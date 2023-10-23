@@ -55,7 +55,7 @@ export default function SpellList() {
   const { searchString } = useSearchParamatersStore((state) => state);
   const { spells, setSpells } = useSpellListStore((state) => state);
   const { data, error, isLoading } = useSWR<Spell[], Error>(
-    spells.length == 0 ? "/spells" : null,
+    "/spells",
     getSpells
   );
 
@@ -105,10 +105,10 @@ export default function SpellList() {
           </List>
         </>
       );
+  }
 
-    if (data) {
-      setSpells(data);
-    }
+  if (data) {
+    setSpells(data);
   }
 
   if (spells) {

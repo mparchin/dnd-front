@@ -1,5 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
-import MenuIcon from "@mui/icons-material/Menu";
+import MenuIcon from "@mui/icons-material/Tune";
 import {
   AppBar,
   Box,
