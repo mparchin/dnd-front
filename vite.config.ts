@@ -16,7 +16,7 @@ export default defineConfig({
         name: "dnd",
         short_name: "dnd",
         description: "Edited dnd spells",
-        theme_color: "#ffffff",
+        theme_color: "#1a7aab",
         icons: [
           {
             src: "vite.svg",

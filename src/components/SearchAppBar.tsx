@@ -24,10 +24,7 @@ export default function SearchAppBar() {
           position="sticky"
           enableColorOnDark
           sx={{
-            bgcolor:
-              theme.palette.mode === "dark"
-                ? theme.palette.primary.dark
-                : theme.palette.primary.main,
+            bgcolor: theme.palette.primary.main,
           }}
           className=""
         >
