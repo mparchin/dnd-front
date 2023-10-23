@@ -11,6 +11,10 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      workbox: {
+        cleanupOutdatedCaches: false,
+        sourcemap: true,
+      },
       includeAssets: ["vite.svg"],
       manifest: {
         name: "dnd",
