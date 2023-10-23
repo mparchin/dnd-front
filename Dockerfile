@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json .
 RUN yarn install --frozen-lockfile
 COPY . .
-RUN yarn build
+RUN yarn run build
 
 FROM nginx:alpine as runner
 COPY --from=builder /app/dist /usr/share/nginx/html
