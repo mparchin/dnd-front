@@ -1,5 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
-import MenuIcon from "@mui/icons-material/Menu";
+import MenuIcon from "@mui/icons-material/Tune";
 import {
   AppBar,
   Box,
@@ -24,10 +24,7 @@ export default function SearchAppBar() {
           position="sticky"
           enableColorOnDark
           sx={{
-            bgcolor:
-              theme.palette.mode === "dark"
-                ? theme.palette.primary.dark
-                : theme.palette.primary.main,
+            bgcolor: theme.palette.primary.main,
           }}
           className=""
         >

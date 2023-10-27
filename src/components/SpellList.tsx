@@ -54,13 +54,12 @@ export default function SpellList() {
   const openDetails = useSpellDetailStore((state) => state.open);
   const { searchString } = useSearchParamatersStore((state) => state);
   const { spells, setSpells } = useSpellListStore((state) => state);
+  const { data, error, isLoading } = useSWR<Spell[], Error>(
+    "/spells",
+    getSpells
+  );
 
   if (spells.length == 0) {
-    const { data, error, isLoading } = useSWR<Spell[], Error>(
-      "/spells",
-      getSpells
-    );
-
     if (error)
       return (
         <Alert security="Error">{`Failed to load data !! ${error}`}</Alert>
@@ -106,10 +105,10 @@ export default function SpellList() {
           </List>
         </>
       );
+  }
 
-    if (data) {
-      setSpells(data);
-    }
+  if (data) {
+    setSpells(data);
   }
 
   if (spells) {
