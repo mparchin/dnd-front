@@ -1,0 +1,13 @@
+dev-dist/
+node_modules/
+Data/
+bin/
+obj/
+Properties/
+.env
+*.sln
+appsettings*
+.git*
+*.sh
+yarn.lock
+Dockerfile
