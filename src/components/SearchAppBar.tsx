@@ -7,7 +7,7 @@ import {
   InputAdornment,
   TextField,
   Toolbar,
-  useTheme,
+  // useTheme,
 } from "@mui/material";
 import { MaterialUISwitch } from "./MaterialUISwitch";
 import { useThemeStore } from "../theme";
@@ -26,7 +26,7 @@ export const useSearchParamatersStore = create<SearchParamatersState>(
 );
 
 export default function SearchAppBar() {
-  const theme = useTheme();
+  // const theme = useTheme();
   const toggleMode = useThemeStore((state) => state.toggleMode);
   const { setSearchString } = useSearchParamatersStore((state) => state);
   return (
