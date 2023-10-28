@@ -11,7 +11,19 @@ import {
 } from "@mui/material";
 import { MaterialUISwitch } from "./MaterialUISwitch";
 import { useThemeStore } from "../theme";
-import { useSearchParamatersStore } from "./SpellList";
+import { create } from "zustand";
+
+interface SearchParamatersState {
+  searchString?: string;
+  setSearchString: (str?: string) => void;
+}
+
+export const useSearchParamatersStore = create<SearchParamatersState>(
+  (set) => ({
+    searchString: undefined,
+    setSearchString: (str?: string) => set({ searchString: str }),
+  })
+);
 
 export default function SearchAppBar() {
   const theme = useTheme();
@@ -20,14 +32,7 @@ export default function SearchAppBar() {
   return (
     <>
       <Box className="flex-grow">
-        <AppBar
-          position="sticky"
-          enableColorOnDark
-          sx={{
-            bgcolor: theme.palette.primary.main,
-          }}
-          className=""
-        >
+        <AppBar position="sticky" className="">
           <Toolbar className="">
             <MaterialUISwitch color="primary" onChange={() => toggleMode()} />
             <TextField
