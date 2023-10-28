@@ -11,7 +11,7 @@ export interface Spell {
   materials?: string;
   spellTags?: string[];
   savingThrow?: string;
-  damageType?: string;
+  damageTypes?: string;
   action: string;
   longerAction?: string;
   range: string;

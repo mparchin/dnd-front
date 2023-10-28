@@ -19,29 +19,21 @@ import { AutoStories, Pets, TempleHindu } from "@mui/icons-material";
 import { useSpellDetailStore } from "./SpellDetailDialog";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useSearchParamatersStore } from "./SearchAppBar";
 
 interface SpellListState {
   spells: Spell[];
+  lastRequestTime: Date;
   setSpells: (spells: Spell[]) => void;
 }
-
-interface SearchParamatersState {
-  searchString?: string;
-  setSearchString: (str?: string) => void;
-}
-
-export const useSearchParamatersStore = create<SearchParamatersState>(
-  (set) => ({
-    searchString: undefined,
-    setSearchString: (str?: string) => set({ searchString: str }),
-  })
-);
 
 export const useSpellListStore = create(
   persist<SpellListState>(
     (set) => ({
       spells: [],
-      setSpells: (spells: Spell[]) => set({ spells: spells }),
+      lastRequestTime: new Date(0),
+      setSpells: (spells: Spell[]) =>
+        set({ spells: spells, lastRequestTime: new Date() }),
     }),
     {
       name: "SpellList-Storage",
@@ -49,66 +41,68 @@ export const useSpellListStore = create(
   )
 );
 
+const loading = () => (
+  <>
+    <CircularProgress
+      size={80}
+      className="absolute z-20 left-[calc(50%-40px)] top-[calc(50%-40px)]"
+    />
+    <List
+      sx={{
+        width: "100%",
+        bgcolor: "background.paper",
+        "& ul": { padding: 0 },
+      }}
+      className="overflow-auto box-border z-10"
+      subheader={<li />}
+    >
+      {[0, 1, 2].map((sectionId) => (
+        <li key={`skeleton-${sectionId}`}>
+          <ul>
+            <ListSubheader>
+              <Skeleton variant="text"></Skeleton>
+            </ListSubheader>
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
+              <div key={`item-${sectionId}-${item}`}>
+                <ListItem>
+                  {/* <ListItemText primary={`Item ${item}`} /> */}
+                  <Skeleton
+                    variant="rectangular"
+                    className="flex-grow h-20"
+                  ></Skeleton>
+                </ListItem>
+                <Divider />
+              </div>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </List>
+  </>
+);
+
 export default function SpellList() {
   const theme = useTheme();
   const openDetails = useSpellDetailStore((state) => state.open);
   const { searchString } = useSearchParamatersStore((state) => state);
-  const { spells, setSpells } = useSpellListStore((state) => state);
+  const { spells, lastRequestTime, setSpells } = useSpellListStore(
+    (state) => state
+  );
+  const shouldRequest =
+    Math.round((new Date().valueOf() - lastRequestTime.valueOf()) / 60000) > 5;
   const { data, error, isLoading } = useSWR<Spell[], Error>(
-    "/spells",
+    shouldRequest ? "/spells" : null,
     getSpells
   );
 
-  if (spells.length == 0) {
-    if (error)
-      return (
-        <Alert security="Error">{`Failed to load data !! ${error}`}</Alert>
-      );
+  if (error && spells.length == 0)
+    return <Alert security="Error">{`Failed to load data !! ${error}`}</Alert>;
 
-    if (isLoading)
-      return (
-        <>
-          <CircularProgress
-            size={80}
-            className="absolute z-20 left-[calc(50%-40px)] top-[calc(50%-40px)]"
-          />
-          <List
-            sx={{
-              width: "100%",
-              bgcolor: "background.paper",
-              "& ul": { padding: 0 },
-            }}
-            className="overflow-auto box-border z-10"
-            subheader={<li />}
-          >
-            {[0, 1, 2].map((sectionId) => (
-              <li key={`skeleton-${sectionId}`}>
-                <ul>
-                  <ListSubheader>
-                    <Skeleton variant="text"></Skeleton>
-                  </ListSubheader>
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
-                    <div key={`item-${sectionId}-${item}`}>
-                      <ListItem>
-                        {/* <ListItemText primary={`Item ${item}`} /> */}
-                        <Skeleton
-                          variant="rectangular"
-                          className="flex-grow h-20"
-                        ></Skeleton>
-                      </ListItem>
-                      <Divider />
-                    </div>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </List>
-        </>
-      );
-  }
+  if (isLoading) return loading();
 
   if (data) {
     setSpells(data);
+    return loading();
   }
 
   if (spells) {
@@ -137,8 +131,8 @@ export default function SpellList() {
                   sx={{
                     bgcolor:
                       theme.palette.mode === "dark"
-                        ? theme.palette.background.paper
-                        : theme.palette.grey[400],
+                        ? theme.palette.primary.dark
+                        : theme.palette.primary.light,
                   }}
                 >
                   <div>{`Level: ${sectionId}`}</div>
@@ -158,7 +152,14 @@ export default function SpellList() {
                     key={`item-${sectionId}-${spell.id}`}
                     onClick={() => openDetails(spell)}
                   >
-                    <ListItemButton>
+                    <ListItemButton
+                      style={{
+                        backgroundColor:
+                          theme.palette.mode === "dark"
+                            ? theme.palette.grey[900]
+                            : theme.palette.background.default,
+                      }}
+                    >
                       <div className="flex flex-row overflow-hidden content-between w-full">
                         <div className="flex-grow flex-shrink basis-auto">
                           <Typography variant="body1" className="text-lg">
@@ -195,34 +196,49 @@ export default function SpellList() {
                           </div>
                         </div>
                         <div className="flex-grow flex-shrink basis-1"></div>
-                        <div className="text-center flex-grow-0 basis-0">
-                          <div className="flex flex-col w-full h-full">
-                            <div className="flex-grow flex-shrink"></div>
-                            <div>
-                              {spell.spellListName == "Arcane" ? (
-                                <AutoStories color="primary" />
-                              ) : spell.spellListName == "Divine" ? (
-                                <TempleHindu color="secondary" />
-                              ) : (
-                                <Pets color="success" />
-                              )}
-                            </div>
-                            <Typography
-                              variant="caption"
-                              className="text-xs flex-grow basis-auto"
-                              sx={{
-                                color:
-                                  spell.spellListName == "Arcane"
-                                    ? theme.palette.primary.main
-                                    : spell.spellListName == "Divine"
-                                    ? theme.palette.secondary.main
-                                    : theme.palette.success.main,
-                              }}
+
+                        {spell.spellListName
+                          .split(",")
+                          .sort()
+                          .map((listName) => (
+                            <div
+                              key={`${spell.id}-${listName}`}
+                              className="text-center flex-grow-0 basis-0 pr-1"
                             >
-                              {spell.spellListName}
-                            </Typography>
-                          </div>
-                        </div>
+                              <div className="flex flex-col w-full h-full">
+                                <div className="flex-grow flex-shrink"></div>
+                                <div>
+                                  {listName == "Arcane" ? (
+                                    <AutoStories
+                                      color="primary"
+                                      fontSize="small"
+                                    />
+                                  ) : listName == "Divine" ? (
+                                    <TempleHindu
+                                      color="secondary"
+                                      fontSize="small"
+                                    />
+                                  ) : (
+                                    <Pets color="success" fontSize="small" />
+                                  )}
+                                </div>
+                                <Typography
+                                  variant="caption"
+                                  className="text-xs flex-grow basis-auto"
+                                  sx={{
+                                    color:
+                                      listName == "Arcane"
+                                        ? theme.palette.primary.main
+                                        : listName == "Divine"
+                                        ? theme.palette.secondary.main
+                                        : theme.palette.success.main,
+                                  }}
+                                >
+                                  {/* {listName[0]} */}
+                                </Typography>
+                              </div>
+                            </div>
+                          ))}
                       </div>
                       {/* <ListItemText primary={`${spell.name}`} /> */}
                     </ListItemButton>

@@ -13,4 +13,4 @@ SERVER="91.107.242.150"
 ssh $SERVER "cd $ADDRESS && \
 git switch $BRANCH && \
 git pull && \
-docker buildx build -t $IMAGE:$BRANCH --push --build-args VITE_API_ADDRESS=$VITE_API_ADDRESS ."
+docker buildx build -t $IMAGE:$BRANCH --push --build-arg VITE_API_ADDRESS=$VITE_API_ADDRESS ."

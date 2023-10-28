@@ -64,13 +64,20 @@ export default function SpellDetailDialog() {
             {spell?.name}
           </div>
           <div className="flex-grow flex-shrink basis-0 pt-4 pr-4 text-right">
-            {spell?.spellListName == "Arcane" ? (
-              <AutoStories color="primary" />
-            ) : spell?.spellListName == "Divine" ? (
-              <TempleHindu color="secondary" />
-            ) : (
-              <Pets color="success" />
-            )}
+            {spell?.spellListName
+              .split(",")
+              .sort()
+              .map((listName) => (
+                <>
+                  {listName == "Arcane" ? (
+                    <AutoStories color="primary" fontSize="small" />
+                  ) : listName == "Divine" ? (
+                    <TempleHindu color="secondary" fontSize="small" />
+                  ) : (
+                    <Pets color="success" fontSize="small" />
+                  )}
+                </>
+              ))}
           </div>
         </div>
         <div className="w-full overflow-x-hidden overflow-y-auto pl-5">
