@@ -1,5 +1,4 @@
 import {
-  Alert,
   Card,
   CircularProgress,
   Divider,
@@ -12,8 +11,6 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import useSWR from "swr";
-import { getSpells } from "../api";
 import { Spell } from "../models/spell";
 import { AutoStories, Pets, TempleHindu } from "@mui/icons-material";
 import { useSpellDetailStore } from "./SpellDetailDialog";
@@ -23,7 +20,6 @@ import { useSearchParamatersStore } from "./SearchAppBar";
 
 interface SpellListState {
   spells: Spell[];
-  lastRequestTime: Date;
   setSpells: (spells: Spell[]) => void;
 }
 
@@ -31,9 +27,7 @@ export const useSpellListStore = create(
   persist<SpellListState>(
     (set) => ({
       spells: [],
-      lastRequestTime: new Date(0),
-      setSpells: (spells: Spell[]) =>
-        set({ spells: spells, lastRequestTime: new Date() }),
+      setSpells: (spells: Spell[]) => set({ spells: spells }),
     }),
     {
       name: "SpellList-Storage",
@@ -41,74 +35,59 @@ export const useSpellListStore = create(
   )
 );
 
-const loading = () => (
-  <>
-    <CircularProgress
-      size={80}
-      className="absolute z-20 left-[calc(50%-40px)] top-[calc(50%-40px)]"
-    />
-    <List
-      sx={{
-        width: "100%",
-        bgcolor: "background.paper",
-        "& ul": { padding: 0 },
-      }}
-      className="overflow-auto box-border z-10"
-      subheader={<li />}
-    >
-      {[0, 1, 2].map((sectionId) => (
-        <li key={`skeleton-${sectionId}`}>
-          <ul>
-            <ListSubheader>
-              <Skeleton variant="text"></Skeleton>
-            </ListSubheader>
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
-              <div key={`item-${sectionId}-${item}`}>
-                <ListItem>
-                  {/* <ListItemText primary={`Item ${item}`} /> */}
-                  <Skeleton
-                    variant="rectangular"
-                    className="flex-grow h-20"
-                  ></Skeleton>
-                </ListItem>
-                <Divider />
-              </div>
-            ))}
-          </ul>
-        </li>
-      ))}
-    </List>
-  </>
-);
-
 export default function SpellList() {
   const theme = useTheme();
   const openDetails = useSpellDetailStore((state) => state.open);
-  const { searchString } = useSearchParamatersStore((state) => state);
-  const { spells, lastRequestTime, setSpells } = useSpellListStore(
-    (state) => state
-  );
-  const shouldRequest =
-    Math.round((new Date().valueOf() - lastRequestTime.valueOf()) / 60000) > 5;
-  const { data, error, isLoading } = useSWR<Spell[], Error>(
-    shouldRequest ? "/spells" : null,
-    getSpells
-  );
+  const searchString = useSearchParamatersStore((state) => state.searchString);
+  const spells = useSpellListStore((state) => state.spells);
 
-  if (error && spells.length == 0)
-    return <Alert security="Error">{`Failed to load data !! ${error}`}</Alert>;
-
-  if (isLoading) return loading();
-
-  if (data) {
-    setSpells(data);
-    return loading();
-  }
+  if (spells.length == 0)
+    return (
+      <>
+        <CircularProgress
+          size={80}
+          className="absolute z-20 left-[calc(50%-40px)] top-[calc(50%-40px)]"
+        />
+        <List
+          sx={{
+            width: "100%",
+            bgcolor: "background.paper",
+            "& ul": { padding: 0 },
+          }}
+          className="overflow-auto box-border z-10"
+          subheader={<li />}
+        >
+          {[0, 1, 2].map((sectionId) => (
+            <li key={`skeleton-${sectionId}`}>
+              <ul>
+                <ListSubheader>
+                  <Skeleton variant="text"></Skeleton>
+                </ListSubheader>
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
+                  <div key={`item-${sectionId}-${item}`}>
+                    <ListItem>
+                      {/* <ListItemText primary={`Item ${item}`} /> */}
+                      <Skeleton
+                        variant="rectangular"
+                        className="flex-grow h-20"
+                      ></Skeleton>
+                    </ListItem>
+                    <Divider />
+                  </div>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </List>
+      </>
+    );
 
   if (spells) {
     var query = spells;
     if (searchString)
-      query = query.filter((spell) => spell.name.includes(searchString));
+      query = query.filter((spell) =>
+        spell.name.toLowerCase().includes(searchString.toLowerCase())
+      );
     const spellLevels = [...new Set(query.map((spell) => spell.level))].sort();
     return (
       <List
@@ -146,7 +125,9 @@ export default function SpellList() {
               </ListSubheader>
               {query
                 .filter((spell) => spell.level == sectionId)
-                .sort((a, b) => (a == b ? 0 : a > b ? 1 : -1))
+                .sort((a, b) =>
+                  a.name == b.name ? 0 : a.name > b.name ? 1 : -1
+                )
                 .map((spell) => (
                   <div
                     key={`item-${sectionId}-${spell.id}`}
@@ -242,7 +223,18 @@ export default function SpellList() {
                       </div>
                       {/* <ListItemText primary={`${spell.name}`} /> */}
                     </ListItemButton>
-                    <Divider />
+                    <Divider
+                      sx={{
+                        color:
+                          theme.palette.mode == "dark"
+                            ? theme.palette.primary.dark
+                            : theme.palette.primary.light,
+                        bgcolor:
+                          theme.palette.mode == "dark"
+                            ? theme.palette.primary.dark
+                            : theme.palette.primary.light,
+                      }}
+                    />
                   </div>
                 ))}
             </ul>

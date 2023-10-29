@@ -4,7 +4,7 @@ interface ISpellArgs {
 }
 
 export default function SpellArgs({ name, value }: ISpellArgs) {
-  if (value != undefined)
+  if (value != undefined && value)
     return (
       <div className="flex">
         <div className="basis-auto">

@@ -1,5 +1,6 @@
 import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Tune";
+import ClearIcon from "@mui/icons-material/Clear";
 import {
   AppBar,
   Box,
@@ -28,7 +29,9 @@ export const useSearchParamatersStore = create<SearchParamatersState>(
 export default function SearchAppBar() {
   // const theme = useTheme();
   const toggleMode = useThemeStore((state) => state.toggleMode);
-  const { setSearchString } = useSearchParamatersStore((state) => state);
+  const { setSearchString, searchString } = useSearchParamatersStore(
+    (state) => state
+  );
   return (
     <>
       <Box className="flex-grow">
@@ -42,6 +45,7 @@ export default function SearchAppBar() {
               className="flex-grow"
               size="small"
               maxRows={1}
+              value={searchString}
               onChange={(e) => setSearchString(e.target.value)}
               sx={{
                 "& .MuiFilledInput-input": {
@@ -59,9 +63,15 @@ export default function SearchAppBar() {
                       },
                     }}
                   >
-                    <IconButton>
-                      <SearchIcon className="align-top p-0" />
-                    </IconButton>
+                    {searchString ? (
+                      <IconButton onClick={() => setSearchString("")}>
+                        <ClearIcon className="align-top p-0" />
+                      </IconButton>
+                    ) : (
+                      <IconButton>
+                        <SearchIcon className="align-top p-0" />
+                      </IconButton>
+                    )}
                   </InputAdornment>
                 ),
               }}

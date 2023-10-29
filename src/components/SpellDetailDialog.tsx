@@ -39,21 +39,26 @@ export default function SpellDetailDialog() {
       open={isOpen}
       onClose={() => close()}
       onOpen={() => open()}
+      elevation={0}
       sx={{
         "& .MuiDrawer-paper": {
           width: "100%",
+          bgcolor:
+            theme.palette.mode == "dark"
+              ? theme.palette.grey[900]
+              : theme.palette.background.default,
         },
       }}
     >
-      <div className="flex w-full h-full overflow-x-hidden overflow-y-auto flex-col">
-        <div className="flex w-full h-20 overflow-hidden flex-row">
-          <div className="flex-grow flex-shrink basis-0 pt-3 pl-2">
+      <div className="flex w-full h-full overflow-x-hidden overflow-y-auto flex-col pb-4">
+        <div className="flex w-full overflow-hidden flex-shrink-0 flex-row">
+          <div className="flex-grow basis-0 pt-2 pl-2">
             <IconButton onClick={() => close()}>
               <ArrowBackIosNew color="primary" />
             </IconButton>
           </div>
           <div
-            className="flex-grow flex-shrink basis-0 pt-4 text-center"
+            className="grow-[3] basis-0 pt-4 text-center"
             style={{
               color:
                 theme.palette.mode == "dark"
@@ -63,12 +68,12 @@ export default function SpellDetailDialog() {
           >
             {spell?.name}
           </div>
-          <div className="flex-grow flex-shrink basis-0 pt-4 pr-4 text-right">
+          <div className="flex-grow basis-0 pt-4 pr-4 text-right">
             {spell?.spellListName
               .split(",")
               .sort()
               .map((listName) => (
-                <>
+                <span key={listName}>
                   {listName == "Arcane" ? (
                     <AutoStories color="primary" fontSize="small" />
                   ) : listName == "Divine" ? (
@@ -76,11 +81,11 @@ export default function SpellDetailDialog() {
                   ) : (
                     <Pets color="success" fontSize="small" />
                   )}
-                </>
+                </span>
               ))}
           </div>
         </div>
-        <div className="w-full overflow-x-hidden overflow-y-auto pl-5">
+        <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-5">
           <Typography
             variant="h4"
             color={
@@ -92,7 +97,10 @@ export default function SpellDetailDialog() {
             {spell?.name}
           </Typography>
           <div className="pl-2 pt-2">
-            <SpellArgs name="List" value={spell?.spellListName} />
+            <SpellArgs
+              name="List"
+              value={spell?.spellListName.replace(",", ", ")}
+            />
             <SpellArgs name="Book" value={spell?.book} />
             <SpellArgs name="Level" value={spell?.level.toString()} />
             <SpellArgs name="School" value={spell?.schoolName} />
@@ -105,6 +113,10 @@ export default function SpellDetailDialog() {
               value={
                 spell?.action === "Longer" ? spell?.longerAction : spell?.action
               }
+            />
+            <SpellArgs
+              name="Concentration"
+              value={spell?.isConcentration ? "YES" : undefined}
             />
             <SpellArgs name="Range" value={spell?.range} />
             <SpellArgs
@@ -131,7 +143,7 @@ export default function SpellDetailDialog() {
             />
             <SpellArgs name="Duration" value={spell?.duration} />
             <SpellArgs
-              name="Classes"
+              name="Restricted to"
               value={spell?.restrictedClasses?.join(", ")}
             />
             <div className="flex flex-row overflow-hidden flex-wrap">
@@ -156,17 +168,49 @@ export default function SpellDetailDialog() {
                   </Typography>
                 </Card>
               ))}
-              <div className="pr-4 pt-4">{spell?.description}</div>
-              {spell?.higherLevelDescription != undefined ? (
-                <div className="pr-4 pt-4">
-                  <strong>At Higher Levels. </strong>
-                  {spell?.higherLevelDescription}
+              <div
+                className="pr-5 pt-4"
+                dangerouslySetInnerHTML={{ __html: spell?.description ?? "" }}
+              ></div>
+              {spell?.higherLevelDescription ? (
+                <div className="pr-5 pt-4">
+                  <strong>At Higher Levels: </strong>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: spell?.higherLevelDescription,
+                    }}
+                  ></div>
                 </div>
               ) : (
                 ""
               )}
             </div>
           </div>
+          {(spell?.relatedConditions?.length ?? 0) > 0 ? (
+            <div className="pt-3 pr-5">
+              <Typography
+                variant="h6"
+                color={
+                  theme.palette.mode === "dark"
+                    ? theme.palette.secondary.main
+                    : theme.palette.primary.main
+                }
+              >
+                Conditions
+              </Typography>
+              {spell?.relatedConditions?.map((condition) => (
+                <div key={condition.name} className="pt-2 pl-2">
+                  <strong className="text-lg">{condition.name}</strong>
+                  <div
+                    className="pl-2"
+                    dangerouslySetInnerHTML={{ __html: condition.description }}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </SwipeableDrawer>
