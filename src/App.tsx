@@ -1,9 +1,9 @@
 import SearchAppBar from "./components/SearchAppBar";
 import SpellList from "./components/SpellList";
 import SpellDetailDialog from "./components/SpellDetailDialog";
+import { GetAndSaveSpells } from "./api";
 
 export default function App() {
-  console.log(import.meta.env.VITE_API_ADDRESS);
   return (
     <>
       <div className="flex-col flex w-screen h-screen max-h-screen overflow-hidden">
@@ -25,6 +25,7 @@ export default function App() {
       </div>
 
       <SpellDetailDialog />
+      <GetAndSaveSpells />
     </>
   );
 }

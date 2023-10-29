@@ -22,5 +22,10 @@ export interface Spell {
   description: string;
   higherLevelDescription?: string;
   damageFormula?: string;
-  relatedConditions?: string[];
+  relatedConditions?: Condition[];
+}
+
+interface Condition {
+  name: string;
+  description: string;
 }
