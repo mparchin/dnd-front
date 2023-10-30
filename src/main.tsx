@@ -10,8 +10,27 @@ import "./index.css";
 import { ThemeProvider } from "@emotion/react";
 import { ThemeMode, getTheme, useThemeStore } from "./theme";
 import { StyledEngineProvider, useMediaQuery } from "@mui/material";
+import {
+  RouterProvider,
+  createHashRouter,
+  createMemoryRouter,
+} from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(<Main />);
+
+const router = createHashRouter(
+  [
+    {
+      path: "/",
+      element: <App />,
+      children: [
+        { path: "details", element: <></> },
+        { path: "filter", element: <></> },
+      ],
+    },
+  ]
+  // { initialEntries: ["/"] }
+);
 
 export default function Main() {
   const mode = useThemeStore((state) => state.mode);
@@ -31,7 +50,7 @@ export default function Main() {
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <App />
+          <RouterProvider router={router}></RouterProvider>
         </ThemeProvider>
       </StyledEngineProvider>
     </React.StrictMode>

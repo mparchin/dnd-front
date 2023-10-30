@@ -13,10 +13,10 @@ import {
 } from "@mui/material";
 import { Spell } from "../models/spell";
 import { AutoStories, Pets, TempleHindu } from "@mui/icons-material";
-import { useSpellDetailStore } from "./SpellDetailDialog";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useSearchParamatersStore } from "./SearchAppBar";
+import { useNavigate } from "react-router-dom";
 
 interface SpellListState {
   spells: Spell[];
@@ -37,9 +37,9 @@ export const useSpellListStore = create(
 
 export default function SpellList() {
   const theme = useTheme();
-  const openDetails = useSpellDetailStore((state) => state.open);
   const searchString = useSearchParamatersStore((state) => state.searchString);
   const spells = useSpellListStore((state) => state.spells);
+  const navigate = useNavigate();
 
   if (spells.length == 0)
     return (
@@ -131,7 +131,9 @@ export default function SpellList() {
                 .map((spell) => (
                   <div
                     key={`item-${sectionId}-${spell.id}`}
-                    onClick={() => openDetails(spell)}
+                    onClick={() => {
+                      navigate("details", { state: { spell: spell } });
+                    }}
                   >
                     <ListItemButton
                       style={{

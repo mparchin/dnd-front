@@ -1,5 +1,4 @@
 import { Spell } from "../models/spell";
-import { create } from "zustand";
 import {
   Card,
   IconButton,
@@ -14,31 +13,41 @@ import {
   TempleHindu,
 } from "@mui/icons-material";
 import SpellArgs from "./SpellArgs";
+import { useLocation, useNavigate } from "react-router-dom";
+import { create } from "zustand";
 
 interface SpellDetailState {
+  spell?: Spell;
   isOpen: boolean;
-  spell: Spell | null;
   open: (spell?: Spell) => void;
   close: () => void;
 }
 
-export const useSpellDetailStore = create<SpellDetailState>((set) => ({
+const useSpellDetailStore = create<SpellDetailState>((set) => ({
+  spell: undefined,
   isOpen: false,
-  spell: null,
-  open: (spell?: Spell) =>
-    spell ? set({ isOpen: true, spell: spell }) : set({ isOpen: true }),
-  close: () => set({ isOpen: false }),
+  open: (spell) => set({ spell: spell, isOpen: true }),
+  close: () => set({ spell: undefined, isOpen: false }),
 }));
 
 export default function SpellDetailDialog() {
   const theme = useTheme();
-  const { isOpen, close, spell, open } = useSpellDetailStore((state) => state);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const IsOpenRequest = () => location.pathname.includes("details");
+  const CloseRequest = () => {
+    if (IsOpenRequest()) navigate(-1);
+  };
+  const { isOpen, spell, open, close } = useSpellDetailStore((state) => state);
+  if (!isOpen && IsOpenRequest()) open(location.state.spell);
+  else if (isOpen && !IsOpenRequest()) close();
   return (
     <SwipeableDrawer
       anchor={"right"}
       open={isOpen}
-      onClose={() => close()}
-      onOpen={() => open()}
+      transitionDuration={300}
+      onClose={() => CloseRequest()}
+      onOpen={() => open(spell)}
       elevation={0}
       sx={{
         "& .MuiDrawer-paper": {
@@ -53,7 +62,7 @@ export default function SpellDetailDialog() {
       <div className="flex w-full h-full overflow-x-hidden overflow-y-auto flex-col pb-4">
         <div className="flex w-full overflow-hidden flex-shrink-0 flex-row">
           <div className="flex-grow basis-0 pt-2 pl-2">
-            <IconButton onClick={() => close()}>
+            <IconButton onClick={() => CloseRequest()}>
               <ArrowBackIosNew color="primary" />
             </IconButton>
           </div>
