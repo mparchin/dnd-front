@@ -8,6 +8,7 @@ import {
   ListSubheader,
   Paper,
   Skeleton,
+  SvgIcon,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -16,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { FilterData, useSpellListStore } from "../api";
 import { useFilterStore } from "./FilterDialog";
 import { useMemo } from "react";
+import Dndsvg from "../assets/dndsvg";
 
 export default function SpellList() {
   const theme = useTheme();
@@ -142,6 +144,7 @@ export default function SpellList() {
                               <Card
                                 key={`card-${sectionId}-${spell.id}-${t}`}
                                 variant="elevation"
+                                elevation={4}
                                 sx={{
                                   bgcolor:
                                     theme.palette.mode === "dark"
@@ -149,10 +152,10 @@ export default function SpellList() {
                                       : theme.palette.grey[200],
                                   color:
                                     theme.palette.mode === "dark"
-                                      ? theme.palette.secondary.dark
+                                      ? theme.palette.secondary.light
                                       : theme.palette.primary.dark,
                                 }}
-                                className="mr-2 mt-2 pl-1 pr-1"
+                                className="mr-2 mt-1 pl-1 pr-1 mb-1"
                               >
                                 <Typography
                                   variant="caption"
@@ -228,6 +231,7 @@ export default function SpellList() {
             </ul>
           </li>
         ))}
+        <Dndsvg />
       </List>
     );
   }

@@ -15,7 +15,7 @@ export default defineConfig({
         cleanupOutdatedCaches: false,
         sourcemap: true,
       },
-      includeAssets: ["vite.svg"],
+      includeAssets: ["dnd.svg"],
       manifest: {
         name: "dnd",
         short_name: "dnd",
@@ -24,12 +24,12 @@ export default defineConfig({
         background_color: "#1a7aab",
         icons: [
           {
-            src: "vite.svg",
+            src: "dnd.svg",
             sizes: "192x192",
             type: "image/svg",
           },
           {
-            src: "vite.svg",
+            src: "dnd.svg",
             sizes: "512x512",
             type: "image/svg",
           },
