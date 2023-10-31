@@ -343,7 +343,7 @@ export default function FilterDialog() {
             </IconButton>
           </div>
         </div>
-        <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-5 pr-5 pb-1 pt-1">
+        <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-1 pr-1 pb-1 pt-1">
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
               <Typography>TYPE</Typography>
