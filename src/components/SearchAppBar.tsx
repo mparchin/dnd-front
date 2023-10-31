@@ -12,26 +12,13 @@ import {
 } from "@mui/material";
 import { MaterialUISwitch } from "./MaterialUISwitch";
 import { useThemeStore } from "../theme";
-import { create } from "zustand";
-
-interface SearchParamatersState {
-  searchString?: string;
-  setSearchString: (str?: string) => void;
-}
-
-export const useSearchParamatersStore = create<SearchParamatersState>(
-  (set) => ({
-    searchString: undefined,
-    setSearchString: (str?: string) => set({ searchString: str }),
-  })
-);
+import { useNavigate } from "react-router-dom";
+import { useFilterStore } from "./FilterDialog";
 
 export default function SearchAppBar() {
-  // const theme = useTheme();
+  const navigate = useNavigate();
   const toggleMode = useThemeStore((state) => state.toggleMode);
-  const { setSearchString, searchString } = useSearchParamatersStore(
-    (state) => state
-  );
+  const filter = useFilterStore((state) => state);
   return (
     <>
       <Box className="flex-grow">
@@ -45,8 +32,8 @@ export default function SearchAppBar() {
               className="flex-grow"
               size="small"
               maxRows={1}
-              value={searchString}
-              onChange={(e) => setSearchString(e.target.value)}
+              value={filter.searchString}
+              onChange={(e) => filter.setSearchString(e.target.value)}
               sx={{
                 "& .MuiFilledInput-input": {
                   padding: "10px 12px 12px 12px",
@@ -63,8 +50,10 @@ export default function SearchAppBar() {
                       },
                     }}
                   >
-                    {searchString ? (
-                      <IconButton onClick={() => setSearchString("")}>
+                    {filter.searchString ? (
+                      <IconButton
+                        onClick={() => filter.setSearchString(undefined)}
+                      >
                         <ClearIcon className="align-top p-0" />
                       </IconButton>
                     ) : (
@@ -81,7 +70,8 @@ export default function SearchAppBar() {
               edge="start"
               color="inherit"
               aria-label="open drawer"
-              className="block md:hidden ml-4"
+              className="block ml-4"
+              onClick={() => navigate("filter")}
             >
               <MenuIcon />
             </IconButton>
