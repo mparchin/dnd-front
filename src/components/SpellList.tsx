@@ -11,35 +11,20 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { Spell } from "../models/spell";
 import { AutoStories, Pets, TempleHindu } from "@mui/icons-material";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { useSearchParamatersStore } from "./SearchAppBar";
 import { useNavigate } from "react-router-dom";
-
-interface SpellListState {
-  spells: Spell[];
-  setSpells: (spells: Spell[]) => void;
-}
-
-export const useSpellListStore = create(
-  persist<SpellListState>(
-    (set) => ({
-      spells: [],
-      setSpells: (spells: Spell[]) => set({ spells: spells }),
-    }),
-    {
-      name: "SpellList-Storage",
-    }
-  )
-);
+import { FilterData, useSpellListStore } from "../api";
+import { useFilterStore } from "./FilterDialog";
+import { useMemo } from "react";
 
 export default function SpellList() {
   const theme = useTheme();
-  const searchString = useSearchParamatersStore((state) => state.searchString);
   const spells = useSpellListStore((state) => state.spells);
   const navigate = useNavigate();
+  const filter = useFilterStore((state) => state);
+  const query = useMemo(() => {
+    return FilterData(spells, filter);
+  }, [spells, filter]);
 
   if (spells.length == 0)
     return (
@@ -82,12 +67,7 @@ export default function SpellList() {
       </>
     );
 
-  if (spells) {
-    var query = spells;
-    if (searchString)
-      query = query.filter((spell) =>
-        spell.name.toLowerCase().includes(searchString.toLowerCase())
-      );
+  if (query) {
     const spellLevels = [...new Set(query.map((spell) => spell.level))].sort();
     return (
       <List
@@ -96,6 +76,12 @@ export default function SpellList() {
           bgcolor: "background.paper",
           position: "relative",
           "& ul": { padding: 0 },
+        }}
+        style={{
+          backgroundColor:
+            theme.palette.mode === "dark"
+              ? theme.palette.grey[900]
+              : theme.palette.background.default,
         }}
         className="overflow-auto box-border"
         subheader={<li />}
@@ -110,8 +96,8 @@ export default function SpellList() {
                   sx={{
                     bgcolor:
                       theme.palette.mode === "dark"
-                        ? theme.palette.primary.dark
-                        : theme.palette.primary.light,
+                        ? theme.palette.grey[900]
+                        : theme.palette.background.default,
                   }}
                 >
                   <div>{`Level: ${sectionId}`}</div>

@@ -2,6 +2,7 @@ import SearchAppBar from "./components/SearchAppBar";
 import SpellList from "./components/SpellList";
 import SpellDetailDialog from "./components/SpellDetailDialog";
 import { GetAndSaveSpells } from "./api";
+import FilterDialog from "./components/FilterDialog";
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
       </div>
 
       <SpellDetailDialog />
+      <FilterDialog />
       <GetAndSaveSpells />
     </>
   );

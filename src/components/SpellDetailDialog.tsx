@@ -60,7 +60,7 @@ export default function SpellDetailDialog() {
       }}
     >
       <div className="flex w-full h-full overflow-x-hidden overflow-y-auto flex-col pb-4">
-        <div className="flex w-full overflow-hidden flex-shrink-0 flex-row">
+        <div className="flex w-full overflow-hidden flex-shrink-0 flex-row h-16">
           <div className="flex-grow basis-0 pt-2 pl-2">
             <IconButton onClick={() => CloseRequest()}>
               <ArrowBackIosNew color="primary" />
@@ -120,7 +120,11 @@ export default function SpellDetailDialog() {
             <SpellArgs
               name="Casting time"
               value={
-                spell?.action === "Longer" ? spell?.longerAction : spell?.action
+                spell?.action === "Longer"
+                  ? spell?.longerAction
+                  : spell?.action == "BonusAction"
+                  ? "Bonus Action"
+                  : spell?.action
               }
             />
             <SpellArgs
