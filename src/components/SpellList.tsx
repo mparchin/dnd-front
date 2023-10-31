@@ -8,7 +8,6 @@ import {
   ListSubheader,
   Paper,
   Skeleton,
-  SvgIcon,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -133,10 +132,13 @@ export default function SpellList() {
                     >
                       <div className="flex flex-row overflow-hidden content-between w-full">
                         <div className="flex-grow flex-shrink basis-auto">
-                          <Typography variant="body1" className="text-lg">
+                          <Typography variant="body1" className="text-lg pl-1">
                             <b>{spell.name}</b>
                           </Typography>
-                          <Typography variant="caption" className="text-sm">
+                          <Typography
+                            variant="caption"
+                            className="text-sm pl-1"
+                          >
                             {spell.schoolName}
                           </Typography>
                           <div className="flex flex-row overflow-hidden flex-wrap">
@@ -155,7 +157,7 @@ export default function SpellList() {
                                       ? theme.palette.secondary.light
                                       : theme.palette.primary.dark,
                                 }}
-                                className="mr-2 mt-1 pl-1 pr-1 mb-1"
+                                className="mr-1 ml-1 mt-1 pl-1 pr-1 mb-1"
                               >
                                 <Typography
                                   variant="caption"

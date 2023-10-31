@@ -176,7 +176,7 @@ export default function SpellDetailDialog() {
                         ? theme.palette.secondary.light
                         : theme.palette.primary.dark,
                   }}
-                  className="mr-2 mt-2 pl-1 pr-1 mb-1"
+                  className="mr-1 ml-1 mt-2 pl-1 pr-1 mb-1"
                 >
                   <Typography variant="caption" className="text-xs">
                     {t.toUpperCase()}
