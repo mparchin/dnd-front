@@ -15,6 +15,7 @@ import { create } from "zustand";
 import { FilterData, useSpellListStore } from "../api";
 import FilterButtonText from "./FilterButtonText";
 import { useMemo } from "react";
+import Dndsvg from "../assets/dndsvg";
 
 export interface FilterState {
   searchString?: string;
@@ -706,6 +707,7 @@ export default function FilterDialog() {
               </ToggleButton>
             </AccordionDetails>
           </Accordion>
+          <Dndsvg />
         </div>
         <div className="flex w-full overflow-hidden flex-shrink-0">
           <Button

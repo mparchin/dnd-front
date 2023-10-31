@@ -15,6 +15,7 @@ import {
 import SpellArgs from "./SpellArgs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
+import Dndsvg from "../assets/dndsvg";
 
 interface SpellDetailState {
   spell?: Spell;
@@ -59,9 +60,9 @@ export default function SpellDetailDialog() {
         },
       }}
     >
-      <div className="flex w-full h-full overflow-x-hidden overflow-y-auto flex-col pb-4">
+      <div className="flex w-full h-full overflow-x-hidden overflow-y-hidden flex-col pb-4">
         <div className="flex w-full overflow-hidden flex-shrink-0 flex-row h-16">
-          <div className="flex-grow basis-0 pt-2 pl-2">
+          <div className="flex-grow basis-0 pt-2 ">
             <IconButton onClick={() => CloseRequest()}>
               <ArrowBackIosNew color="primary" />
             </IconButton>
@@ -77,7 +78,7 @@ export default function SpellDetailDialog() {
           >
             {spell?.name}
           </div>
-          <div className="flex-grow basis-0 pt-4 pr-4 text-right">
+          <div className="flex-grow basis-0 pt-4 pr-2 text-right">
             {spell?.spellListName
               .split(",")
               .sort()
@@ -94,7 +95,7 @@ export default function SpellDetailDialog() {
               ))}
           </div>
         </div>
-        <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-5">
+        <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-3 pr-5">
           <Typography
             variant="h4"
             color={
@@ -164,6 +165,7 @@ export default function SpellDetailDialog() {
                 <Card
                   key={`card-${spell.id}-${t}`}
                   variant="elevation"
+                  elevation={4}
                   sx={{
                     bgcolor:
                       theme.palette.mode === "dark"
@@ -171,10 +173,10 @@ export default function SpellDetailDialog() {
                         : theme.palette.grey[200],
                     color:
                       theme.palette.mode === "dark"
-                        ? theme.palette.secondary.dark
+                        ? theme.palette.secondary.light
                         : theme.palette.primary.dark,
                   }}
-                  className="mr-2 mt-2 pl-1 pr-1"
+                  className="mr-2 mt-2 pl-1 pr-1 mb-1"
                 >
                   <Typography variant="caption" className="text-xs">
                     {t.toUpperCase()}
@@ -182,11 +184,11 @@ export default function SpellDetailDialog() {
                 </Card>
               ))}
               <div
-                className="pr-5 pt-4"
+                className="pt-4"
                 dangerouslySetInnerHTML={{ __html: spell?.description ?? "" }}
               ></div>
               {spell?.higherLevelDescription ? (
-                <div className="pr-5 pt-4">
+                <div className="pt-4">
                   <strong>At Higher Levels: </strong>
                   <div
                     dangerouslySetInnerHTML={{
@@ -200,7 +202,7 @@ export default function SpellDetailDialog() {
             </div>
           </div>
           {(spell?.relatedConditions?.length ?? 0) > 0 ? (
-            <div className="pt-3 pr-5">
+            <div className="pt-3">
               <Typography
                 variant="h6"
                 color={
@@ -224,6 +226,7 @@ export default function SpellDetailDialog() {
           ) : (
             <></>
           )}
+          <Dndsvg />
         </div>
       </div>
     </SwipeableDrawer>
