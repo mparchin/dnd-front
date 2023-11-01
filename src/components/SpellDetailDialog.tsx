@@ -109,7 +109,7 @@ export default function SpellDetailDialog() {
           <div className="pl-2 pt-2">
             <SpellArgs
               name="List"
-              value={spell?.spellListName.replace(",", ", ")}
+              value={spell?.spellListName.replace(/,/g, ", ")}
             />
             <SpellArgs name="Book" value={spell?.book} />
             <SpellArgs name="Level" value={spell?.level.toString()} />

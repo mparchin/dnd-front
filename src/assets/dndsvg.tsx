@@ -1,5 +1,3 @@
-import { useTheme } from "@mui/material";
-
 interface ISvgProps {
   color: string;
   background: string;
