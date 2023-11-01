@@ -107,7 +107,7 @@ export interface FilterState {
 }
 export interface Filter {}
 
-export const useFilterStore = create<FilterState>((set) => ({
+export const useFilterStore = create<FilterState>()((set) => ({
   searchString: undefined,
   setSearchString: (str?: string) => set({ searchString: str }),
   levels: [],

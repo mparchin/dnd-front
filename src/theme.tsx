@@ -63,21 +63,21 @@ interface ThemeState {
 
 export const useThemeStore = create(
   persist<ThemeState>(
-    (set, get) => ({
+    (set) => ({
       mode: ThemeMode.light,
       userChangedMode: false,
       toggleMode: (systemInput?: boolean) =>
-        set(() => {
+        set((state) => {
           if (typeof systemInput !== "undefined")
             return {
               mode:
-                get().mode == ThemeMode.light
+                state.mode == ThemeMode.light
                   ? ThemeMode.dark
                   : ThemeMode.light,
             };
           return {
             mode:
-              get().mode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light,
+              state.mode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light,
             userChangedMode: true,
           };
         }),

@@ -24,7 +24,7 @@ interface SpellDetailState {
   close: () => void;
 }
 
-const useSpellDetailStore = create<SpellDetailState>((set) => ({
+const useSpellDetailStore = create<SpellDetailState>()((set) => ({
   spell: undefined,
   isOpen: false,
   open: (spell) => set({ spell: spell, isOpen: true }),

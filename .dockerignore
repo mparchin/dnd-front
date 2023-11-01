@@ -9,5 +9,4 @@ Properties/
 appsettings*
 .git*
 *.sh
-yarn.lock
 Dockerfile
