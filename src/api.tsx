@@ -16,7 +16,7 @@ interface SpellListState {
   setSpells: (spells: Spell[], filterList: FilterList) => void;
 }
 
-export const useSpellListStore = create(
+export const useSpellListStore = create<SpellListState>()(
   persist<SpellListState>(
     (set) => ({
       spells: [],

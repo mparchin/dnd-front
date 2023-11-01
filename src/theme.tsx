@@ -61,7 +61,7 @@ interface ThemeState {
   toggleMode: (systemInput?: boolean) => void;
 }
 
-export const useThemeStore = create(
+export const useThemeStore = create<ThemeState>()(
   persist<ThemeState>(
     (set, get) => ({
       mode: ThemeMode.light,
