@@ -32,7 +32,7 @@ jobs:
         cache-to: type=registry,ref=${{ github.repository }}:buildcache,mode=max
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.ref_name }} == 'production'
+    if: github.ref_name == 'production'
     steps:
     - name: update server
       uses: appleboy/ssh-action@v1.0.0
