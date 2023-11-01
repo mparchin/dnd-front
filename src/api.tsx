@@ -2,7 +2,7 @@ import useSWR from "swr";
 import { FilterList, Spell } from "./models/spell";
 import axios from "axios";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import { FilterState } from "./components/FilterDialog";
 
 const apiAddress = import.meta.env.VITE_API_ADDRESS
@@ -17,29 +17,31 @@ interface SpellListState {
 }
 
 export const useSpellListStore = create<SpellListState>()(
-  persist<SpellListState>(
-    (set) => ({
-      spells: [],
-      filterList: {
-        actions: [],
-        books: [],
-        classes: [],
-        conditions: [],
-        damageTypes: [],
-        durations: [],
-        levels: [],
-        lists: [],
-        ranges: [],
-        savingThrows: [],
-        schools: [],
-        tags: [],
-      },
-      setSpells: (spells: Spell[], filterList: FilterList) =>
-        set({ spells: spells, filterList: filterList }),
-    }),
-    {
-      name: "SpellList-Storage",
-    }
+  devtools(
+    persist(
+      (set) => ({
+        spells: [],
+        filterList: {
+          actions: [],
+          books: [],
+          classes: [],
+          conditions: [],
+          damageTypes: [],
+          durations: [],
+          levels: [],
+          lists: [],
+          ranges: [],
+          savingThrows: [],
+          schools: [],
+          tags: [],
+        },
+        setSpells: (spells: Spell[], filterList: FilterList) =>
+          set({ spells: spells, filterList: filterList }),
+      }),
+      {
+        name: "SpellList-Storage",
+      }
+    )
   )
 );
 

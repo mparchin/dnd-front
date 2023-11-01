@@ -1,6 +1,6 @@
 import { ThemeOptions, createTheme } from "@mui/material/styles";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 
 const lightThemeOptions: ThemeOptions = {
   palette: {
@@ -62,29 +62,33 @@ interface ThemeState {
 }
 
 export const useThemeStore = create<ThemeState>()(
-  persist<ThemeState>(
-    (set, get) => ({
-      mode: ThemeMode.light,
-      userChangedMode: false,
-      toggleMode: (systemInput?: boolean) =>
-        set(() => {
-          if (typeof systemInput !== "undefined")
+  devtools(
+    persist(
+      (set, get) => ({
+        mode: ThemeMode.light,
+        userChangedMode: false,
+        toggleMode: (systemInput?: boolean) =>
+          set(() => {
+            if (typeof systemInput !== "undefined")
+              return {
+                mode:
+                  get().mode == ThemeMode.light
+                    ? ThemeMode.dark
+                    : ThemeMode.light,
+              };
             return {
               mode:
                 get().mode == ThemeMode.light
                   ? ThemeMode.dark
                   : ThemeMode.light,
+              userChangedMode: true,
             };
-          return {
-            mode:
-              get().mode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light,
-            userChangedMode: true,
-          };
-        }),
-    }),
-    {
-      name: "Theme-Settings-Storage",
-    }
+          }),
+      }),
+      {
+        name: "Theme-Settings-Storage",
+      }
+    )
   )
 );
 
