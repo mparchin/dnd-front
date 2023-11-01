@@ -1,4 +1,9 @@
-import { ArrowBackIosNew, Clear, ExpandMore } from "@mui/icons-material";
+import {
+  ArrowBackIosNew,
+  Clear,
+  ExpandMore,
+  FiberManualRecord,
+} from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
@@ -347,7 +352,20 @@ export default function FilterDialog() {
         <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-1 pr-1 pb-1 pt-1">
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>TYPE</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">TYPE</Typography>
+                {filter.list.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.lists?.map((spellType) => (
@@ -368,7 +386,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>LEVEL</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">LEVEL</Typography>
+                {filter.levels.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.levels?.map((level) => (
@@ -389,7 +420,23 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>COMPONENTS</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">COMPONENTS</Typography>
+                {filter.verbal ||
+                filter.somatic ||
+                filter.material ||
+                filter.consumed ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               <ToggleButton
@@ -431,7 +478,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>SCHOOL</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">SCHOOL</Typography>
+                {filter.schools.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.schools?.map((school) => (
@@ -452,7 +512,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>BOOK</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">BOOK</Typography>
+                {filter.books.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.books?.map((book) => (
@@ -473,7 +546,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>TAG</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">TAG</Typography>
+                {filter.tags.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.tags?.map((tag) => (
@@ -494,7 +580,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>SAVING THROWS</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">SAVING THROW</Typography>
+                {filter.savingThrows.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.savingThrows?.map((savingThrow) => (
@@ -517,7 +616,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>DAMAGE TYPES</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">DAMAGE TYPE</Typography>
+                {filter.damageTypes.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.damageTypes?.map((damageType) => (
@@ -538,7 +650,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>CASTING TIME</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">CASTING TIME</Typography>
+                {filter.actions.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.actions?.map((action) => (
@@ -559,7 +684,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>RANGE</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">RANGE</Typography>
+                {filter.range.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.ranges?.map((range) => (
@@ -580,7 +718,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>DURATION</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">DURATION</Typography>
+                {filter.duration.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.durations?.map((duration) => (
@@ -601,7 +752,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>RESTRICTION</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">RESTRICTION</Typography>
+                {filter.restrictedTo.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.classes?.map((restrictedTo) => (
@@ -624,7 +788,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>CONDITION</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">CONDITION</Typography>
+                {filter.relatedConditions.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               {filterList.conditions?.map((relatedConditions) => (
@@ -651,7 +828,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>RITUAL</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">RITUAL</Typography>
+                {filter.ritual != undefined ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               <ToggleButton
@@ -680,7 +870,20 @@ export default function FilterDialog() {
           </Accordion>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
-              <Typography>CONCENTRATION</Typography>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">CONCENTRATION</Typography>
+                {filter.concentration != undefined ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    color={
+                      theme.palette.mode == "dark" ? "secondary" : "primary"
+                    }
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               <ToggleButton
