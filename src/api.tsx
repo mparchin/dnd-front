@@ -16,8 +16,8 @@ interface SpellListState {
   setSpells: (spells: Spell[], filterList: FilterList) => void;
 }
 
-export const useSpellListStore = create<SpellListState>()(
-  persist(
+export const useSpellListStore = create(
+  persist<SpellListState>(
     (set) => ({
       spells: [],
       filterList: {
@@ -181,7 +181,7 @@ export function FilterData(spells: Spell[], filter: FilterState): Spell[] {
     query = query.filter(
       (spell) =>
         spell.hasMaterialComponent &&
-        spell.materials?.toLowerCase().includes("consumed")
+        spell.materials?.toLowerCase().includes("consum")
     );
   if (filter.schools.length > 0) {
     var ret: Spell[] = [];
