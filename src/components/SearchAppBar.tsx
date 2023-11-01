@@ -32,7 +32,7 @@ export default function SearchAppBar() {
               className="flex-grow"
               size="small"
               maxRows={1}
-              value={filter.searchString}
+              value={filter.searchString ? filter.searchString : ""}
               onChange={(e) => filter.setSearchString(e.target.value)}
               sx={{
                 "& .MuiFilledInput-input": {
