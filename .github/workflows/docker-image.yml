@@ -41,3 +41,4 @@ jobs:
         port: ${{ secrets.HOST_PORT }}
         username: ${{ secrets.HOST_USERNAME }}
         key: ${{ secrets.HOST_KEY }}
+        script: docker compose pull && docker compose up -d
