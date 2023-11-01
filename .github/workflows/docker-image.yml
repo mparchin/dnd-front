@@ -25,4 +25,4 @@ jobs:
         context: .
         push: true
         tags: ${{ github.repository }}:${{ github.ref_name }}
-        build-args: VITE_API_ADDRESS=${{ env.VITE_API_ADDRESS }}
+        build-args: VITE_API_ADDRESS=${{ vars.VITE_API_ADDRESS }}
