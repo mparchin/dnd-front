@@ -707,7 +707,18 @@ export default function FilterDialog() {
               </ToggleButton>
             </AccordionDetails>
           </Accordion>
-          <Dndsvg />
+          <Dndsvg
+            background={
+              theme.palette.mode == "dark"
+                ? theme.palette.grey[900]
+                : theme.palette.background.default
+            }
+            color={
+              theme.palette.mode == "dark"
+                ? theme.palette.secondary.main
+                : theme.palette.primary.main
+            }
+          />
         </div>
         <div className="flex w-full overflow-hidden flex-shrink-0">
           <Button

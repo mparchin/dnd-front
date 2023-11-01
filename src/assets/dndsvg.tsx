@@ -1,7 +1,11 @@
 import { useTheme } from "@mui/material";
 
-export default function () {
-  const theme = useTheme();
+interface ISvgProps {
+  color: string;
+  background: string;
+}
+
+export default function (props: ISvgProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -10,16 +14,13 @@ export default function () {
       strokeWidth={1.5}
       className=""
       viewBox="0 0 1000 1000"
-      style={{
-        color:
-          theme.palette.mode == "dark"
-            ? theme.palette.secondary.main
-            : theme.palette.primary.main,
-      }}
     >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
+        style={{
+          color: props.color,
+        }}
         d="M542,680.3c-4.8,9.6-9.8,19.2-15.6,28.3c-18.9,29.6-41.3,55.9-71.7,74.5c-13.3,8.2-27.5,14.5-42.5,19
 	c-21.9,6.6-44.2,8.9-67,7c-19.6-1.7-38.5-6.5-56.2-14.9c-22.1-10.5-41.6-24.6-56.9-44.1c-2.2-2.8-4.3-5.8-6.5-8.7
 	c-0.4-0.6-0.8-1.5-1.7-1.2c-1,0.3-0.5,1.3-0.5,1.9c0.5,8,1.1,16,1.6,23.9c0,0.4,0.1,0.7,0.1,1.8c-7.6-8.4-14.8-16.2-20.4-25.3
@@ -80,6 +81,15 @@ export default function () {
 	c3.9,2.4,7.6,2,11-0.6c7.8-5.9,17-8.7,26.1-11.6c19.6-6.4,39.6-9.1,60.2-7.3c0.8,0.1,1.7,0.5,2.3-0.5
 	C839.6,446.2,838.7,441.7,837.4,440.7z M647,839.5c0.1,0,0.1,0,0.2,0c0-7,0-14.1,0-21.1c-0.1,0-0.1,0-0.2,0
 	C647,825.5,647,832.5,647,839.5z"
+      />
+      <rect
+        x="634.539"
+        y="813.009"
+        width="25.995"
+        height="29.67"
+        style={{
+          color: props.background,
+        }}
       />
     </svg>
   );

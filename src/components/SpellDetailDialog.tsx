@@ -226,7 +226,18 @@ export default function SpellDetailDialog() {
           ) : (
             <></>
           )}
-          <Dndsvg />
+          <Dndsvg
+            background={
+              theme.palette.mode == "dark"
+                ? theme.palette.grey[900]
+                : theme.palette.background.default
+            }
+            color={
+              theme.palette.mode == "dark"
+                ? theme.palette.secondary.main
+                : theme.palette.primary.main
+            }
+          />
         </div>
       </div>
     </SwipeableDrawer>

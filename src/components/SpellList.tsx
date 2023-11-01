@@ -80,7 +80,7 @@ export default function SpellList() {
         }}
         style={{
           backgroundColor:
-            theme.palette.mode === "dark"
+            theme.palette.mode == "dark"
               ? theme.palette.grey[900]
               : theme.palette.background.default,
         }}
@@ -233,7 +233,18 @@ export default function SpellList() {
             </ul>
           </li>
         ))}
-        <Dndsvg />
+        <Dndsvg
+          background={
+            theme.palette.mode == "dark"
+              ? theme.palette.grey[900]
+              : theme.palette.background.default
+          }
+          color={
+            theme.palette.mode == "dark"
+              ? theme.palette.secondary.main
+              : theme.palette.primary.main
+          }
+        />
       </List>
     );
   }
