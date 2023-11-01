@@ -26,4 +26,4 @@ jobs:
       with:
         context: .
         push: true
-        tag: $IMG_NAME:$GITHUB_REF_NAME
+        tags: $IMG_NAME:$GITHUB_REF_NAME
