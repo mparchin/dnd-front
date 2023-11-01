@@ -26,3 +26,5 @@ jobs:
         push: true
         tags: ${{ github.repository }}:${{ github.ref_name }}
         build-args: VITE_API_ADDRESS=${{ vars.VITE_API_ADDRESS }}
+        cache-from: type=registry,ref=${{ github.repository }}:buildcache
+        cache-to: type=registry,ref=${{ github.repository }}:buildcache,mode=max
