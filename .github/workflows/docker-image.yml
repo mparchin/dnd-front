@@ -11,8 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      IMG_NAME: ${{ github.repository }}
     steps:
     - name: checkout
       uses: actions/checkout@v3
@@ -26,4 +24,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: "$IMG_NAME:$GITHUB_REF_NAME"
+        tags: ${{ github.repository }}:${{ github.ref_name }}
