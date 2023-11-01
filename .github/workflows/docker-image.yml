@@ -30,3 +30,14 @@ jobs:
         build-args: VITE_API_ADDRESS=${{ vars.VITE_API_ADDRESS }}
         cache-from: type=registry,ref=${{ github.repository }}:buildcache
         cache-to: type=registry,ref=${{ github.repository }}:buildcache,mode=max
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name }} == 'production'
+    steps:
+    - name: update server
+      uses: appleboy/ssh-action@v1.0.0
+      with: 
+        host: ${{ secrets.HOST }}
+        port: ${{ secrets.HOST_PORT }}
+        username: ${{ secrets.HOST_USERNAME }}
+        key: ${{ secrets.HOST_KEY }}
