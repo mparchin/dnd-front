@@ -10,3 +10,8 @@ body {
   right: 0;
   bottom: 0;
 }
+
+div.conditions ul {
+  list-style-type: disc;
+  padding-left: 1rem;
+}
