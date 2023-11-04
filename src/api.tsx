@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { FilterList, Spell } from "./models/spell";
+import { FilterList, Spell, spellComparer } from "./models/spell";
 import axios from "axios";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -64,7 +64,7 @@ export function GetAndSaveSpells() {
     if (spellsSorted.length == dataSorted.length) {
       var ret = true;
       for (var i =0;i< spellsSorted.length ;i++)
-        ret &&= spellsSorted[i].isEqualTo(dataSorted[i]);
+        ret &&= spellComparer(spellsSorted[i],dataSorted[i]);
       if (ret)
         return <></>;
     }
