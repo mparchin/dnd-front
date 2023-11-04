@@ -8,20 +8,20 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       devOptions: {
         enabled: true,
       },
       workbox: {
-        cleanupOutdatedCaches: false,
+        cleanupOutdatedCaches: true,
         sourcemap: true,
       },
-      includeAssets: ["dnd.svg"],
       manifest: {
         name: "dnd",
         short_name: "dnd",
         description: "Edited dnd spells",
         theme_color: "#1a7aab",
+        orientation: "portrait",
         icons: [
           {
             src: "pwa-64x64.png",
