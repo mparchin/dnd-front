@@ -217,7 +217,7 @@ export default function SpellDetailDialog() {
                 <div key={condition.name} className="pt-2 pl-2">
                   <strong className="text-lg">{condition.name}</strong>
                   <div
-                    className="pl-2"
+                    className="pl-2 conditions"
                     dangerouslySetInnerHTML={{ __html: condition.description }}
                   />
                 </div>
