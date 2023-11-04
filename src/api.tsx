@@ -48,12 +48,27 @@ export const getSpells = (url: string) =>
 
 export function GetAndSaveSpells() {
   const setSpells = useSpellListStore((state) => state.setSpells);
+  const spells = useSpellListStore((state) => state.spells);
   const { data } = useSWR<Spell[], Error>("/spells", getSpells, {
     refreshInterval: 300000,
     revalidateOnFocus: false,
   });
 
   if (data) {
+    var spellsSorted = spells
+      .slice()
+      .sort((a, b) => (a.id == b.id ? 0 : a.id > b.id ? 1 : -1));
+    var dataSorted = data
+      .slice()
+      .sort((a, b) => (a.id == b.id ? 0 : a.id > b.id ? 1 : -1));
+    if (spellsSorted.length == dataSorted.length) {
+      var ret = true;
+      for (var i =0;i< spellsSorted.length ;i++)
+        ret &&= spellsSorted[i].isEqualTo(dataSorted[i]);
+      if (ret)
+        return <></>;
+    }
+
     let actions = [
       ...new Set(
         data
