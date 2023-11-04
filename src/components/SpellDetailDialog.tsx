@@ -184,7 +184,7 @@ export default function SpellDetailDialog() {
                 </Card>
               ))}
               <div
-                className="pt-4"
+                className={`pt-4 descriptions ${theme.palette.mode}`}
                 dangerouslySetInnerHTML={{ __html: spell?.description ?? "" }}
               ></div>
               {spell?.higherLevelDescription ? (
@@ -217,7 +217,7 @@ export default function SpellDetailDialog() {
                 <div key={condition.name} className="pt-2 pl-2">
                   <strong className="text-lg">{condition.name}</strong>
                   <div
-                    className="pl-2 conditions"
+                    className={`pl-2 conditions ${theme.palette.mode}`}
                     dangerouslySetInnerHTML={{ __html: condition.description }}
                   />
                 </div>
