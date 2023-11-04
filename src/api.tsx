@@ -90,7 +90,7 @@ export function GetAndSaveSpells() {
     let damageTypes = [
       ...new Set(
         data
-          .flatMap((spell) => spell.damageTypes ?? "")
+          .flatMap((spell) => spell.damageTypes?.split(",") ?? "")
           .filter((spell) => spell)
       ),
     ].sort();
