@@ -23,75 +23,70 @@ export class Spell {
   higherLevelDescription?: string;
   damageFormula?: string;
   relatedConditions?: Condition[];
+}
 
-  isEqualTo(spell: Spell) {
-    if (
-      this.id != spell.id ||
-      this.level != spell.level ||
-      this.name != spell.name ||
-      this.book != spell.book ||
-      this.schoolName != spell.schoolName ||
-      this.spellListName != spell.spellListName ||
-      this.hasVerbalComponent != spell.hasVerbalComponent ||
-      this.hasSomaticComponent != spell.hasSomaticComponent ||
-      this.hasMaterialComponent != spell.hasMaterialComponent ||
-      this.materials != spell.materials ||
-      this.savingThrow != spell.savingThrow ||
-      this.damageTypes != spell.damageTypes ||
-      this.action != spell.action ||
-      this.longerAction != spell.longerAction ||
-      this.range != spell.range ||
-      this.duration != spell.duration ||
-      this.isConcentration != spell.isConcentration ||
-      this.isRitual != spell.isRitual ||
-      this.description != spell.description ||
-      this.higherLevelDescription != spell.higherLevelDescription ||
-      this.damageFormula != spell.damageFormula
-    )
-      return false;
-    if (
-      this.spellTags?.length != spell.spellTags?.length ||
-      this.restrictedClasses?.length != spell.restrictedClasses?.length ||
-      this.relatedConditions?.length != spell.relatedConditions?.length
-    )
-      return false;
+export function spellComparer(a: Spell, b: Spell) {
+  if (
+    a.id != b.id ||
+    a.level != b.level ||
+    a.name != b.name ||
+    a.book != b.book ||
+    a.schoolName != b.schoolName ||
+    a.spellListName != b.spellListName ||
+    a.hasVerbalComponent != b.hasVerbalComponent ||
+    a.hasSomaticComponent != b.hasSomaticComponent ||
+    a.hasMaterialComponent != b.hasMaterialComponent ||
+    a.materials != b.materials ||
+    a.savingThrow != b.savingThrow ||
+    a.damageTypes != b.damageTypes ||
+    a.action != b.action ||
+    a.longerAction != b.longerAction ||
+    a.range != b.range ||
+    a.duration != b.duration ||
+    a.isConcentration != b.isConcentration ||
+    a.isRitual != b.isRitual ||
+    a.description != b.description ||
+    a.higherLevelDescription != b.higherLevelDescription ||
+    a.damageFormula != b.damageFormula
+  )
+    return false;
+  if (
+    a.spellTags?.length != b.spellTags?.length ||
+    a.restrictedClasses?.length != b.restrictedClasses?.length ||
+    a.relatedConditions?.length != b.relatedConditions?.length
+  )
+    return false;
 
-    if (
-      (this.spellTags?.filter((tag) => !spell.spellTags?.includes(tag))
-        .length ?? 0) > 0 ||
-      (spell.spellTags?.filter((tag) => !this.spellTags?.includes(tag))
-        .length ?? 0) > 0
-    )
-      return false;
+  if (
+    (a.spellTags?.filter((tag) => !b.spellTags?.includes(tag)).length ?? 0) >
+      0 ||
+    (b.spellTags?.filter((tag) => !a.spellTags?.includes(tag)).length ?? 0) > 0
+  )
+    return false;
 
-    if (
-      (this.restrictedClasses?.filter(
-        (cls) => !spell.restrictedClasses?.includes(cls)
-      ).length ?? 0) > 0 ||
-      (spell.restrictedClasses?.filter(
-        (cls) => !this.restrictedClasses?.includes(cls)
-      ).length ?? 0) > 0
-    )
-      return false;
+  if (
+    (a.restrictedClasses?.filter((cls) => !b.restrictedClasses?.includes(cls))
+      .length ?? 0) > 0 ||
+    (b.restrictedClasses?.filter((cls) => !a.restrictedClasses?.includes(cls))
+      .length ?? 0) > 0
+  )
+    return false;
 
-    for (let i = 0; i < (this.relatedConditions?.length ?? 0); i++) {
-      if (this.relatedConditions && spell.relatedConditions)
-        if (!this.relatedConditions[i].isEqualsTo(spell.relatedConditions[i]))
-          return false;
-    }
-    return true;
+  for (let i = 0; i < (a.relatedConditions?.length ?? 0); i++) {
+    if (a.relatedConditions && b.relatedConditions)
+      if (!conditionComparer(a.relatedConditions[i], b.relatedConditions[i]))
+        return false;
   }
+  return true;
 }
 
 class Condition {
   name: string = "";
   description: string = "";
+}
 
-  isEqualsTo(condition: Condition) {
-    return (
-      this.name == condition.name && this.description == condition.description
-    );
-  }
+export function conditionComparer(a: Condition, b: Condition) {
+  return a.name == b.name && a.description == b.description;
 }
 
 export interface FilterList {
