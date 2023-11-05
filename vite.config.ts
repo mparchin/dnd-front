@@ -17,9 +17,9 @@ export default defineConfig({
         sourcemap: true,
       },
       manifest: {
-        name: "dnd",
-        short_name: "dnd",
-        description: "Edited dnd spells",
+        name: "Eldoriantales",
+        short_name: "Eldoriantales",
+        description: "Eldoriantales table top games",
         theme_color: "#1a7aab",
         orientation: "portrait",
         icons: [
