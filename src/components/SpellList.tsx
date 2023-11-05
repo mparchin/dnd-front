@@ -38,9 +38,10 @@ export default function SpellList() {
   }, [spells, filter]);
   const groupCounts = useMemo(() => {
     const spellLevels = [...new Set(query.map((spell) => spell.level))].sort();
-    return spellLevels.map(
-      (level) => query.filter((spell) => spell.level == level).length
-    );
+    return spellLevels.map((level) => ({
+      count: query.filter((spell) => spell.level == level).length,
+      level: level,
+    }));
   }, [query]);
 
   if (spells.length == 0)
@@ -97,12 +98,12 @@ export default function SpellList() {
                 : theme.palette.background.default,
           }}
           className="overflow-auto box-border"
-          groupCounts={groupCounts}
+          groupCounts={groupCounts.map((gc) => gc.count)}
           groupContent={(index) => {
             return (
               <div className="flex p-0 flex-row leading-loose">
                 <Paper
-                  className="flex flex-grow w-full pl-4 pr-4 rounded-none"
+                  className="flex flex-grow w-full pl-4 pr-4 pt-0.5 pb-0.5 rounded-none"
                   elevation={3}
                   sx={{
                     bgcolor:
@@ -111,9 +112,9 @@ export default function SpellList() {
                         : theme.palette.background.default,
                   }}
                 >
-                  <div>{`Level: ${index}`}</div>
+                  <div>{`Level: ${groupCounts[index].level}`}</div>
                   <div className="flex-grow"></div>
-                  <div>{`Spells: ${groupCounts[index]}`}</div>
+                  <div>{`Spells: ${groupCounts[index].count}`}</div>
                 </Paper>
               </div>
             );
