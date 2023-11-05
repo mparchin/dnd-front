@@ -29,11 +29,12 @@ export default function SpellList() {
   }, [spells, filter]);
   useEffect(() => {
     if (location.pathname == "/") {
-      //@ts-ignore
-      ref.current.scrollTo({
-        top: currentScroll ?? 0,
-        behavior: "smooth",
-      });
+      if (ref.current)
+        //@ts-ignore
+        ref.current.scrollTo({
+          top: currentScroll ?? 0,
+          behavior: "smooth",
+        });
     }
   }, [ref]);
   var currentScroll = 0;

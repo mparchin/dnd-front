@@ -12,14 +12,16 @@ const apiAddress = import.meta.env.VITE_API_ADDRESS
 
 interface SpellListState {
   spells: Spell[];
+  lastTime?: number;
   filterList: FilterList;
-  setSpells: (spells: Spell[], filterList: FilterList) => void;
+  setSpells: (spells: Spell[],lastTime:number, filterList: FilterList) => void;
 }
 
 export const useSpellListStore = create(
   persist<SpellListState>(
     (set) => ({
       spells: [],
+      lastTime: undefined,
       filterList: {
         actions: [],
         books: [],
@@ -34,8 +36,8 @@ export const useSpellListStore = create(
         schools: [],
         tags: [],
       },
-      setSpells: (spells: Spell[], filterList: FilterList) =>
-        set({ spells: spells, filterList: filterList }),
+      setSpells: (spells: Spell[],lastTime:number, filterList: FilterList) =>
+        set({ spells: spells,lastTime: lastTime, filterList: filterList }),
     }),
     {
       name: "SpellList-Storage",
@@ -47,9 +49,8 @@ export const getSpells = (url: string) =>
   axios.get<Spell[]>(`${apiAddress}${url}`).then((res) => res.data);
 
 export function GetAndSaveSpells() {
-  const setSpells = useSpellListStore((state) => state.setSpells);
-  const spells = useSpellListStore((state) => state.spells);
-  const { data } = useSWR<Spell[], Error>("/spells", getSpells, {
+  const {setSpells,spells,lastTime} = useSpellListStore((state) => state);
+  const { data } = useSWR<Spell[], Error>(lastTime ? `/spells?lasttime=${lastTime}`:"/spells", getSpells, {
     refreshInterval: 300000,
     revalidateOnFocus: false,
   });
@@ -143,7 +144,9 @@ export function GetAndSaveSpells() {
       ),
     ].sort();
 
-    setSpells(data, {
+    var newLastTime = Math.max(...data.map(spell => spell.time));
+
+    setSpells(data,newLastTime,{
       actions: actions,
       books: books,
       classes: classes,
