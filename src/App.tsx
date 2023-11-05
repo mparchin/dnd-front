@@ -24,7 +24,7 @@ export default function App() {
           <SpellList></SpellList>
         </div>
 
-        <div className="flex-grow-0 flex flex-shrink basis-1"></div>
+        <div className="flex-grow-0 flex flex-shrink basis-0"></div>
       </div>
       <SpellDetailDialog />
       <FilterDialog />

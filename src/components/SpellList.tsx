@@ -12,20 +12,31 @@ import {
   useTheme,
 } from "@mui/material";
 import { AutoStories, Pets, TempleHindu } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FilterData, useSpellListStore } from "../api";
 import { useFilterStore } from "./FilterDialog";
-import { useMemo } from "react";
-import Dndsvg from "../assets/dndsvg";
+import { useEffect, useMemo, useRef } from "react";
 
 export default function SpellList() {
+  const ref = useRef();
   const theme = useTheme();
   const spells = useSpellListStore((state) => state.spells);
   const navigate = useNavigate();
   const filter = useFilterStore((state) => state);
+  const location = useLocation();
   const query = useMemo(() => {
     return FilterData(spells, filter);
   }, [spells, filter]);
+  useEffect(() => {
+    if (location.pathname == "/") {
+      //@ts-ignore
+      ref.current.scrollTo({
+        top: currentScroll ?? 0,
+        behavior: "smooth",
+      });
+    }
+  }, [ref]);
+  var currentScroll = 0;
 
   if (spells.length == 0)
     return (
@@ -71,6 +82,7 @@ export default function SpellList() {
   if (query) {
     const spellLevels = [...new Set(query.map((spell) => spell.level))].sort();
     return (
+      //@ts-ignore
       <List
         sx={{
           width: "100%",
@@ -85,7 +97,10 @@ export default function SpellList() {
               : theme.palette.background.default,
         }}
         className="overflow-auto box-border"
+        //@ts-ignore
+        onScroll={() => (currentScroll = ref.current.scrollTop)}
         subheader={<li />}
+        ref={ref}
       >
         {spellLevels.map((sectionId) => (
           <li key={`section-${sectionId}`}>
@@ -119,7 +134,9 @@ export default function SpellList() {
                   <div
                     key={`item-${sectionId}-${spell.id}`}
                     onClick={() => {
-                      navigate("details", { state: { spell: spell } });
+                      navigate("details", {
+                        state: { spell: spell },
+                      });
                     }}
                   >
                     <ListItemButton
@@ -233,18 +250,7 @@ export default function SpellList() {
             </ul>
           </li>
         ))}
-        <Dndsvg
-          background={
-            theme.palette.mode == "dark"
-              ? theme.palette.grey[900]
-              : theme.palette.background.default
-          }
-          color={
-            theme.palette.mode == "dark"
-              ? theme.palette.secondary.main
-              : theme.palette.primary.main
-          }
-        />
+        <img src="/dnd.png" className="mt-4 mb-4" />
       </List>
     );
   }
