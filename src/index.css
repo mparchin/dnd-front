@@ -25,17 +25,15 @@ div.descriptions table {
   border-collapse: collapse;
   border-spacing: 0.5rem 0.5rem;
   border-width: 1px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 div.descriptions td {
   border-width: 1px;
-  text-align: center;
   padding: 0.5rem;
 }
 div.descriptions th {
   border-width: 1px;
-  text-align: center;
   padding: 0.5rem;
 }
 div.descriptions.light th {

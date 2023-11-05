@@ -15,20 +15,20 @@ import {
 import SpellArgs from "./SpellArgs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
-import Dndsvg from "../assets/dndsvg";
+import { useEffect } from "react";
 
 interface SpellDetailState {
   spell?: Spell;
   isOpen: boolean;
   open: (spell?: Spell) => void;
-  close: () => void;
+  close: (spell?: Spell) => void;
 }
 
 const useSpellDetailStore = create<SpellDetailState>()((set) => ({
   spell: undefined,
   isOpen: false,
   open: (spell) => set({ spell: spell, isOpen: true }),
-  close: () => set({ spell: undefined, isOpen: false }),
+  close: (spell) => set({ spell: spell, isOpen: false }),
 }));
 
 export default function SpellDetailDialog() {
@@ -40,13 +40,16 @@ export default function SpellDetailDialog() {
     if (IsOpenRequest()) navigate(-1);
   };
   const { isOpen, spell, open, close } = useSpellDetailStore((state) => state);
-  if (!isOpen && IsOpenRequest()) open(location.state.spell);
-  else if (isOpen && !IsOpenRequest()) close();
+  useEffect(() => {
+    if (!isOpen && IsOpenRequest()) open(location.state.spell);
+    else if (isOpen && !IsOpenRequest()) close(spell);
+  }, [isOpen, IsOpenRequest, spell]);
+
   return (
     <SwipeableDrawer
       anchor={"right"}
       open={isOpen}
-      transitionDuration={300}
+      transitionDuration={200}
       onClose={() => CloseRequest()}
       onOpen={() => open(spell)}
       elevation={0}
@@ -60,7 +63,7 @@ export default function SpellDetailDialog() {
         },
       }}
     >
-      <div className="flex w-full h-full overflow-x-hidden overflow-y-hidden flex-col pb-4">
+      <div className="flex w-full h-full overflow-x-hidden overflow-y-hidden flex-col">
         <div className="flex w-full overflow-hidden flex-shrink-0 flex-row h-16">
           <div className="flex-grow basis-0 pt-2 ">
             <IconButton onClick={() => CloseRequest()}>
@@ -95,7 +98,7 @@ export default function SpellDetailDialog() {
               ))}
           </div>
         </div>
-        <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-3 pr-5">
+        <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-3 pr-3">
           <Typography
             variant="h4"
             color={
@@ -106,7 +109,7 @@ export default function SpellDetailDialog() {
           >
             {spell?.name}
           </Typography>
-          <div className="pl-2 pt-2">
+          <div className="pl-2 pt-2 pr-2">
             <SpellArgs
               name="List"
               value={spell?.spellListName.replace(/,/g, ", ")}
@@ -214,10 +217,10 @@ export default function SpellDetailDialog() {
                 Conditions
               </Typography>
               {spell?.relatedConditions?.map((condition) => (
-                <div key={condition.name} className="pt-2 pl-2">
+                <div key={condition.name} className="pt-2 pl-2 pr-2">
                   <strong className="text-lg">{condition.name}</strong>
                   <div
-                    className={`pl-2 conditions ${theme.palette.mode}`}
+                    className={`pl-2 pr-2 conditions ${theme.palette.mode}`}
                     dangerouslySetInnerHTML={{ __html: condition.description }}
                   />
                 </div>
@@ -226,7 +229,7 @@ export default function SpellDetailDialog() {
           ) : (
             <></>
           )}
-          <Dndsvg
+          {/* <Dndsvg
             background={
               theme.palette.mode == "dark"
                 ? theme.palette.grey[900]
@@ -237,7 +240,8 @@ export default function SpellDetailDialog() {
                 ? theme.palette.secondary.main
                 : theme.palette.primary.main
             }
-          />
+          /> */}
+          <img src="/dnd.png" className="mt-4 mb-4" />
         </div>
       </div>
     </SwipeableDrawer>

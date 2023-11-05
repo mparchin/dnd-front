@@ -23,6 +23,7 @@ export class Spell {
   higherLevelDescription?: string;
   damageFormula?: string;
   relatedConditions?: Condition[];
+  time: number = 0;
 }
 
 export function spellComparer(a: Spell, b: Spell) {
