@@ -16,6 +16,7 @@ import SpellArgs from "./SpellArgs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import { useEffect } from "react";
+import Dndsvg from "../assets/dndsvg";
 
 interface SpellDetailState {
   spell?: Spell;
@@ -229,7 +230,7 @@ export default function SpellDetailDialog() {
           ) : (
             <></>
           )}
-          {/* <Dndsvg
+          <Dndsvg
             background={
               theme.palette.mode == "dark"
                 ? theme.palette.grey[900]
@@ -240,8 +241,7 @@ export default function SpellDetailDialog() {
                 ? theme.palette.secondary.main
                 : theme.palette.primary.main
             }
-          /> */}
-          <img src="/dnd.png" className="mt-4 mb-4" />
+          />
         </div>
       </div>
     </SwipeableDrawer>

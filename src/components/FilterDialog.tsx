@@ -20,6 +20,7 @@ import { create } from "zustand";
 import { FilterData, useSpellListStore } from "../api";
 import FilterButtonText from "./FilterButtonText";
 import { useMemo } from "react";
+import Dndsvg from "../assets/dndsvg";
 
 export interface FilterState {
   searchString?: string;
@@ -909,7 +910,18 @@ export default function FilterDialog() {
               </ToggleButton>
             </AccordionDetails>
           </Accordion>
-          <img src="/dnd.png" className="mt-4 mb-4" />
+          <Dndsvg
+            color={
+              theme.palette.mode == "dark"
+                ? theme.palette.secondary.main
+                : theme.palette.primary.main
+            }
+            background={
+              theme.palette.mode == "dark"
+                ? theme.palette.grey[900]
+                : theme.palette.background.default
+            }
+          />
         </div>
         <div className="flex w-full overflow-hidden flex-shrink-0">
           <Button
