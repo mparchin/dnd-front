@@ -10,7 +10,6 @@ import {
   Toolbar,
   useTheme,
 } from "@mui/material";
-import { MaterialUISwitch } from "./MaterialUISwitch";
 import { getPrimaryColor, getPrimaryString, useThemeStore } from "../theme";
 import { useNavigate } from "react-router-dom";
 import { useFilterStore } from "./FilterDialog";
@@ -19,7 +18,6 @@ import { Settings } from "@mui/icons-material";
 
 export default function SearchAppBar() {
   const navigate = useNavigate();
-  const toggleMode = useThemeStore((state) => state.toggleMode);
   const filter = useFilterStore((state) => state);
   const theme = useTheme();
   const themeStore = useThemeStore((state) => state);

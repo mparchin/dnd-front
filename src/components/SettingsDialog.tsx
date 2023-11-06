@@ -1,5 +1,4 @@
 import {
-  Card,
   Divider,
   IconButton,
   SwipeableDrawer,
@@ -15,12 +14,7 @@ import {
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
-import {
-  ArrowBackIosNew,
-  ArrowForwardIos,
-  RestartAlt,
-} from "@mui/icons-material";
-import { MaterialUISwitch } from "./MaterialUISwitch";
+import { ArrowForwardIos, RestartAlt } from "@mui/icons-material";
 
 interface SettingsState {
   isOpen: boolean;
