@@ -189,14 +189,21 @@ export default function SpellDetailDialog() {
               ))}
               <div
                 className={`pt-4 descriptions ${theme.palette.mode}`}
-                dangerouslySetInnerHTML={{ __html: spell?.description ?? "" }}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    spell?.description
+                      .replace(/color:hsl\(0, 0%, 0%\);/g, "")
+                      .replace(/color:hsl\(0,0%,0%\);/g, "") ?? "",
+                }}
               ></div>
               {spell?.higherLevelDescription ? (
                 <div className="pt-4">
                   <strong>At Higher Levels: </strong>
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: spell?.higherLevelDescription,
+                      __html: spell?.higherLevelDescription
+                        .replace(/color:hsl\(0, 0%, 0%\);/g, "")
+                        .replace(/color:hsl\(0,0%,0%\);/g, ""),
                     }}
                   ></div>
                 </div>
@@ -222,7 +229,11 @@ export default function SpellDetailDialog() {
                   <strong className="text-lg">{condition.name}</strong>
                   <div
                     className={`pl-2 pr-2 conditions ${theme.palette.mode}`}
-                    dangerouslySetInnerHTML={{ __html: condition.description }}
+                    dangerouslySetInnerHTML={{
+                      __html: condition.description
+                        .replace(/color:hsl\(0, 0%, 0%\);/g, "")
+                        .replace(/color:hsl\(0,0%,0%\);/g, ""),
+                    }}
                   />
                 </div>
               ))}
