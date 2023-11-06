@@ -4,6 +4,7 @@ import SpellDetailDialog from "./components/SpellDetailDialog";
 import { GetAndSaveSpells } from "./api";
 import FilterDialog from "./components/FilterDialog";
 import ReloadPrompt from "./reloadPrompt";
+import SettingsDialog from "./components/SettingsDialog";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
       </div>
       <SpellDetailDialog />
       <FilterDialog />
+      <SettingsDialog />
       <GetAndSaveSpells />
     </>
   );

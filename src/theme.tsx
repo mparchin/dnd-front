@@ -1,4 +1,4 @@
-import { ThemeOptions, createTheme } from "@mui/material/styles";
+import { Theme, ThemeOptions, createTheme } from "@mui/material/styles";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -58,7 +58,9 @@ export enum ThemeMode {
 interface ThemeState {
   mode: ThemeMode;
   userChangedMode: boolean;
+  isPrimarySwapped: boolean;
   toggleMode: (systemInput?: boolean) => void;
+  swappPrimary: () => void;
 }
 
 export const useThemeStore = create(
@@ -66,6 +68,7 @@ export const useThemeStore = create(
     (set) => ({
       mode: ThemeMode.light,
       userChangedMode: false,
+      isPrimarySwapped: false,
       toggleMode: (systemInput?: boolean) =>
         set((state) => {
           if (typeof systemInput !== "undefined")
@@ -81,6 +84,8 @@ export const useThemeStore = create(
             userChangedMode: true,
           };
         }),
+      swappPrimary: () =>
+        set((state) => ({ isPrimarySwapped: !state.isPrimarySwapped })),
     }),
     {
       name: "Theme-Settings-Storage",
@@ -92,4 +97,22 @@ export function getTheme(mode: ThemeMode) {
   return createTheme(
     mode == ThemeMode.light ? lightThemeOptions : darkThemeOptions
   );
+}
+
+export function getPrimaryColor(theme: Theme, themeStore: ThemeState) {
+  var ret = theme.palette.mode == "dark";
+  if (ret == themeStore.isPrimarySwapped) return theme.palette.primary;
+  return theme.palette.secondary;
+}
+
+export function getPrimaryString(theme: Theme, themeStore: ThemeState) {
+  var ret = theme.palette.mode == "dark";
+  if (ret == themeStore.isPrimarySwapped) return "primary";
+  return "secondary";
+}
+
+export function getSecondaryColor(theme: Theme, themeStore: ThemeState) {
+  var ret = theme.palette.mode == "dark";
+  if (ret == themeStore.isPrimarySwapped) return theme.palette.secondary;
+  return theme.palette.primary;
 }

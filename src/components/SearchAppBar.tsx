@@ -8,27 +8,47 @@ import {
   InputAdornment,
   TextField,
   Toolbar,
-  // useTheme,
+  useTheme,
 } from "@mui/material";
 import { MaterialUISwitch } from "./MaterialUISwitch";
-import { useThemeStore } from "../theme";
+import { getPrimaryColor, getPrimaryString, useThemeStore } from "../theme";
 import { useNavigate } from "react-router-dom";
 import { useFilterStore } from "./FilterDialog";
+import { useMemo } from "react";
+import { Settings } from "@mui/icons-material";
 
 export default function SearchAppBar() {
   const navigate = useNavigate();
   const toggleMode = useThemeStore((state) => state.toggleMode);
   const filter = useFilterStore((state) => state);
+  const theme = useTheme();
+  const themeStore = useThemeStore((state) => state);
+  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
+    theme,
+    themeStore,
+  ]);
   return (
     <>
       <Box className="flex-grow">
-        <AppBar position="sticky" className="">
+        <AppBar
+          position="sticky"
+          color={getPrimaryString(theme, themeStore)}
+          className=""
+        >
           <Toolbar className="">
-            <MaterialUISwitch color="primary" onChange={() => toggleMode()} />
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              className="block ml-1 mr-3"
+              onClick={() => navigate("settings")}
+            >
+              <Settings />
+            </IconButton>
             <TextField
               id="search"
               variant="filled"
-              color="secondary"
               className="flex-grow"
               size="small"
               maxRows={1}
@@ -38,6 +58,7 @@ export default function SearchAppBar() {
                 "& .MuiFilledInput-input": {
                   padding: "10px 12px 12px 12px",
                 },
+                color: primaryColor.dark,
               }}
               InputProps={{
                 endAdornment: (

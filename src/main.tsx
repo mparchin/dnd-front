@@ -21,6 +21,7 @@ const router = createHashRouter([
     children: [
       { path: "details", element: <></> },
       { path: "filter", element: <></> },
+      { path: "settings", element: <></> },
     ],
   },
 ]);

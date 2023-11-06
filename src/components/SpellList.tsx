@@ -17,9 +17,15 @@ import { useFilterStore } from "./FilterDialog";
 import { useMemo } from "react";
 import { GroupedVirtuoso } from "react-virtuoso";
 import Dndsvg from "../assets/dndsvg";
+import { getPrimaryColor, useThemeStore } from "../theme";
 
 export default function SpellList() {
   const theme = useTheme();
+  const themeStore = useThemeStore();
+  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
+    theme,
+    themeStore,
+  ]);
   const spells = useSpellListStore((state) => state.spells);
   const navigate = useNavigate();
   const filter = useFilterStore((state) => state);
@@ -50,6 +56,9 @@ export default function SpellList() {
         <CircularProgress
           size={80}
           className="absolute z-20 left-[calc(50%-40px)] top-[calc(50%-40px)]"
+          sx={{
+            color: primaryColor.main,
+          }}
         />
         <List
           sx={{
@@ -159,8 +168,8 @@ export default function SpellList() {
                                 : theme.palette.grey[200],
                             color:
                               theme.palette.mode === "dark"
-                                ? theme.palette.secondary.light
-                                : theme.palette.primary.dark,
+                                ? primaryColor.light
+                                : primaryColor.dark,
                           }}
                           className="mr-1 ml-1 mt-1 pl-1 pr-1 mb-3"
                         >
@@ -212,20 +221,20 @@ export default function SpellList() {
                   sx={{
                     color:
                       theme.palette.mode == "dark"
-                        ? theme.palette.primary.dark
-                        : theme.palette.primary.light,
+                        ? primaryColor.dark
+                        : primaryColor.light,
                     bgcolor:
                       theme.palette.mode == "dark"
-                        ? theme.palette.primary.dark
-                        : theme.palette.primary.light,
+                        ? primaryColor.dark
+                        : primaryColor.light,
                   }}
                 />
                 {index == query.length - 1 ? (
                   <Dndsvg
                     color={
                       theme.palette.mode == "dark"
-                        ? theme.palette.secondary.main
-                        : theme.palette.primary.main
+                        ? primaryColor.main
+                        : primaryColor.main
                     }
                     background={
                       theme.palette.mode == "dark"
