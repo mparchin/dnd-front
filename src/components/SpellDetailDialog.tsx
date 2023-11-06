@@ -15,8 +15,9 @@ import {
 import SpellArgs from "./SpellArgs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import Dndsvg from "../assets/dndsvg";
+import { getPrimaryColor, useThemeStore } from "../theme";
 
 interface SpellDetailState {
   spell?: Spell;
@@ -34,6 +35,11 @@ const useSpellDetailStore = create<SpellDetailState>()((set) => ({
 
 export default function SpellDetailDialog() {
   const theme = useTheme();
+  const themeStore = useThemeStore();
+  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
+    theme,
+    themeStore,
+  ]);
   const location = useLocation();
   const navigate = useNavigate();
   const IsOpenRequest = () => location.pathname.includes("details");
@@ -68,26 +74,23 @@ export default function SpellDetailDialog() {
         <div className="flex w-full overflow-hidden flex-shrink-0 flex-row h-16">
           <div className="flex-grow basis-0 pt-2 ">
             <IconButton onClick={() => CloseRequest()}>
-              <ArrowBackIosNew color="primary" />
+              <ArrowBackIosNew sx={{ color: primaryColor.main }} />
             </IconButton>
           </div>
           <div
             className="grow-[3] basis-0 pt-4 text-center"
             style={{
-              color:
-                theme.palette.mode == "dark"
-                  ? theme.palette.secondary.main
-                  : theme.palette.primary.main,
+              color: primaryColor.main,
             }}
           >
             {spell?.name}
           </div>
-          <div className="flex-grow basis-0 pt-4 pr-2 text-right">
+          <div className="flex-grow basis-0 pt-4 pr-1 text-right">
             {spell?.spellListName
               .split(",")
               .sort()
               .map((listName) => (
-                <span key={listName}>
+                <span key={listName} className="pr-1">
                   {listName == "Arcane" ? (
                     <AutoStories color="primary" fontSize="small" />
                   ) : listName == "Divine" ? (
@@ -100,14 +103,7 @@ export default function SpellDetailDialog() {
           </div>
         </div>
         <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-3 pr-3">
-          <Typography
-            variant="h4"
-            color={
-              theme.palette.mode === "dark"
-                ? theme.palette.secondary.main
-                : theme.palette.primary.main
-            }
-          >
+          <Typography variant="h4" color={primaryColor.main}>
             {spell?.name}
           </Typography>
           <div className="pl-2 pt-2 pr-2">
@@ -177,8 +173,8 @@ export default function SpellDetailDialog() {
                         : theme.palette.grey[200],
                     color:
                       theme.palette.mode === "dark"
-                        ? theme.palette.secondary.light
-                        : theme.palette.primary.dark,
+                        ? primaryColor.light
+                        : primaryColor.dark,
                   }}
                   className="mr-1 ml-1 mt-2 pl-1 pr-1 mb-1"
                 >
@@ -188,7 +184,9 @@ export default function SpellDetailDialog() {
                 </Card>
               ))}
               <div
-                className={`pt-4 descriptions ${theme.palette.mode}`}
+                className={`pt-4 descriptions ${theme.palette.mode} ${
+                  themeStore.isPrimarySwapped ? "swappedColors" : ""
+                }`}
                 dangerouslySetInnerHTML={{
                   __html:
                     spell?.description
@@ -198,7 +196,9 @@ export default function SpellDetailDialog() {
               ></div>
               {spell?.higherLevelDescription ? (
                 <div className="pt-4">
-                  <strong>At Higher Levels: </strong>
+                  <strong style={{ color: primaryColor.main }}>
+                    At Higher Levels:{" "}
+                  </strong>
                   <div
                     dangerouslySetInnerHTML={{
                       __html: spell?.higherLevelDescription
@@ -214,14 +214,7 @@ export default function SpellDetailDialog() {
           </div>
           {(spell?.relatedConditions?.length ?? 0) > 0 ? (
             <div className="pt-3">
-              <Typography
-                variant="h6"
-                color={
-                  theme.palette.mode === "dark"
-                    ? theme.palette.secondary.main
-                    : theme.palette.primary.main
-                }
-              >
+              <Typography variant="h6" color={primaryColor.main}>
                 Conditions
               </Typography>
               {spell?.relatedConditions?.map((condition) => (
@@ -247,11 +240,7 @@ export default function SpellDetailDialog() {
                 ? theme.palette.grey[900]
                 : theme.palette.background.default
             }
-            color={
-              theme.palette.mode == "dark"
-                ? theme.palette.secondary.main
-                : theme.palette.primary.main
-            }
+            color={primaryColor.main}
           />
         </div>
       </div>
