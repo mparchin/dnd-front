@@ -21,6 +21,7 @@ import { FilterData, useSpellListStore } from "../api";
 import FilterButtonText from "./FilterButtonText";
 import { useMemo } from "react";
 import Dndsvg from "../assets/dndsvg";
+import { getPrimaryColor, useThemeStore } from "../theme";
 
 export interface FilterState {
   searchString?: string;
@@ -276,6 +277,11 @@ export const useFilterStore = create<FilterState>()((set) => ({
 export default function FilterDialog() {
   const filterList = useSpellListStore((state) => state.filterList);
   const theme = useTheme();
+  const themeStore = useThemeStore();
+  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
+    theme,
+    themeStore,
+  ]);
   const location = useLocation();
   const navigate = useNavigate();
   const spells = useSpellListStore((state) => state.spells);
@@ -311,16 +317,13 @@ export default function FilterDialog() {
         <div className="flex w-full overflow-hidden h-16 flex-shrink-0 flex-row">
           <div className="flex-grow basis-0 pt-2 pl-2">
             <IconButton onClick={() => CloseRequest()}>
-              <ArrowBackIosNew color="primary" />
+              <ArrowBackIosNew sx={{ color: primaryColor.main }} />
             </IconButton>
           </div>
           <div
             className="grow-[3] basis-0 pt-4 text-center"
             style={{
-              color:
-                theme.palette.mode == "dark"
-                  ? theme.palette.secondary.main
-                  : theme.palette.primary.main,
+              color: primaryColor.main,
             }}
           >
             Filters
@@ -345,7 +348,7 @@ export default function FilterDialog() {
                 filter.concentrationActions.clear();
               }}
             >
-              <Clear color="primary" />
+              <Clear sx={{ color: primaryColor.main }} />
             </IconButton>
           </div>
         </div>
@@ -358,9 +361,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -392,9 +393,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -429,9 +428,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -484,9 +481,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -518,9 +513,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -552,9 +545,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -586,9 +577,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -622,9 +611,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -656,9 +643,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -690,9 +675,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -724,9 +707,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -758,9 +739,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -794,9 +773,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -834,9 +811,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -876,9 +851,7 @@ export default function FilterDialog() {
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
-                    color={
-                      theme.palette.mode == "dark" ? "secondary" : "primary"
-                    }
+                    sx={{ color: primaryColor.main }}
                   />
                 ) : (
                   <></>
@@ -911,11 +884,7 @@ export default function FilterDialog() {
             </AccordionDetails>
           </Accordion>
           <Dndsvg
-            color={
-              theme.palette.mode == "dark"
-                ? theme.palette.secondary.main
-                : theme.palette.primary.main
-            }
+            color={primaryColor.main}
             background={
               theme.palette.mode == "dark"
                 ? theme.palette.grey[900]
@@ -928,10 +897,7 @@ export default function FilterDialog() {
             className="w-full h-16"
             onClick={() => CloseRequest()}
             style={{
-              background:
-                theme.palette.mode == "dark"
-                  ? theme.palette.secondary.main
-                  : theme.palette.primary.main,
+              background: primaryColor.main,
               color: theme.palette.text.primary,
             }}
           >

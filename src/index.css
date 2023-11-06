@@ -40,12 +40,19 @@ div.descriptions.light th {
   color: rgb(26, 122, 171);
   background-color: #f5f5f5;
 }
+div.descriptions.light.swappedColors th {
+  color: rgb(196, 86, 30);
+  background-color: #f5f5f5;
+}
 div.descriptions.light tr:nth-child(even) {
   background-color: #f5f5f5;
 }
-
 div.descriptions.dark th {
   color: rgb(196, 86, 30);
+  background-color: #313131;
+}
+div.descriptions.dark.swappedColors th {
+  color: rgb(26, 122, 171);
   background-color: #313131;
 }
 div.descriptions.dark tr:nth-child(even) {

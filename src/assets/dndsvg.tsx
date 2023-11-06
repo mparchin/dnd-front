@@ -10,7 +10,7 @@ export default function (props: ISvgProps) {
       fill="currentColor"
       stroke="currentColor"
       strokeWidth={1.5}
-      className=""
+      className="max-w-xs mr-auto ml-auto"
       viewBox="0 0 1000 1000"
     >
       <path
