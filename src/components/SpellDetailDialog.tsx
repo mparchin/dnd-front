@@ -221,7 +221,9 @@ export default function SpellDetailDialog() {
                 <div key={condition.name} className="pt-2 pl-2 pr-2">
                   <strong className="text-lg">{condition.name}</strong>
                   <div
-                    className={`pl-2 pr-2 conditions ${theme.palette.mode}`}
+                    className={`pl-2 pr-2 conditions ${theme.palette.mode} ${
+                      themeStore.isPrimarySwapped ? "swappedColors" : ""
+                    }`}
                     dangerouslySetInnerHTML={{
                       __html: condition.description
                         .replace(/color:hsl\(0, 0%, 0%\);/g, "")

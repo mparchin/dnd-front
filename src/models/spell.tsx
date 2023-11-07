@@ -26,64 +26,10 @@ export class Spell {
   time: number = 0;
 }
 
-export function spellComparer(a: Spell, b: Spell) {
-  if (
-    a.id != b.id ||
-    a.level != b.level ||
-    a.name != b.name ||
-    a.book != b.book ||
-    a.schoolName != b.schoolName ||
-    a.spellListName != b.spellListName ||
-    a.hasVerbalComponent != b.hasVerbalComponent ||
-    a.hasSomaticComponent != b.hasSomaticComponent ||
-    a.hasMaterialComponent != b.hasMaterialComponent ||
-    a.materials != b.materials ||
-    a.savingThrow != b.savingThrow ||
-    a.damageTypes != b.damageTypes ||
-    a.action != b.action ||
-    a.longerAction != b.longerAction ||
-    a.range != b.range ||
-    a.duration != b.duration ||
-    a.isConcentration != b.isConcentration ||
-    a.isRitual != b.isRitual ||
-    a.description != b.description ||
-    a.higherLevelDescription != b.higherLevelDescription ||
-    a.damageFormula != b.damageFormula
-  )
-    return false;
-  if (
-    a.spellTags?.length != b.spellTags?.length ||
-    a.restrictedClasses?.length != b.restrictedClasses?.length ||
-    a.relatedConditions?.length != b.relatedConditions?.length
-  )
-    return false;
-
-  if (
-    (a.spellTags?.filter((tag) => !b.spellTags?.includes(tag)).length ?? 0) >
-      0 ||
-    (b.spellTags?.filter((tag) => !a.spellTags?.includes(tag)).length ?? 0) > 0
-  )
-    return false;
-
-  if (
-    (a.restrictedClasses?.filter((cls) => !b.restrictedClasses?.includes(cls))
-      .length ?? 0) > 0 ||
-    (b.restrictedClasses?.filter((cls) => !a.restrictedClasses?.includes(cls))
-      .length ?? 0) > 0
-  )
-    return false;
-
-  for (let i = 0; i < (a.relatedConditions?.length ?? 0); i++) {
-    if (a.relatedConditions && b.relatedConditions)
-      if (!conditionComparer(a.relatedConditions[i], b.relatedConditions[i]))
-        return false;
-  }
-  return true;
-}
-
-class Condition {
+export class Condition {
   name: string = "";
   description: string = "";
+  time: number = 0;
 }
 
 export function conditionComparer(a: Condition, b: Condition) {
