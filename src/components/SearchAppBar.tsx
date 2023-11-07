@@ -14,7 +14,6 @@ import { getPrimaryColor, getPrimaryString, useThemeStore } from "../theme";
 import { useNavigate } from "react-router-dom";
 import { useFilterStore } from "./FilterDialog";
 import { useMemo } from "react";
-import { Settings } from "@mui/icons-material";
 
 export default function SearchAppBar() {
   const navigate = useNavigate();
@@ -25,16 +24,16 @@ export default function SearchAppBar() {
     theme,
     themeStore,
   ]);
+  const primaryString = useMemo(() => getPrimaryString(theme, themeStore), [
+    theme,
+    themeStore,
+  ]);
   return (
     <>
       <Box className="flex-grow">
-        <AppBar
-          position="sticky"
-          color={getPrimaryString(theme, themeStore)}
-          className=""
-        >
+        <AppBar position="sticky" color={primaryString} className="">
           <Toolbar className="">
-            <IconButton
+            {/* <IconButton
               size="large"
               edge="start"
               color="inherit"
@@ -43,7 +42,7 @@ export default function SearchAppBar() {
               onClick={() => navigate("settings")}
             >
               <Settings />
-            </IconButton>
+            </IconButton> */}
             <TextField
               id="search"
               variant="filled"
