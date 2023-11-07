@@ -16,7 +16,7 @@ import {
   MilitaryTech,
   Accessible,
 } from "@mui/icons-material";
-import { getPrimaryString, useThemeStore } from "./theme";
+import { getPrimaryColor, useThemeStore } from "./theme";
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CommingSoon from "./components/CommingSoon";
@@ -27,7 +27,7 @@ export default function App() {
   const themeStore = useThemeStore((state) => state);
   const navigate = useNavigate();
   const location = useLocation();
-  const primaryString = useMemo(() => getPrimaryString(theme, themeStore), [
+  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
     theme,
     themeStore,
   ]);
@@ -84,31 +84,51 @@ export default function App() {
             <BottomNavigationAction
               label="Spells"
               value="/"
-              color={primaryString}
+              sx={{
+                "&.Mui-selected": {
+                  color: primaryColor.main,
+                },
+              }}
               icon={<AutoStories fontSize="large" />}
             />
             <BottomNavigationAction
               label="Feats"
               value="/feats"
-              color={primaryString}
+              sx={{
+                "&.Mui-selected": {
+                  color: primaryColor.main,
+                },
+              }}
               icon={<MilitaryTech fontSize="large" />}
             />
             <BottomNavigationAction
               label="Classes"
               value="/classes"
-              color={primaryString}
+              sx={{
+                "&.Mui-selected": {
+                  color: primaryColor.main,
+                },
+              }}
               icon={<School fontSize="large" />}
             />
             <BottomNavigationAction
               label="Conditions"
               value="/conditions"
-              color={primaryString}
+              sx={{
+                "&.Mui-selected": {
+                  color: primaryColor.main,
+                },
+              }}
               icon={<Accessible fontSize="large" />}
             />
             <BottomNavigationAction
               label="Settings"
               value="/settings"
-              color={primaryString}
+              sx={{
+                "&.Mui-selected": {
+                  color: primaryColor.main,
+                },
+              }}
               icon={<Settings fontSize="large" />}
             />
           </BottomNavigation>
