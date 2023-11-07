@@ -39,7 +39,7 @@ export default function App() {
       <ReloadPrompt />
       <div className="flex-col flex w-screen h-screen max-h-screen overflow-hidden">
         <div className="flex-grow-0 flex flex-shrink basis-auto flex-col">
-          <SearchAppBar></SearchAppBar>
+          {location.pathname.includes("settings") ? <></> : <SearchAppBar />}
         </div>
         {/* <IconButton
         onClick={() => toggleMode()}
