@@ -11,7 +11,7 @@ export default function CommingSoon() {
   ]);
 
   return (
-    <Paper className="w-full h-full">
+    <Paper className="w-full h-full pt-24">
       <Typography
         className="text-center align-middle"
         variant="h4"
