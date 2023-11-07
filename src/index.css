@@ -12,14 +12,54 @@ body {
 }
 
 div.conditions ul {
-  list-style-type: disc;
+  list-style-type: none;
   padding-left: 1rem;
 }
 div.descriptions ul {
-  list-style-type: disc;
+  list-style-type: none;
   padding-left: 1rem;
 }
+div.descriptions li::before {
+  content: "•";
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+  font-weight: bold;
+  font-size: large;
+}
+div.descriptions.light li::before {
+  color: rgb(26, 122, 171);
+}
+div.descriptions.light.swappedColors li::before {
+  color: rgb(196, 86, 30);
+}
+div.descriptions.dark li::before {
+  color: rgb(196, 86, 30);
+}
+div.descriptions.dark.swappedColors li::before {
+  color: rgb(26, 122, 171);
+}
 
+div.conditions li::before {
+  content: "•";
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+  font-weight: bold;
+  font-size: large;
+}
+div.conditions.light li::before {
+  color: rgb(26, 122, 171);
+}
+div.conditions.light.swappedColors li::before {
+  color: rgb(196, 86, 30);
+}
+div.conditions.dark li::before {
+  color: rgb(196, 86, 30);
+}
+div.conditions.dark.swappedColors li::before {
+  color: rgb(26, 122, 171);
+}
 div.descriptions table {
   table-layout: auto;
   border-collapse: collapse;

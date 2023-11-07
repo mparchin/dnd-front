@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { getPrimaryColor, getPrimaryString, useThemeStore } from "../theme";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useFilterStore } from "./FilterDialog";
 import { useMemo } from "react";
 
@@ -28,6 +28,7 @@ export default function SearchAppBar() {
     theme,
     themeStore,
   ]);
+  const location = useLocation();
   return (
     <>
       <Box className="flex-grow">
@@ -49,8 +50,19 @@ export default function SearchAppBar() {
               className="flex-grow"
               size="small"
               maxRows={1}
-              value={filter.searchString ? filter.searchString : ""}
-              onChange={(e) => filter.setSearchString(e.target.value)}
+              value={
+                location.pathname.includes("conditions") &&
+                filter.conditionSearchString
+                  ? filter.conditionSearchString
+                  : location.pathname == "/" && filter.searchString
+                  ? filter.searchString
+                  : ""
+              }
+              onChange={
+                location.pathname.includes("conditions")
+                  ? (e) => filter.setConditionSearchString(e.target.value)
+                  : (e) => filter.setSearchString(e.target.value)
+              }
               sx={{
                 "& .MuiFilledInput-input": {
                   padding: "10px 12px 12px 12px",
@@ -70,7 +82,11 @@ export default function SearchAppBar() {
                   >
                     {filter.searchString ? (
                       <IconButton
-                        onClick={() => filter.setSearchString(undefined)}
+                        onClick={
+                          location.pathname.includes("conditions")
+                            ? () => filter.setConditionSearchString(undefined)
+                            : () => filter.setSearchString(undefined)
+                        }
                       >
                         <ClearIcon className="align-top p-0" />
                       </IconButton>
@@ -83,16 +99,22 @@ export default function SearchAppBar() {
                 ),
               }}
             />
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              className="block ml-4"
-              onClick={() => navigate("filter")}
-            >
-              <MenuIcon />
-            </IconButton>
+
+            {location.pathname.includes("conditions") ? (
+              <></>
+            ) : (
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                className="block ml-4"
+                onClick={() => navigate("filter")}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
+
             {/* <Typography
             variant="h6"
             noWrap

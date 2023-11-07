@@ -17,15 +17,17 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
-import { FilterData, useSpellListStore } from "../api";
 import FilterButtonText from "./FilterButtonText";
 import { useMemo } from "react";
 import Dndsvg from "../assets/dndsvg";
 import { getPrimaryColor, useThemeStore } from "../theme";
+import { FilterData, useSpellListStore } from "../API/spell";
 
 export interface FilterState {
   searchString?: string;
   setSearchString: (str?: string) => void;
+  conditionSearchString?: string;
+  setConditionSearchString: (str?: string) => void;
   levels: number[];
   books: string[];
   schools: string[];
@@ -116,6 +118,9 @@ export interface Filter {}
 export const useFilterStore = create<FilterState>()((set) => ({
   searchString: undefined,
   setSearchString: (str?: string) => set({ searchString: str }),
+  conditionSearchString: undefined,
+  setConditionSearchString: (str?: string) =>
+    set({ conditionSearchString: str }),
   levels: [],
   list: [],
   verbal: false,

@@ -1,7 +1,6 @@
 import SearchAppBar from "./components/SearchAppBar";
 import SpellList from "./components/SpellList";
 import SpellDetailDialog from "./components/SpellDetailDialog";
-import { GetAndSaveSpells } from "./api";
 import FilterDialog from "./components/FilterDialog";
 import ReloadPrompt from "./reloadPrompt";
 import {
@@ -21,6 +20,9 @@ import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CommingSoon from "./components/CommingSoon";
 import SettingsPage from "./components/SettingsPage";
+import { GetAndSaveSpells } from "./API/spell";
+import GetAndSaveConditions from "./API/conditions";
+import ConditionsPage from "./components/ConditionsPage";
 
 export default function App() {
   const theme = useTheme();
@@ -53,6 +55,8 @@ export default function App() {
             <SpellList />
           ) : location.pathname == "/settings" ? (
             <SettingsPage />
+          ) : location.pathname == "/conditions" ? (
+            <ConditionsPage />
           ) : (
             <CommingSoon />
           )}
@@ -137,6 +141,7 @@ export default function App() {
       <SpellDetailDialog />
       <FilterDialog />
       <GetAndSaveSpells />
+      <GetAndSaveConditions />
     </>
   );
 }
