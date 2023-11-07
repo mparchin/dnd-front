@@ -80,7 +80,9 @@ export default function SearchAppBar() {
                       },
                     }}
                   >
-                    {filter.searchString ? (
+                    {(location.pathname == "/" && filter.searchString) ||
+                    (location.pathname.includes("conditions") &&
+                      filter.conditionSearchString) ? (
                       <IconButton
                         onClick={
                           location.pathname.includes("conditions")
