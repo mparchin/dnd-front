@@ -58,14 +58,22 @@ export default function App() {
           )}
         </div>
 
-        <div className="flex-grow-0 flex flex-shrink basis-0">
+        <div
+          className="flex-grow-0 flex flex-shrink basis-0 pb-1"
+          style={{
+            background:
+              theme.palette.mode == "dark"
+                ? theme.palette.grey[900]
+                : theme.palette.background.default,
+          }}
+        >
           <BottomNavigation
             value={location.pathname}
             onChange={(_event, newValue) => {
               if (!newValue.includes("filter") && !newValue.includes("details"))
                 navigate(newValue, { replace: true });
             }}
-            className="w-full"
+            className="w-full h-20"
             style={{
               background:
                 theme.palette.mode == "dark"
@@ -77,31 +85,31 @@ export default function App() {
               label="Spells"
               value="/"
               color={primaryString}
-              icon={<AutoStories />}
+              icon={<AutoStories fontSize="large" />}
             />
             <BottomNavigationAction
               label="Feats"
               value="/feats"
               color={primaryString}
-              icon={<MilitaryTech />}
+              icon={<MilitaryTech fontSize="large" />}
             />
             <BottomNavigationAction
               label="Classes"
               value="/classes"
               color={primaryString}
-              icon={<School />}
+              icon={<School fontSize="large" />}
             />
             <BottomNavigationAction
               label="Conditions"
               value="/conditions"
               color={primaryString}
-              icon={<Accessible />}
+              icon={<Accessible fontSize="large" />}
             />
             <BottomNavigationAction
               label="Settings"
               value="/settings"
               color={primaryString}
-              icon={<Settings />}
+              icon={<Settings fontSize="large" />}
             />
           </BottomNavigation>
         </div>
