@@ -32,8 +32,15 @@ export class Condition {
   time: number = 0;
 }
 
-export function conditionComparer(a: Condition, b: Condition) {
-  return a.name == b.name && a.description == b.description;
+export class Feature {
+  id: number = 0;
+  name: string = "";
+  description: string = "";
+  level: number = 0;
+  order?: number = 0;
+  className: string = "";
+  subclass?: string = "";
+  time: number = 0;
 }
 
 export interface FilterList {
