@@ -23,6 +23,7 @@ import SettingsPage from "./components/SettingsPage";
 import { GetAndSaveSpells } from "./API/spell";
 import GetAndSaveConditions from "./API/conditions";
 import ConditionsPage from "./components/ConditionsPage";
+import { Helmet } from "react-helmet";
 
 export default function App() {
   const theme = useTheme();
@@ -36,18 +37,14 @@ export default function App() {
 
   return (
     <>
+      <Helmet>
+        <meta name="theme-color" content={primaryColor.main} />
+      </Helmet>
       <ReloadPrompt />
       <div className="flex-col flex w-screen h-screen max-h-screen overflow-hidden">
         <div className="flex-grow-0 flex flex-shrink basis-auto flex-col">
           {location.pathname.includes("settings") ? <></> : <SearchAppBar />}
         </div>
-        {/* <IconButton
-        onClick={() => toggleMode()}
-        color="secondary"
-        className="block md:hidden"
-      >
-        {mode == ThemeMode.dark ? <Brightness7Icon /> : <Brightness4Icon />}
-      </IconButton> */}
         <div className="flex-grow flex flex-shrink basis-auto overflow-auto">
           {location.pathname == "/" ||
           location.pathname.includes("filter") ||
