@@ -26,6 +26,8 @@ import ConditionsPage from "./components/ConditionsPage";
 import { Helmet } from "react-helmet";
 import GetAndSaveFeatures from "./API/feature";
 import ClassesPage from "./components/ClassesPage";
+import GetAndSaveFeats from "./API/feat";
+import FeatsPage from "./components/FeatsPage";
 
 export default function App() {
   const theme = useTheme();
@@ -65,6 +67,8 @@ export default function App() {
             <ConditionsPage />
           ) : location.pathname == "/classes" ? (
             <ClassesPage />
+          ) : location.pathname == "/feats" ? (
+            <FeatsPage />
           ) : (
             <CommingSoon />
           )}
@@ -151,6 +155,7 @@ export default function App() {
       <GetAndSaveSpells />
       <GetAndSaveConditions />
       <GetAndSaveFeatures />
+      <GetAndSaveFeats />
     </>
   );
 }

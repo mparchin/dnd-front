@@ -27,6 +27,7 @@ export class Spell {
 }
 
 export class Condition {
+  id: number = 0;
   name: string = "";
   description: string = "";
   time: number = 0;
@@ -43,6 +44,15 @@ export class Feature {
   time: number = 0;
 }
 
+export class Feat {
+  id: number = 0;
+  name: string = "";
+  description: string = "";
+  level: number = 0;
+  prerequisite?: string = "";
+  time: number = 0;
+}
+
 export interface FilterList {
   levels: number[];
   books: string[];
@@ -56,4 +66,9 @@ export interface FilterList {
   durations: string[];
   classes: string[];
   conditions: string[];
+}
+
+export interface FeatFilterList {
+  levels: number[];
+  prerequisite: string[];
 }

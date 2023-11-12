@@ -113,7 +113,6 @@ export interface FilterState {
     clear: () => void;
   };
 }
-export interface Filter {}
 
 export const useFilterStore = create<FilterState>()((set) => ({
   searchString: undefined,
