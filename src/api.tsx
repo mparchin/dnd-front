@@ -3,8 +3,8 @@ import axios from "axios";
 
 const apiAddress = import.meta.env.VITE_API_ADDRESS
   ? import.meta.env.VITE_API_ADDRESS
-  : // : "https://backend.eldoriantales.com";
-    "http://localhost:5056";
+  : // : "http://localhost:5056";
+    "https://backend.eldoriantales.com";
 
 export const getSpells = (url: string) =>
   axios.get<Spell[]>(`${apiAddress}/${url}`).then((res) => res.data);

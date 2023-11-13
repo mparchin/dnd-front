@@ -67,10 +67,16 @@ div.descriptions table {
   border-width: 1px;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+  width: 100%;
+  max-width: 640px;
 }
 div.descriptions td {
   border-width: 1px;
   padding: 0.5rem;
+  overflow: hidden;
+  font-size: small;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
 }
 div.descriptions th {
   border-width: 1px;

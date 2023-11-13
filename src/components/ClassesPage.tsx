@@ -59,13 +59,16 @@ export default function ClassesPage() {
                 </strong>
               </div>
               <div
-                className={`pl-2 pr-2 conditions ${theme.palette.mode} ${
+                className={`pl-2 pr-2 descriptions ${theme.palette.mode} ${
                   themeStore.isPrimarySwapped ? "swappedColors" : ""
                 }`}
                 dangerouslySetInnerHTML={{
                   __html: feature.description
                     .replace(/color:hsl\(0, 0%, 0%\);/g, "")
-                    .replace(/color:hsl\(0,0%,0%\);/g, ""),
+                    .replace(/color:hsl\(0,0%,0%\);/g, "")
+                    .replace(/style="width:\d*.\d*%;"/g, "")
+                    .replace(/list-style-type:circle;/g, "")
+                    .replace(/list-style-type:disc;/g, ""),
                 }}
               />
             </div>
