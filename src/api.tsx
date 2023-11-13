@@ -1,4 +1,4 @@
-import { Condition, Spell } from "./models/spell";
+import { Condition, Feat, Feature, Spell } from "./models/spell";
 import axios from "axios";
 
 const apiAddress = import.meta.env.VITE_API_ADDRESS
@@ -11,3 +11,9 @@ export const getSpells = (url: string) =>
 
 export const getConditions = (url: string) =>
   axios.get<Condition[]>(`${apiAddress}/${url}`).then((res) => res.data);
+
+export const getFeatures = (url: string) =>
+  axios.get<Feature[]>(`${apiAddress}/${url}`).then((res) => res.data);
+
+export const getFeats = (url: string) =>
+  axios.get<Feat[]>(`${apiAddress}/${url}`).then((res) => res.data);

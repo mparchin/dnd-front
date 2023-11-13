@@ -15,7 +15,7 @@ import {
   MilitaryTech,
   Accessible,
 } from "@mui/icons-material";
-import { getPrimaryColor, useThemeStore } from "./theme";
+import { ThemeMode, getPrimaryColor, useThemeStore } from "./theme";
 import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import CommingSoon from "./components/CommingSoon";
@@ -24,6 +24,11 @@ import { GetAndSaveSpells } from "./API/spell";
 import GetAndSaveConditions from "./API/conditions";
 import ConditionsPage from "./components/ConditionsPage";
 import { Helmet } from "react-helmet";
+import GetAndSaveFeatures from "./API/feature";
+import ClassesPage from "./components/ClassesPage";
+import GetAndSaveFeats from "./API/feat";
+import FeatsPage from "./components/FeatsPage";
+import ClassFilterDialog from "./components/ClassesFilterDialog";
 
 export default function App() {
   const theme = useTheme();
@@ -38,7 +43,14 @@ export default function App() {
   return (
     <>
       <Helmet>
-        <meta name="theme-color" content={primaryColor.main} />
+        <meta
+          name="theme-color"
+          content={
+            themeStore.mode == ThemeMode.light
+              ? primaryColor.main
+              : theme.palette.grey[900]
+          }
+        />
       </Helmet>
       <ReloadPrompt />
       <div className="flex-col flex w-screen h-screen max-h-screen overflow-hidden">
@@ -54,6 +66,11 @@ export default function App() {
             <SettingsPage />
           ) : location.pathname == "/conditions" ? (
             <ConditionsPage />
+          ) : location.pathname == "/classes" ? (
+            <ClassesPage />
+          ) : location.pathname == "/feats" ? (
+            <CommingSoon />
+            // <FeatsPage />
           ) : (
             <CommingSoon />
           )}
@@ -137,8 +154,11 @@ export default function App() {
       </div>
       <SpellDetailDialog />
       <FilterDialog />
+      <ClassFilterDialog />
       <GetAndSaveSpells />
       <GetAndSaveConditions />
+      <GetAndSaveFeatures />
+      <GetAndSaveFeats />
     </>
   );
 }

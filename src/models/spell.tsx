@@ -27,13 +27,39 @@ export class Spell {
 }
 
 export class Condition {
+  id: number = 0;
   name: string = "";
   description: string = "";
   time: number = 0;
 }
 
-export function conditionComparer(a: Condition, b: Condition) {
-  return a.name == b.name && a.description == b.description;
+export class Feature {
+  id: number = 0;
+  name: string = "";
+  description: string = "";
+  level: number = 0;
+  order?: number = 0;
+  className: string = "";
+  subclass?: string = "";
+  time: number = 0;
+}
+
+export class Subclass {
+  name: string = "";
+  className: string = "";
+  constructor(name: string, className: string) {
+    this.name = name;
+    this.className = className;
+  }
+}
+
+export class Feat {
+  id: number = 0;
+  name: string = "";
+  description: string = "";
+  level: number = 0;
+  prerequisite?: string = "";
+  time: number = 0;
 }
 
 export interface FilterList {
@@ -49,4 +75,9 @@ export interface FilterList {
   durations: string[];
   classes: string[];
   conditions: string[];
+}
+
+export interface FeatFilterList {
+  levels: number[];
+  prerequisite: string[];
 }

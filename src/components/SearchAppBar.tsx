@@ -14,10 +14,14 @@ import { getPrimaryColor, getPrimaryString, useThemeStore } from "../theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFilterStore } from "./FilterDialog";
 import { useMemo } from "react";
+import { useFeatFilterStore } from "./FeatsFilterDialog";
+import { useClassFilterStore } from "./ClassesFilterDialog";
 
 export default function SearchAppBar() {
   const navigate = useNavigate();
   const filter = useFilterStore((state) => state);
+  const featFilter = useFeatFilterStore((state) => state);
+  const classFilter = useClassFilterStore((state) => state);
   const theme = useTheme();
   const themeStore = useThemeStore((state) => state);
   const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
@@ -56,11 +60,21 @@ export default function SearchAppBar() {
                   ? filter.conditionSearchString
                   : location.pathname == "/" && filter.searchString
                   ? filter.searchString
+                  : location.pathname.includes("feats") &&
+                    featFilter.searchString
+                  ? featFilter.searchString
+                  : location.pathname.includes("classes") &&
+                    classFilter.searchString
+                  ? classFilter.searchString
                   : ""
               }
               onChange={
                 location.pathname.includes("conditions")
                   ? (e) => filter.setConditionSearchString(e.target.value)
+                  : location.pathname.includes("feats")
+                  ? (e) => featFilter.searchActions.set(e.target.value)
+                  : location.pathname.includes("classes")
+                  ? (e) => classFilter.searchActions.set(e.target.value)
                   : (e) => filter.setSearchString(e.target.value)
               }
               sx={{
@@ -82,11 +96,19 @@ export default function SearchAppBar() {
                   >
                     {(location.pathname == "/" && filter.searchString) ||
                     (location.pathname.includes("conditions") &&
-                      filter.conditionSearchString) ? (
+                      filter.conditionSearchString) ||
+                    (location.pathname.includes("feats") &&
+                      featFilter.searchString) ||
+                    (location.pathname.includes("classes") &&
+                      classFilter.searchString) ? (
                       <IconButton
                         onClick={
                           location.pathname.includes("conditions")
                             ? () => filter.setConditionSearchString(undefined)
+                            : location.pathname.includes("feats")
+                            ? () => featFilter.searchActions.set(undefined)
+                            : location.pathname.includes("classes")
+                            ? () => classFilter.searchActions.set(undefined)
                             : () => filter.setSearchString(undefined)
                         }
                       >
@@ -111,7 +133,13 @@ export default function SearchAppBar() {
                 color="inherit"
                 aria-label="open drawer"
                 className="block ml-4"
-                onClick={() => navigate("filter")}
+                onClick={
+                  location.pathname == "/"
+                    ? () => navigate("filter")
+                    : location.pathname.includes("filter")
+                    ? () => navigate("featFilter")
+                    : () => navigate("classesFilter")
+                }
               >
                 <MenuIcon />
               </IconButton>

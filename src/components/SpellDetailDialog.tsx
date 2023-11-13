@@ -116,7 +116,7 @@ export default function SpellDetailDialog() {
             <SpellArgs name="School" value={spell?.schoolName} />
             <SpellArgs
               name="Ritual"
-              value={spell?.isRitual ? "YES" : undefined}
+              value={spell?.isRitual ? "Yes" : undefined}
             />
             <SpellArgs
               name="Casting time"
@@ -130,7 +130,7 @@ export default function SpellDetailDialog() {
             />
             <SpellArgs
               name="Concentration"
-              value={spell?.isConcentration ? "YES" : undefined}
+              value={spell?.isConcentration ? "Yes" : undefined}
             />
             <SpellArgs name="Range" value={spell?.range} />
             <SpellArgs
