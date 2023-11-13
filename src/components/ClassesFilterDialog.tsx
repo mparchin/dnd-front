@@ -172,48 +172,50 @@ export default function ClassFilterDialog() {
               ))}
             </AccordionDetails>
           </Accordion>
-          {filter.class ? (
-            <Accordion>
-              <AccordionSummary expandIcon={<ExpandMore />}>
-                <div className="flex flex-row w-full">
-                  <Typography className="flex-grow">SUBCLASS</Typography>
-                  {filter.subclasses.length > 0 ? (
-                    <FiberManualRecord
-                      fontSize="small"
-                      className="pr-2 pt-1"
-                      sx={{ color: primaryColor.main }}
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMore />}>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">SUBCLASS</Typography>
+                {filter.subclasses.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    sx={{ color: primaryColor.main }}
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
+            </AccordionSummary>
+            <AccordionDetails>
+              {features.subclasses
+                ?.sort((a, b) =>
+                  a.className > b.className
+                    ? 1
+                    : a.className < b.className
+                    ? -1
+                    : a.name > b.name
+                    ? 1
+                    : -1
+                )
+                .map((subclass) => (
+                  <ToggleButton
+                    key={subclass.name}
+                    value="subclass"
+                    selected={filter.subclasses.includes(subclass.name)}
+                    className="w-full"
+                    onChange={() =>
+                      filter.subclassesActions.toggle(subclass.name)
+                    }
+                  >
+                    <FilterButtonText
+                      text={`${subclass.className} - ${subclass.name}`}
+                      checkCondition={filter.subclasses.includes(subclass.name)}
                     />
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              </AccordionSummary>
-              <AccordionDetails>
-                {features.subclasses
-                  ?.filter((sc) => sc.className == filter.class)
-                  .map((subclass) => (
-                    <ToggleButton
-                      key={subclass.name}
-                      value="subclass"
-                      selected={filter.subclasses.includes(subclass.name)}
-                      className="w-full"
-                      onChange={() =>
-                        filter.subclassesActions.toggle(subclass.name)
-                      }
-                    >
-                      <FilterButtonText
-                        text={subclass.name}
-                        checkCondition={filter.subclasses.includes(
-                          subclass.name
-                        )}
-                      />
-                    </ToggleButton>
-                  ))}
-              </AccordionDetails>
-            </Accordion>
-          ) : (
-            <></>
-          )}
+                  </ToggleButton>
+                ))}
+            </AccordionDetails>
+          </Accordion>
           <Dndsvg
             color={primaryColor.main}
             background={
