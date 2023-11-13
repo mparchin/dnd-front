@@ -69,7 +69,8 @@ export default function App() {
           ) : location.pathname == "/classes" ? (
             <ClassesPage />
           ) : location.pathname == "/feats" ? (
-            <FeatsPage />
+            <CommingSoon />
+            // <FeatsPage />
           ) : (
             <CommingSoon />
           )}
