@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "production"
+      - "stage"
 
 jobs:
   build:
@@ -30,7 +31,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref_name == 'production'
+    if: ${{ github.ref_name == 'production' || github.ref_name == 'stage' }}
     steps:
       - name: update server
         uses: appleboy/ssh-action@v1.0.0
