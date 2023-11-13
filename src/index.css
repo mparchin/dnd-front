@@ -81,6 +81,7 @@ div.descriptions td {
 div.descriptions th {
   border-width: 1px;
   padding: 0.5rem;
+  font-size: small;
 }
 div.descriptions.light th {
   color: rgb(26, 122, 171);
