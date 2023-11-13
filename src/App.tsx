@@ -27,7 +27,8 @@ import { Helmet } from "react-helmet";
 import GetAndSaveFeatures from "./API/feature";
 import ClassesPage from "./components/ClassesPage";
 import GetAndSaveFeats from "./API/feat";
-import FeatsPage from "./components/FeatsPage";
+// import FeatsPage from "./components/FeatsPage";
+import ClassFilterDialog from "./components/ClassesFilterDialog";
 
 export default function App() {
   const theme = useTheme();
@@ -68,8 +69,9 @@ export default function App() {
           ) : location.pathname == "/classes" ? (
             <ClassesPage />
           ) : location.pathname == "/feats" ? (
-            <FeatsPage />
+            <CommingSoon />
           ) : (
+            // <FeatsPage />
             <CommingSoon />
           )}
         </div>
@@ -152,6 +154,7 @@ export default function App() {
       </div>
       <SpellDetailDialog />
       <FilterDialog />
+      <ClassFilterDialog />
       <GetAndSaveSpells />
       <GetAndSaveConditions />
       <GetAndSaveFeatures />

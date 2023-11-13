@@ -72,7 +72,7 @@ div.descriptions table {
 }
 div.descriptions td {
   border-width: 1px;
-  padding: 0.5rem;
+  padding: 0.25rem;
   overflow: hidden;
   font-size: small;
   text-overflow: ellipsis;
@@ -80,7 +80,7 @@ div.descriptions td {
 }
 div.descriptions th {
   border-width: 1px;
-  padding: 0.5rem;
+  padding: 0.25rem;
   font-size: small;
 }
 div.descriptions.light th {
