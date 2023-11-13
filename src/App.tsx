@@ -28,6 +28,7 @@ import GetAndSaveFeatures from "./API/feature";
 import ClassesPage from "./components/ClassesPage";
 import GetAndSaveFeats from "./API/feat";
 import FeatsPage from "./components/FeatsPage";
+import ClassFilterDialog from "./components/ClassesFilterDialog";
 
 export default function App() {
   const theme = useTheme();
@@ -152,6 +153,7 @@ export default function App() {
       </div>
       <SpellDetailDialog />
       <FilterDialog />
+      <ClassFilterDialog />
       <GetAndSaveSpells />
       <GetAndSaveConditions />
       <GetAndSaveFeatures />

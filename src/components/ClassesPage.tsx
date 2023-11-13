@@ -2,8 +2,9 @@ import { useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { useThemeStore, getPrimaryColor } from "../theme";
 import { Virtuoso } from "react-virtuoso";
-import { useFeatureListStore } from "../API/feature";
+import { FilterData, useFeatureListStore } from "../API/feature";
 import Dndsvg from "../assets/dndsvg";
+import { useClassFilterStore } from "./ClassesFilterDialog";
 
 export default function ClassesPage() {
   const theme = useTheme();
@@ -12,22 +13,24 @@ export default function ClassesPage() {
     theme,
     themeStore,
   ]);
+  const filter = useClassFilterStore((state) => state);
   const features = useFeatureListStore((state) => state.features);
-
-  var query = features;
-
-  query.sort((a, b) =>
-    a.className > b.className
-      ? 1
-      : a.className < b.className
-      ? -1
-      : a.level > b.level
-      ? 1
-      : a.level < b.level
-      ? -1
-      : (a.order ?? 0) > (b.order ?? 0)
-      ? 1
-      : -1
+  const query = useMemo(
+    () =>
+      FilterData(features, filter).sort((a, b) =>
+        a.className > b.className
+          ? 1
+          : a.className < b.className
+          ? -1
+          : a.level > b.level
+          ? 1
+          : a.level < b.level
+          ? -1
+          : (a.order ?? 0) > (b.order ?? 0)
+          ? 1
+          : -1
+      ),
+    [features, filter]
   );
 
   return (

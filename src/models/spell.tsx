@@ -44,6 +44,15 @@ export class Feature {
   time: number = 0;
 }
 
+export class Subclass {
+  name: string = "";
+  className: string = "";
+  constructor(name: string, className: string) {
+    this.name = name;
+    this.className = className;
+  }
+}
+
 export class Feat {
   id: number = 0;
   name: string = "";
