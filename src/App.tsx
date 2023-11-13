@@ -27,7 +27,7 @@ import { Helmet } from "react-helmet";
 import GetAndSaveFeatures from "./API/feature";
 import ClassesPage from "./components/ClassesPage";
 import GetAndSaveFeats from "./API/feat";
-import FeatsPage from "./components/FeatsPage";
+// import FeatsPage from "./components/FeatsPage";
 import ClassFilterDialog from "./components/ClassesFilterDialog";
 
 export default function App() {
@@ -70,8 +70,8 @@ export default function App() {
             <ClassesPage />
           ) : location.pathname == "/feats" ? (
             <CommingSoon />
-            // <FeatsPage />
           ) : (
+            // <FeatsPage />
             <CommingSoon />
           )}
         </div>
