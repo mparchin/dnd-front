@@ -37,9 +37,9 @@ export default function ClassesPage() {
         itemContent={(index, feature) => (
           <>
             <div className="pt-2 pl-4 pr-4 pb-2">
-              <div className="flex flex-row w-full">
+              <div className="flex flex-col w-full">
                 <strong
-                  className="text-lg flex-grow"
+                  className="text-lg"
                   style={{ color: primaryColor.main }}
                 >
                   {feature.name}
@@ -48,12 +48,14 @@ export default function ClassesPage() {
                 !(
                   feature.name.toLowerCase() == feature.subclass.toLowerCase()
                 ) ? (
-                  <span
-                    style={{ color: primaryColor.main }}
-                    className="text-xs mt-auto mb-auto pl-0.5"
-                  >
-                    {feature.subclass}
-                  </span>
+                  <>
+                    <span
+                      style={{ color: primaryColor.main }}
+                      className="text-xs"
+                    >
+                      [{feature.subclass}]
+                    </span>
+                  </>
                 ) : (
                   <></>
                 )}
