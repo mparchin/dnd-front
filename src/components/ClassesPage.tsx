@@ -39,11 +39,24 @@ export default function ClassesPage() {
             <div className="pt-2 pl-4 pr-4 pb-2">
               <div className="flex flex-row w-full">
                 <strong
-                  className="text-lg"
+                  className="text-lg flex-grow"
                   style={{ color: primaryColor.main }}
                 >
                   {feature.name}
                 </strong>
+                {feature.subclass &&
+                !(
+                  feature.name.toLowerCase() == feature.subclass.toLowerCase()
+                ) ? (
+                  <span
+                    style={{ color: primaryColor.main }}
+                    className="text-xs mt-auto mb-auto pl-0.5"
+                  >
+                    {feature.subclass}
+                  </span>
+                ) : (
+                  <></>
+                )}
               </div>
               <div
                 className={`pl-2 pr-2 descriptions ${theme.palette.mode} ${
