@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import {
   ArrowBackIosNew,
-  Clear,
+  FilterAltOff,
   ExpandMore,
   FiberManualRecord,
 } from "@mui/icons-material";
@@ -130,7 +130,7 @@ export default function ClassFilterDialog() {
                 filter.subclassesActions.clear();
               }}
             >
-              <Clear sx={{ color: primaryColor.main }} />
+              <FilterAltOff sx={{ color: primaryColor.main }} />
             </IconButton>
           </div>
         </div>

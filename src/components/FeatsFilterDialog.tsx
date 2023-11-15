@@ -13,7 +13,7 @@ import { create } from "zustand";
 import { getPrimaryColor, useThemeStore } from "../theme";
 import {
   ArrowBackIosNew,
-  Clear,
+  FilterAltOff,
   ExpandMore,
   FiberManualRecord,
 } from "@mui/icons-material";
@@ -137,7 +137,7 @@ export default function FeatsFilterDialog() {
                 filter.prerequisitesActions.clear();
               }}
             >
-              <Clear sx={{ color: primaryColor.main }} />
+              <FilterAltOff sx={{ color: primaryColor.main }} />
             </IconButton>
           </div>
         </div>
