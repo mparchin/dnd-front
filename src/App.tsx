@@ -27,8 +27,9 @@ import { Helmet } from "react-helmet";
 import GetAndSaveFeatures from "./API/feature";
 import ClassesPage from "./components/ClassesPage";
 import GetAndSaveFeats from "./API/feat";
-// import FeatsPage from "./components/FeatsPage";
+import FeatsPage from "./components/FeatsPage";
 import ClassFilterDialog from "./components/ClassesFilterDialog";
+import FeatsFilterDialog from "./components/FeatsFilterDialog";
 
 export default function App() {
   const theme = useTheme();
@@ -59,19 +60,20 @@ export default function App() {
         </div>
         <div className="flex-grow flex flex-shrink basis-auto overflow-auto">
           {location.pathname == "/" ||
-          location.pathname.includes("filter") ||
+          location.pathname == "/filter" ||
           location.pathname.includes("details") ? (
             <SpellList />
           ) : location.pathname == "/settings" ? (
             <SettingsPage />
           ) : location.pathname == "/conditions" ? (
             <ConditionsPage />
-          ) : location.pathname == "/classes" ? (
+          ) : location.pathname == "/classes" ||
+            location.pathname == "/classesFilter" ? (
             <ClassesPage />
-          ) : location.pathname == "/feats" ? (
-            <CommingSoon />
+          ) : location.pathname == "/feats" ||
+            location.pathname == "/featsFilter" ? (
+            <FeatsPage />
           ) : (
-            // <FeatsPage />
             <CommingSoon />
           )}
         </div>
@@ -155,6 +157,7 @@ export default function App() {
       <SpellDetailDialog />
       <FilterDialog />
       <ClassFilterDialog />
+      <FeatsFilterDialog />
       <GetAndSaveSpells />
       <GetAndSaveConditions />
       <GetAndSaveFeatures />

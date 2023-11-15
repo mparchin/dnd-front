@@ -188,7 +188,12 @@ export default function ClassFilterDialog() {
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              {features.subclasses
+              {(filter.class
+                ? features.subclasses.filter(
+                    (sc) => sc.className == filter.class
+                  )
+                : features.subclasses
+              )
                 ?.sort((a, b) =>
                   a.className > b.className
                     ? 1
