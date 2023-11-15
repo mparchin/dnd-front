@@ -84,6 +84,15 @@ export function FilterData(feats: Feat[], filter: FeatFilterState): Feat[] {
   let names = [...new Set(query.map((feat) => feat.name))];
   query = names
     .map((name) => query.find((feat) => feat.name == name) ?? new Feat())
-    .filter((feat) => feat.id);
+    .filter((feat) => feat.id)
+    .sort((a, b) =>
+      Number(a.level) > Number(b.level)
+        ? 1
+        : Number(a.level) < Number(b.level)
+        ? -1
+        : a.name > b.name
+        ? 1
+        : -1
+    );
   return query;
 }

@@ -15,23 +15,7 @@ export default function ClassesPage() {
   ]);
   const filter = useClassFilterStore((state) => state);
   const features = useFeatureListStore((state) => state.features);
-  const query = useMemo(
-    () =>
-      FilterData(features, filter).sort((a, b) =>
-        a.className > b.className
-          ? 1
-          : a.className < b.className
-          ? -1
-          : a.level > b.level
-          ? 1
-          : a.level < b.level
-          ? -1
-          : (a.order ?? 0) > (b.order ?? 0)
-          ? 1
-          : -1
-      ),
-    [features, filter]
-  );
+  const query = useMemo(() => FilterData(features, filter), [features, filter]);
 
   return (
     <div

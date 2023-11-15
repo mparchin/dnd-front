@@ -59,6 +59,7 @@ export class Feat {
   description: string = "";
   level: number = 0;
   prerequisite?: string = "";
+  repeatable?: string = "";
   time: number = 0;
 }
 

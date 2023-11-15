@@ -16,19 +16,7 @@ export default function FeatsPage() {
   ]);
   const feats = useFeatListStore((state) => state.feats);
   const filter = useFeatFilterStore((state) => state);
-  const query = useMemo(
-    () =>
-      FilterData(feats, filter).sort((a, b) =>
-        Number(a.level) > Number(b.level)
-          ? 1
-          : Number(a.level) < Number(b.level)
-          ? -1
-          : a.name > b.name
-          ? 1
-          : -1
-      ),
-    [feats, filter]
-  );
+  const query = useMemo(() => FilterData(feats, filter), [feats, filter]);
   const groupCounts = useMemo(() => {
     const featLevels = [...new Set(query.map((feat) => feat.level))];
     return featLevels.map((level) => ({
@@ -101,6 +89,11 @@ export default function FeatsPage() {
                     <div className="text-base">
                       <strong className="pr-2">Prerequisite:</strong>
                       {feat.prerequisite ? feat.prerequisite : "None"}
+                    </div>
+
+                    <div className="text-base">
+                      <strong className="pr-2">Repeatable:</strong>
+                      {feat.repeatable ? feat.repeatable : "No"}
                     </div>
                   </div>
                   <div
