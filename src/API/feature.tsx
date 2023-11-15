@@ -121,6 +121,10 @@ export function FilterData(
         ? 1
         : a.subclass && b.subclass && a.subclass < b.subclass
         ? -1
+        : a.subclass && !b.subclass
+        ? 1
+        : !a.subclass && b.subclass
+        ? -1
         : (a.order ?? 0) > (b.order ?? 0)
         ? 1
         : -1

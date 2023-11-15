@@ -20,7 +20,7 @@ export default function SpellList() {
   const navigate = useNavigate();
   const filter = useFilterStore((state) => state);
   const query = useMemo(() => {
-    return FilterData(spells, filter)
+    return FilterData(spells, filter);
   }, [spells, filter]);
   const groupCounts = useMemo(() => {
     const spellLevels = [...new Set(query.map((spell) => spell.level))].sort();
@@ -70,7 +70,7 @@ export default function SpellList() {
             var spell = query[index];
             return (
               <div
-                className="pt-2"
+                className=""
                 style={{
                   background:
                     theme.palette.mode === "dark"

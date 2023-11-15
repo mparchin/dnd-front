@@ -19,7 +19,7 @@ export default function ClassesPage() {
 
   return (
     <div
-      className="w-full h-full pt-2"
+      className="w-full h-full"
       style={{
         backgroundColor:
           theme.palette.mode == "dark"

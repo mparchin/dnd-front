@@ -214,7 +214,11 @@ export default function ClassFilterDialog() {
                     }
                   >
                     <FilterButtonText
-                      text={`${subclass.className} - ${subclass.name}`}
+                      text={
+                        !filter.class
+                          ? `${subclass.className} - ${subclass.name}`
+                          : subclass.name
+                      }
                       checkCondition={filter.subclasses.includes(subclass.name)}
                     />
                   </ToggleButton>
