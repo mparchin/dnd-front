@@ -136,8 +136,8 @@ export default function SearchAppBar() {
                 onClick={
                   location.pathname == "/"
                     ? () => navigate("filter")
-                    : location.pathname.includes("filter")
-                    ? () => navigate("featFilter")
+                    : location.pathname.includes("feats")
+                    ? () => navigate("featsFilter")
                     : () => navigate("classesFilter")
                 }
               >
