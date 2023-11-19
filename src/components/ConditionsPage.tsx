@@ -1,9 +1,4 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  useTheme,
-} from "@mui/material";
+import { Card, useTheme } from "@mui/material";
 import { Virtuoso } from "react-virtuoso";
 import { useConditionListStore } from "../API/conditions";
 import DataLoading from "./DataLoading";
@@ -11,7 +6,6 @@ import { useMemo } from "react";
 import { useThemeStore, getPrimaryColor } from "../theme";
 import Dndsvg from "../assets/dndsvg";
 import { useFilterStore } from "./FilterDialog";
-import { ExpandMore } from "@mui/icons-material";
 
 export default function ConditionsPage() {
   const theme = useTheme();
@@ -34,7 +28,7 @@ export default function ConditionsPage() {
 
   return (
     <div
-      className="w-full h-full pt-2"
+      className="w-full h-full"
       style={{
         backgroundColor:
           theme.palette.mode == "dark"
@@ -52,30 +46,26 @@ export default function ConditionsPage() {
         itemContent={(index, condition) => (
           <>
             <div className="pt-2 pl-4 pr-4 pb-2">
-              <Accordion elevation={5} className="rounded-2xl">
-                <AccordionSummary expandIcon={<ExpandMore />}>
-                  <div className="flex flex-row w-full">
-                    <strong
-                      className="text-lg"
-                      style={{ color: primaryColor.main }}
-                    >
-                      {condition.name}
-                    </strong>
-                  </div>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <div
-                    className={`pl-2 pr-2 conditions ${theme.palette.mode} ${
-                      themeStore.isPrimarySwapped ? "swappedColors" : ""
-                    }`}
-                    dangerouslySetInnerHTML={{
-                      __html: condition.description
-                        .replace(/color:hsl\(0, 0%, 0%\);/g, "")
-                        .replace(/color:hsl\(0,0%,0%\);/g, ""),
-                    }}
-                  />
-                </AccordionDetails>
-              </Accordion>
+              <Card elevation={5} className="rounded-2xl pr-4 pl-4 pt-2 pb-2">
+                <div className="flex flex-row w-full">
+                  <strong
+                    className="text-lg"
+                    style={{ color: primaryColor.main }}
+                  >
+                    {condition.name}
+                  </strong>
+                </div>
+                <div
+                  className={`pl-2 pr-2 conditions ${theme.palette.mode} ${
+                    themeStore.isPrimarySwapped ? "swappedColors" : ""
+                  }`}
+                  dangerouslySetInnerHTML={{
+                    __html: condition.description
+                      .replace(/color:hsl\(0, 0%, 0%\);/g, "")
+                      .replace(/color:hsl\(0,0%,0%\);/g, ""),
+                  }}
+                />
+              </Card>
             </div>
             {index == query.length - 1 ? (
               <Dndsvg

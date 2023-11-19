@@ -289,6 +289,17 @@ export function FilterData(spells: Spell[], filter: FilterState): Spell[] {
   let names = [...new Set(query.map((spell) => spell.name))];
   query = names
     .map((name) => query.find((spell) => spell.name == name) ?? new Spell())
-    .filter((spell) => spell.id);
+    .filter((spell) => spell.id)
+    .sort((a, b) =>
+      a.level > b.level
+        ? 1
+        : a.level < b.level
+        ? -1
+        : a.name > b.name
+        ? 1
+        : a.name < b.name
+        ? -1
+        : 0
+    );
   return query;
 }

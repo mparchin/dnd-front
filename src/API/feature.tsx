@@ -107,6 +107,27 @@ export function FilterData(
   let names = [...new Set(query.map((feat) => feat.name))];
   query = names
     .map((name) => query.find((feat) => feat.name == name) ?? new Feature())
-    .filter((feat) => feat.id);
+    .filter((feat) => feat.id)
+    .sort((a, b) =>
+      a.className > b.className
+        ? 1
+        : a.className < b.className
+        ? -1
+        : a.level > b.level
+        ? 1
+        : a.level < b.level
+        ? -1
+        : a.subclass && b.subclass && a.subclass > b.subclass
+        ? 1
+        : a.subclass && b.subclass && a.subclass < b.subclass
+        ? -1
+        : a.subclass && !b.subclass
+        ? 1
+        : !a.subclass && b.subclass
+        ? -1
+        : (a.order ?? 0) > (b.order ?? 0)
+        ? 1
+        : -1
+    );
   return query;
 }

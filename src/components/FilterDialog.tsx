@@ -1,6 +1,6 @@
 import {
   ArrowBackIosNew,
-  Clear,
+  FilterAltOff,
   ExpandMore,
   FiberManualRecord,
 } from "@mui/icons-material";
@@ -352,7 +352,7 @@ export default function FilterDialog() {
                 filter.concentrationActions.clear();
               }}
             >
-              <Clear sx={{ color: primaryColor.main }} />
+              <FilterAltOff sx={{ color: primaryColor.main }} />
             </IconButton>
           </div>
         </div>

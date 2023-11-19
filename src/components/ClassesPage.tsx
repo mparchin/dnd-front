@@ -15,27 +15,11 @@ export default function ClassesPage() {
   ]);
   const filter = useClassFilterStore((state) => state);
   const features = useFeatureListStore((state) => state.features);
-  const query = useMemo(
-    () =>
-      FilterData(features, filter).sort((a, b) =>
-        a.className > b.className
-          ? 1
-          : a.className < b.className
-          ? -1
-          : a.level > b.level
-          ? 1
-          : a.level < b.level
-          ? -1
-          : (a.order ?? 0) > (b.order ?? 0)
-          ? 1
-          : -1
-      ),
-    [features, filter]
-  );
+  const query = useMemo(() => FilterData(features, filter), [features, filter]);
 
   return (
     <div
-      className="w-full h-full pt-2"
+      className="w-full h-full"
       style={{
         backgroundColor:
           theme.palette.mode == "dark"
@@ -53,13 +37,28 @@ export default function ClassesPage() {
         itemContent={(index, feature) => (
           <>
             <div className="pt-2 pl-4 pr-4 pb-2">
-              <div className="flex flex-row w-full">
+              <div className="flex flex-col w-full">
                 <strong
                   className="text-lg"
                   style={{ color: primaryColor.main }}
                 >
                   {feature.name}
                 </strong>
+                {feature.subclass &&
+                !(
+                  feature.name.toLowerCase() == feature.subclass.toLowerCase()
+                ) ? (
+                  <>
+                    <span
+                      style={{ color: primaryColor.main }}
+                      className="text-xs"
+                    >
+                      [{feature.subclass}]
+                    </span>
+                  </>
+                ) : (
+                  <></>
+                )}
               </div>
               <div
                 className={`pl-2 pr-2 descriptions ${theme.palette.mode} ${
