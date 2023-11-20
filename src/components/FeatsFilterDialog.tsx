@@ -190,7 +190,7 @@ export default function FeatsFilterDialog() {
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              {feats.filterList.levels.map((level) => (
+              {feats.filterList.levels?.map((level) => (
                 <ToggleButton
                   key={level}
                   value="Level"
@@ -222,7 +222,7 @@ export default function FeatsFilterDialog() {
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              {feats.filterList.prerequisite.map((prerequisite) => (
+              {feats.filterList.prerequisite?.map((prerequisite) => (
                 <ToggleButton
                   key={prerequisite}
                   value="prerequisite"
@@ -288,7 +288,7 @@ export default function FeatsFilterDialog() {
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              {feats.filterList.repeatable.map((repeatable) => (
+              {feats.filterList.repeatable?.map((repeatable) => (
                 <ToggleButton
                   key={repeatable}
                   value="repeatable"
