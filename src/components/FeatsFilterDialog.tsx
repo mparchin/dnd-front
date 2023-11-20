@@ -256,7 +256,7 @@ export default function FeatsFilterDialog() {
               </div>
             </AccordionSummary>
             <AccordionDetails>
-              {feats.filterList.books.map((book) => (
+              {feats.filterList.books?.map((book) => (
                 <ToggleButton
                   key={book}
                   value="book"
