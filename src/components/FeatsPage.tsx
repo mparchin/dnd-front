@@ -83,7 +83,12 @@ export default function FeatsPage() {
 
                     <div className="text-base">
                       <strong className="pr-2">Level:</strong>
-                      {feat.level}
+                      {`${feat.level}+${feat.level >= 18 ? "(Epic boon)" : ""}`}
+                    </div>
+
+                    <div className="text-base">
+                      <strong className="pr-2">Book:</strong>
+                      {feat.book}
                     </div>
 
                     <div className="text-base">
