@@ -244,7 +244,7 @@ export default function FeatsFilterDialog() {
             <AccordionSummary expandIcon={<ExpandMore />}>
               <div className="flex flex-row w-full">
                 <Typography className="flex-grow">BOOK</Typography>
-                {filter.prerequisites.length > 0 ? (
+                {filter.books.length > 0 ? (
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
@@ -276,7 +276,7 @@ export default function FeatsFilterDialog() {
             <AccordionSummary expandIcon={<ExpandMore />}>
               <div className="flex flex-row w-full">
                 <Typography className="flex-grow">REPATABLE</Typography>
-                {filter.prerequisites.length > 0 ? (
+                {filter.repeatable.length > 0 ? (
                   <FiberManualRecord
                     fontSize="small"
                     className="pr-2 pt-1"
