@@ -60,9 +60,11 @@ export default function FeatsPage() {
                       : theme.palette.background.default,
                 }}
               >
-                <div>{`Level: ${groupCounts[index].level}`}</div>
+                <div>{`Level: ${groupCounts[index].level}+${
+                  groupCounts[index].level >= 18 ? "(Epic boon)" : ""
+                }`}</div>
                 <div className="flex-grow"></div>
-                <div>{`Feats: ${groupCounts[index].count}`}</div>
+                <div>{`Count: ${groupCounts[index].count}`}</div>
               </Paper>
             </div>
           );

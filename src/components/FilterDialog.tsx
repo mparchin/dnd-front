@@ -414,7 +414,7 @@ export default function FilterDialog() {
                   onChange={() => filter.levelsActions.toggle(level)}
                 >
                   <FilterButtonText
-                    text={level.toString()}
+                    text={`${level == 0 ? "Cantrip" : level}`}
                     checkCondition={filter.levels.includes(level)}
                   />
                 </ToggleButton>
