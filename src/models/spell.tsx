@@ -59,6 +59,7 @@ export class Feat {
   description: string = "";
   level: number = 0;
   prerequisite?: string = "";
+  book?: string = "";
   repeatable?: string = "";
   time: number = 0;
 }
@@ -81,4 +82,6 @@ export interface FilterList {
 export interface FeatFilterList {
   levels: number[];
   prerequisite: string[];
+  repeatable: string[];
+  books: string[];
 }

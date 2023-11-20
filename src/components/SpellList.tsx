@@ -59,9 +59,13 @@ export default function SpellList() {
                         : theme.palette.background.default,
                   }}
                 >
-                  <div>{`Level: ${groupCounts[index].level}`}</div>
+                  <div>{`Level: ${
+                    groupCounts[index].level == 0
+                      ? "Cantrip"
+                      : groupCounts[index].level
+                  }`}</div>
                   <div className="flex-grow"></div>
-                  <div>{`Spells: ${groupCounts[index].count}`}</div>
+                  <div>{`Count: ${groupCounts[index].count}`}</div>
                 </Paper>
               </div>
             );

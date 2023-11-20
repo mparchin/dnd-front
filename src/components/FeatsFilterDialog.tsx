@@ -43,6 +43,16 @@ export interface FeatFilterState {
     toggle: (prerequisite: string) => void;
     clear: () => void;
   };
+  repeatable: string[];
+  repeatablesActions: {
+    toggle: (repeatable: string) => void;
+    clear: () => void;
+  };
+  books: string[];
+  booksActions: {
+    toggle: (book: string) => void;
+    clear: () => void;
+  };
 }
 
 export const useFeatFilterStore = create<FeatFilterState>()((set) => ({
@@ -74,6 +84,26 @@ export const useFeatFilterStore = create<FeatFilterState>()((set) => ({
           : state.prerequisites.concat(prerequisite),
       })),
     clear: () => set({ prerequisites: [] }),
+  },
+  repeatable: [],
+  repeatablesActions: {
+    toggle: (repeatable: string) =>
+      set((state) => ({
+        repeatable: state.repeatable.includes(repeatable)
+          ? state.repeatable.filter((l) => l != repeatable)
+          : state.repeatable.concat(repeatable),
+      })),
+    clear: () => set({ repeatable: [] }),
+  },
+  books: [],
+  booksActions: {
+    toggle: (books: string) =>
+      set((state) => ({
+        books: state.books.includes(books)
+          ? state.books.filter((l) => l != books)
+          : state.books.concat(books),
+      })),
+    clear: () => set({ books: [] }),
   },
 }));
 
@@ -135,6 +165,8 @@ export default function FeatsFilterDialog() {
               onClick={() => {
                 filter.levelsActions.clear();
                 filter.prerequisitesActions.clear();
+                filter.booksActions.clear();
+                filter.repeatablesActions.clear();
               }}
             >
               <FilterAltOff sx={{ color: primaryColor.main }} />
@@ -167,7 +199,7 @@ export default function FeatsFilterDialog() {
                   onChange={() => filter.levelsActions.toggle(level)}
                 >
                   <FilterButtonText
-                    text={level.toString()}
+                    text={`${level}+${level >= 18 ? "(Epic boon)" : ""}`}
                     checkCondition={filter.levels.includes(level)}
                   />
                 </ToggleButton>
@@ -177,7 +209,7 @@ export default function FeatsFilterDialog() {
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMore />}>
               <div className="flex flex-row w-full">
-                <Typography className="flex-grow">PREREQUISITES</Typography>
+                <Typography className="flex-grow">PREREQUISITE</Typography>
                 {filter.prerequisites.length > 0 ? (
                   <FiberManualRecord
                     fontSize="small"
@@ -203,6 +235,70 @@ export default function FeatsFilterDialog() {
                   <FilterButtonText
                     text={prerequisite}
                     checkCondition={filter.prerequisites.includes(prerequisite)}
+                  />
+                </ToggleButton>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMore />}>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">BOOK</Typography>
+                {filter.books.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    sx={{ color: primaryColor.main }}
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
+            </AccordionSummary>
+            <AccordionDetails>
+              {feats.filterList.books?.map((book) => (
+                <ToggleButton
+                  key={book}
+                  value="book"
+                  selected={filter.books.includes(book)}
+                  className="w-full"
+                  onChange={() => filter.booksActions.toggle(book)}
+                >
+                  <FilterButtonText
+                    text={book}
+                    checkCondition={filter.books.includes(book)}
+                  />
+                </ToggleButton>
+              ))}
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMore />}>
+              <div className="flex flex-row w-full">
+                <Typography className="flex-grow">REPATABLE</Typography>
+                {filter.repeatable.length > 0 ? (
+                  <FiberManualRecord
+                    fontSize="small"
+                    className="pr-2 pt-1"
+                    sx={{ color: primaryColor.main }}
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
+            </AccordionSummary>
+            <AccordionDetails>
+              {feats.filterList.repeatable.map((repeatable) => (
+                <ToggleButton
+                  key={repeatable}
+                  value="repeatable"
+                  selected={filter.repeatable.includes(repeatable)}
+                  className="w-full"
+                  onChange={() => filter.repeatablesActions.toggle(repeatable)}
+                >
+                  <FilterButtonText
+                    text={repeatable}
+                    checkCondition={filter.repeatable.includes(repeatable)}
                   />
                 </ToggleButton>
               ))}

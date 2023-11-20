@@ -112,7 +112,10 @@ export default function SpellDetailDialog() {
               value={spell?.spellListName.replace(/,/g, ", ")}
             />
             <SpellArgs name="Book" value={spell?.book} />
-            <SpellArgs name="Level" value={spell?.level.toString()} />
+            <SpellArgs
+              name="Level"
+              value={`${spell?.level == 0 ? "Cantrip" : spell?.level}`}
+            />
             <SpellArgs name="School" value={spell?.schoolName} />
             <SpellArgs
               name="Ritual"
