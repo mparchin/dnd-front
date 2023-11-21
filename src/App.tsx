@@ -17,6 +17,8 @@ import {
   AccessibleOutlined,
   ArrowBackIosNew,
   ArrowForwardIos,
+  GavelOutlined,
+  Gavel,
 } from "@mui/icons-material";
 import { ThemeMode, getPrimaryColor, useThemeStore } from "./theme";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -35,6 +37,12 @@ import ClassFilterDialog from "./components/ClassesFilterDialog";
 import FeatsFilterDialog from "./components/FeatsFilterDialog";
 import MenuItem from "./components/navigation/MenuItem";
 
+const calcScrollValue = (
+  left: number,
+  scrollWidth: number,
+  clientWidth: number
+) => Math.round(left / (scrollWidth - clientWidth));
+
 export default function App() {
   const theme = useTheme();
   const themeStore = useThemeStore((state) => state);
@@ -47,13 +55,18 @@ export default function App() {
   const [scrollValue, setScrollValue] = useState(0);
   const divRef = useRef();
   useEffect(() => {
-    //@ts-ignore
-    var a = divRef.current.scrollLeft;
-    //@ts-ignore
-    var b = divRef.current.scrollWidth - divRef.current.clientWidth;
-    var percent = Math.round((a / b) * 10) * 10;
-    setScrollValue(percent);
-  });
+    if (
+      calcScrollValue(
+        //@ts-ignore
+        divRef.current.scrollLeft,
+        //@ts-ignore
+        divRef.current.scrollWidth,
+        //@ts-ignore
+        divRef.current.clientWidth
+      ) != scrollValue
+    )
+      setScrollValue(scrollValue == 0 ? 1 : 0);
+  }, [divRef]);
 
   return (
     <>
@@ -113,15 +126,22 @@ export default function App() {
           ref={divRef}
           onScroll={
             //@ts-ignore
-            (e) => {
-              var a = e.target.scrollLeft;
-              var b = e.target.scrollWidth - e.target.clientWidth;
-              var percent = Math.round((a / b) * 10) * 10;
-              setScrollValue(percent);
+            () => {
+              if (
+                calcScrollValue(
+                  //@ts-ignore
+                  divRef.current.scrollLeft,
+                  //@ts-ignore
+                  divRef.current.scrollWidth,
+                  //@ts-ignore
+                  divRef.current.clientWidth
+                ) != scrollValue
+              )
+                setScrollValue(scrollValue == 0 ? 1 : 0);
             }
           }
         >
-          {scrollValue > 30 ? (
+          {scrollValue == 1 ? (
             <div
               className="fixed left-0 bottom-0 h-20 w-9 pl-2 pt-4"
               style={{
@@ -135,13 +155,17 @@ export default function App() {
                 onClick={() => {
                   //@ts-ignore
                   divRef.current.scroll(divRef.current.scrollLeft - 100, 0);
-                  //@ts-ignore
-                  var a = divRef.current.scrollLeft;
-                  var b =
-                    //@ts-ignore
-                    divRef.current.scrollWidth - divRef.current.clientWidth;
-                  var percent = Math.round((a / b) * 10) * 10;
-                  setScrollValue(percent);
+                  if (
+                    calcScrollValue(
+                      //@ts-ignore
+                      divRef.current.scrollLeft,
+                      //@ts-ignore
+                      divRef.current.scrollWidth,
+                      //@ts-ignore
+                      divRef.current.clientWidth
+                    ) != scrollValue
+                  )
+                    setScrollValue(0);
                 }}
               >
                 <ArrowBackIosNew />
@@ -183,6 +207,14 @@ export default function App() {
             onClick={() => navigate("/conditions", { replace: true })}
           />
           <MenuItem
+            label="Rules"
+            selectedColor={primaryColor.main}
+            icon={Gavel}
+            outlinedIcon={GavelOutlined}
+            selected={location.pathname == "/rules"}
+            onClick={() => navigate("/rules", { replace: true })}
+          />
+          <MenuItem
             label="Settings"
             selectedColor={primaryColor.main}
             icon={Settings}
@@ -190,7 +222,7 @@ export default function App() {
             selected={location.pathname == "/settings"}
             onClick={() => navigate("/settings", { replace: true })}
           />
-          {scrollValue < 60 ? (
+          {scrollValue == 0 ? (
             <div
               className="fixed right-0 bottom-0 h-20 w-12 pt-4"
               style={{
@@ -204,13 +236,17 @@ export default function App() {
                 onClick={() => {
                   //@ts-ignore
                   divRef.current.scroll(divRef.current.scrollLeft + 100, 0);
-                  //@ts-ignore
-                  var a = divRef.current.scrollLeft;
-                  var b =
-                    //@ts-ignore
-                    divRef.current.scrollWidth - divRef.current.clientWidth;
-                  var percent = Math.round((a / b) * 10) * 10;
-                  setScrollValue(percent);
+                  if (
+                    calcScrollValue(
+                      //@ts-ignore
+                      divRef.current.scrollLeft,
+                      //@ts-ignore
+                      divRef.current.scrollWidth,
+                      //@ts-ignore
+                      divRef.current.clientWidth
+                    ) != scrollValue
+                  )
+                    setScrollValue(1);
                 }}
               >
                 <ArrowForwardIos />
@@ -225,6 +261,7 @@ export default function App() {
       <FilterDialog />
       <ClassFilterDialog />
       <FeatsFilterDialog />
+
       <GetAndSaveSpells />
       <GetAndSaveConditions />
       <GetAndSaveFeatures />
