@@ -16,6 +16,7 @@ import { useFilterStore } from "./FilterDialog";
 import { useMemo } from "react";
 import { useFeatFilterStore } from "./FeatsFilterDialog";
 import { useClassFilterStore } from "./ClassesFilterDialog";
+import { Home } from "@mui/icons-material";
 
 export default function SearchAppBar() {
   const navigate = useNavigate();
@@ -38,16 +39,14 @@ export default function SearchAppBar() {
       <Box className="flex-grow">
         <AppBar position="sticky" color={primaryString} className="">
           <Toolbar className="">
-            {/* <IconButton
+            <IconButton
               size="large"
               edge="start"
-              color="inherit"
-              aria-label="open drawer"
               className="block ml-1 mr-3"
-              onClick={() => navigate("settings")}
+              onClick={() => navigate(-1)}
             >
-              <Settings />
-            </IconButton> */}
+              <Home />
+            </IconButton>
             <TextField
               id="search"
               variant="filled"
