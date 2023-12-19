@@ -20,7 +20,7 @@ export default function () {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate("/menu", { replace: true });
-    }, 1300);
+    }, 1200);
     return () => clearTimeout(timer);
   }, []);
 
