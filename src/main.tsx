@@ -28,6 +28,9 @@ const router = createHashRouter([
       { path: "conditions", element: <></> },
       { path: "featsFilter", element: <></> },
       { path: "rules", element: <></> },
+      { path: "races", element: <></> },
+      { path: "backgrounds", element: <></> },
+      { path: "characters", element: <></> },
     ],
   },
 ]);

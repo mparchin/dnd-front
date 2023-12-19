@@ -19,6 +19,12 @@ import {
   ArrowForwardIos,
   GavelOutlined,
   Gavel,
+  Description,
+  DescriptionOutlined,
+  People,
+  PeopleOutlined,
+  ChildFriendly,
+  ChildFriendlyOutlined,
 } from "@mui/icons-material";
 import { ThemeMode, getPrimaryColor, useThemeStore } from "./theme";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -183,6 +189,22 @@ export default function App() {
             onClick={() => navigate("/", { replace: true })}
           />
           <MenuItem
+            label="Classes"
+            selectedColor={primaryColor.main}
+            icon={School}
+            outlinedIcon={SchoolOutlined}
+            selected={location.pathname == "/classes"}
+            onClick={() => navigate("/classes", { replace: true })}
+          />
+          <MenuItem
+            label="Characters"
+            selectedColor={primaryColor.main}
+            icon={Description}
+            outlinedIcon={DescriptionOutlined}
+            selected={location.pathname == "/characters"}
+            onClick={() => navigate("/characters", { replace: true })}
+          />
+          <MenuItem
             label="Feats"
             selectedColor={primaryColor.main}
             icon={MilitaryTech}
@@ -191,12 +213,20 @@ export default function App() {
             onClick={() => navigate("/feats", { replace: true })}
           />
           <MenuItem
-            label="Classes"
+            label="Races"
             selectedColor={primaryColor.main}
-            icon={School}
-            outlinedIcon={SchoolOutlined}
-            selected={location.pathname == "/classes"}
-            onClick={() => navigate("/classes", { replace: true })}
+            icon={People}
+            outlinedIcon={PeopleOutlined}
+            selected={location.pathname == "/races"}
+            onClick={() => navigate("/races", { replace: true })}
+          />
+          <MenuItem
+            label="Backgrounds"
+            selectedColor={primaryColor.main}
+            icon={ChildFriendly}
+            outlinedIcon={ChildFriendlyOutlined}
+            selected={location.pathname == "/backgrounds"}
+            onClick={() => navigate("/backgrounds", { replace: true })}
           />
           <MenuItem
             label="Conditions"
