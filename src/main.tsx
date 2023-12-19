@@ -31,6 +31,8 @@ const router = createHashRouter([
       { path: "races", element: <></> },
       { path: "backgrounds", element: <></> },
       { path: "characters", element: <></> },
+      { path: "spells", element: <></> },
+      { path: "menu", element: <></> },
     ],
   },
 ]);
