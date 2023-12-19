@@ -42,7 +42,9 @@ export default function SearchAppBar() {
             <IconButton
               size="large"
               edge="start"
-              className="block ml-1 mr-3"
+              color="inherit"
+              aria-label="open drawer"
+              className="block mr-1"
               onClick={() => navigate(-1)}
             >
               <Home />
@@ -131,7 +133,7 @@ export default function SearchAppBar() {
                 edge="start"
                 color="inherit"
                 aria-label="open drawer"
-                className="block ml-4"
+                className="block ml-1"
                 onClick={
                   location.pathname == "/"
                     ? () => navigate("filter")
