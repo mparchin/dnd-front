@@ -49,7 +49,7 @@ export default function FeatsPage() {
         groupCounts={groupCounts.map((gc) => gc.count)}
         groupContent={(index) => {
           return (
-            <div className="flex p-0 flex-row leading-loose">
+            <div className="flex p-0 flex-row leading-loose mb-4">
               <Paper
                 className="flex flex-grow w-full pl-4 pr-4 pt-0.5 pb-0.5 rounded-none"
                 elevation={3}
@@ -73,7 +73,11 @@ export default function FeatsPage() {
           var feat = query[index];
           return (
             <>
-              <div className="pt-4 pl-4 pr-4">
+              <div
+                className={
+                  index == 0 ? "pt-4 pb-4 pl-4 pr-4" : "pb-4 pl-4 pr-4"
+                }
+              >
                 <Card elevation={5} className="rounded-2xl pr-4 pl-4 pt-2 pb-2">
                   <div className="flex flex-col w-full">
                     <strong
