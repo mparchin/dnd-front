@@ -16,6 +16,7 @@ import { useFilterStore } from "./FilterDialog";
 import { useMemo } from "react";
 import { useFeatFilterStore } from "./FeatsFilterDialog";
 import { useClassFilterStore } from "./ClassesFilterDialog";
+import { Home } from "@mui/icons-material";
 
 export default function SearchAppBar() {
   const navigate = useNavigate();
@@ -38,93 +39,100 @@ export default function SearchAppBar() {
       <Box className="flex-grow">
         <AppBar position="sticky" color={primaryString} className="">
           <Toolbar className="">
-            {/* <IconButton
+            <IconButton
               size="large"
               edge="start"
               color="inherit"
               aria-label="open drawer"
-              className="block ml-1 mr-3"
-              onClick={() => navigate("settings")}
+              className="block mr-1"
+              onClick={() => navigate(-1)}
             >
-              <Settings />
-            </IconButton> */}
-            <TextField
-              id="search"
-              variant="filled"
-              className="flex-grow"
-              size="small"
-              maxRows={1}
-              value={
-                location.pathname.includes("conditions") &&
-                filter.conditionSearchString
-                  ? filter.conditionSearchString
-                  : location.pathname == "/" && filter.searchString
-                  ? filter.searchString
-                  : location.pathname.includes("feats") &&
-                    featFilter.searchString
-                  ? featFilter.searchString
-                  : location.pathname.includes("classes") &&
-                    classFilter.searchString
-                  ? classFilter.searchString
-                  : ""
-              }
-              onChange={
-                location.pathname.includes("conditions")
-                  ? (e) => filter.setConditionSearchString(e.target.value)
-                  : location.pathname.includes("feats")
-                  ? (e) => featFilter.searchActions.set(e.target.value)
-                  : location.pathname.includes("classes")
-                  ? (e) => classFilter.searchActions.set(e.target.value)
-                  : (e) => filter.setSearchString(e.target.value)
-              }
-              sx={{
-                "& .MuiFilledInput-input": {
-                  padding: "10px 12px 12px 12px",
-                },
-                color: primaryColor.dark,
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment
-                    position="start"
-                    className="align-top mb-5 mr-0 pr-0"
-                    sx={{
-                      "& .MuiIconButton-root": {
-                        paddingRight: 0,
-                      },
-                    }}
-                  >
-                    {(location.pathname == "/" && filter.searchString) ||
-                    (location.pathname.includes("conditions") &&
-                      filter.conditionSearchString) ||
-                    (location.pathname.includes("feats") &&
-                      featFilter.searchString) ||
-                    (location.pathname.includes("classes") &&
-                      classFilter.searchString) ? (
-                      <IconButton
-                        onClick={
-                          location.pathname.includes("conditions")
-                            ? () => filter.setConditionSearchString(undefined)
-                            : location.pathname.includes("feats")
-                            ? () => featFilter.searchActions.set(undefined)
-                            : location.pathname.includes("classes")
-                            ? () => classFilter.searchActions.set(undefined)
-                            : () => filter.setSearchString(undefined)
-                        }
-                      >
-                        <ClearIcon className="align-top p-0" />
-                      </IconButton>
-                    ) : (
-                      <IconButton>
-                        <SearchIcon className="align-top p-0" />
-                      </IconButton>
-                    )}
-                  </InputAdornment>
-                ),
-              }}
-            />
+              <Home />
+            </IconButton>
+            {location.pathname.includes("settings") ? (
+              // <span>{location.pathname.replace("/", "").toUpperCase()}</span>
+              <></>
+            ) : (
+              <TextField
+                id="search"
+                variant="filled"
+                className="flex-grow"
+                size="small"
+                maxRows={1}
+                value={
+                  location.pathname.includes("conditions") &&
+                  filter.conditionSearchString
+                    ? filter.conditionSearchString
+                    : location.pathname == "/spells" && filter.searchString
+                    ? filter.searchString
+                    : location.pathname.includes("feats") &&
+                      featFilter.searchString
+                    ? featFilter.searchString
+                    : location.pathname.includes("classes") &&
+                      classFilter.searchString
+                    ? classFilter.searchString
+                    : ""
+                }
+                onChange={
+                  location.pathname.includes("conditions")
+                    ? (e) => filter.setConditionSearchString(e.target.value)
+                    : location.pathname.includes("feats")
+                    ? (e) => featFilter.searchActions.set(e.target.value)
+                    : location.pathname.includes("classes")
+                    ? (e) => classFilter.searchActions.set(e.target.value)
+                    : (e) => filter.setSearchString(e.target.value)
+                }
+                sx={{
+                  "& .MuiFilledInput-input": {
+                    padding: "10px 12px 12px 12px",
+                  },
+                  color: primaryColor.dark,
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment
+                      position="start"
+                      className="align-top mb-5 mr-0 pr-0"
+                      sx={{
+                        "& .MuiIconButton-root": {
+                          paddingRight: 0,
+                        },
+                      }}
+                    >
+                      {(location.pathname == "/spells" &&
+                        filter.searchString) ||
+                      (location.pathname.includes("conditions") &&
+                        filter.conditionSearchString) ||
+                      (location.pathname.includes("feats") &&
+                        featFilter.searchString) ||
+                      (location.pathname.includes("classes") &&
+                        classFilter.searchString) ? (
+                        <IconButton
+                          onClick={
+                            location.pathname.includes("conditions")
+                              ? () => filter.setConditionSearchString(undefined)
+                              : location.pathname.includes("feats")
+                              ? () => featFilter.searchActions.set(undefined)
+                              : location.pathname.includes("classes")
+                              ? () => classFilter.searchActions.set(undefined)
+                              : () => filter.setSearchString(undefined)
+                          }
+                        >
+                          <ClearIcon className="align-top p-0" />
+                        </IconButton>
+                      ) : (
+                        <IconButton>
+                          <SearchIcon className="align-top p-0" />
+                        </IconButton>
+                      )}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
 
-            {location.pathname.includes("conditions") ? (
+            {location.pathname.includes("conditions") ||
+            location.pathname.includes("settings") ? (
               <></>
             ) : (
               <IconButton
@@ -132,9 +140,9 @@ export default function SearchAppBar() {
                 edge="start"
                 color="inherit"
                 aria-label="open drawer"
-                className="block ml-4"
+                className="block ml-1"
                 onClick={
-                  location.pathname == "/"
+                  location.pathname == "/spells"
                     ? () => navigate("filter")
                     : location.pathname.includes("feats")
                     ? () => navigate("featsFilter")

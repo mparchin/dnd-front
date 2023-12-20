@@ -11,7 +11,7 @@ interface MenuItemProps {
 export default function (props: MenuItemProps) {
   return (
     <div
-      className="w-16 h-20 flex-shrink-0 flex-grow flex-col flex items-center"
+      className="w-20 h-20 flex-shrink-0 flex-grow flex-col flex items-center"
       onClick={props.onClick}
     >
       {props.outlinedIcon && !props.selected ? (

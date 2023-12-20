@@ -11,6 +11,26 @@ body {
   bottom: 0;
 }
 
+@keyframes splash {
+  from {
+    opacity: 1;
+    scale: 1;
+  }
+  to {
+    opacity: 0.1;
+    scale: 5;
+    display: none;
+  }
+}
+
+.animation-splash {
+  animation-name: splash;
+  animation-duration: 500ms;
+  animation-delay: 500ms;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
 div.conditions ul {
   list-style-type: none;
   padding-left: 1rem;
