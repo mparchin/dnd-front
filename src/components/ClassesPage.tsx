@@ -39,7 +39,7 @@ export default function ClassesPage() {
             <div className="pt-2 pl-4 pr-4 pb-2">
               <div className="flex flex-col w-full">
                 <strong
-                  className="text-lg"
+                  className="text-xl"
                   style={{ color: primaryColor.main }}
                 >
                   {feature.name}
