@@ -85,3 +85,12 @@ export interface FeatFilterList {
   repeatable: string[];
   books: string[];
 }
+
+export class Rule {
+  id: number = 0;
+  name: string = "";
+  category: string = "";
+  description: string = "";
+  order?: number;
+  time: number = 0;
+}
