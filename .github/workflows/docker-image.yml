@@ -41,3 +41,16 @@ jobs:
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.HOST_KEY }}
           script: docker compose pull && docker compose up -d
+  announce:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'production' }}
+    steps:
+      - name: announce update
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.HOST_PORT }}
+          username: ${{ secrets.HOST_USERNAME }}
+          key: ${{ secrets.HOST_KEY }}
+          script: ./announce.sh
