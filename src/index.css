@@ -53,14 +53,11 @@ div .text-tiny {
 
 div ul {
   list-style-type: disc;
-  padding-left: 1rem;
+  padding-left: 1.5rem;
 }
 div li::marker {
-  display: inline-block;
-  width: 1em;
-  margin-left: -1em;
-  font-weight: bold;
-  font-size: large;
+  font-weight: bolder;
+  font-size: x-large;
 }
 div.light li::marker {
   color: rgb(26, 122, 171);
