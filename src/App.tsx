@@ -21,6 +21,8 @@ import ClassFilterDialog from "./components/ClassesFilterDialog";
 import FeatsFilterDialog from "./components/FeatsFilterDialog";
 import Animation from "./components/Animation";
 import MenuPage from "./components/MenuPage";
+import GetAndSaveRules from "./API/rules";
+import RulesPage from "./components/RulesPage";
 
 export default function App() {
   const theme = useTheme();
@@ -79,6 +81,8 @@ export default function App() {
             <Animation />
           ) : location.pathname == "/menu" ? (
             <MenuPage />
+          ) : location.pathname == "/rules" ? (
+            <RulesPage />
           ) : (
             <CommingSoon />
           )}
@@ -93,6 +97,7 @@ export default function App() {
       <GetAndSaveConditions />
       <GetAndSaveFeatures />
       <GetAndSaveFeats />
+      <GetAndSaveRules />
     </>
   );
 }

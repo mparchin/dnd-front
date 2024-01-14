@@ -49,7 +49,8 @@ export default function SearchAppBar() {
             >
               <Home />
             </IconButton>
-            {location.pathname.includes("settings") ? (
+            {location.pathname.includes("settings") ||
+            location.pathname == "/rules" ? (
               // <span>{location.pathname.replace("/", "").toUpperCase()}</span>
               <></>
             ) : (
@@ -132,6 +133,7 @@ export default function SearchAppBar() {
             )}
 
             {location.pathname.includes("conditions") ||
+            location.pathname == "/rules" ||
             location.pathname.includes("settings") ? (
               <></>
             ) : (
