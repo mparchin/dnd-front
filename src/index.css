@@ -57,6 +57,7 @@ div ul {
 }
 div li::marker {
   font-weight: bolder;
+  line-height: 1.5rem;
   font-size: x-large;
 }
 div.light li::marker {
