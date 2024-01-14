@@ -68,9 +68,7 @@ export default function ClassesPage() {
                   __html: feature.description
                     .replace(/color:hsl\(0, 0%, 0%\);/g, "")
                     .replace(/color:hsl\(0,0%,0%\);/g, "")
-                    .replace(/style="width:\d*.\d*%;"/g, "")
-                    .replace(/list-style-type:circle;/g, "")
-                    .replace(/list-style-type:disc;/g, ""),
+                    .replace(/style="width:\d*.\d*%;"/g, ""),
                 }}
               />
             </div>
