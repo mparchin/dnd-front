@@ -188,7 +188,7 @@ export default function CharatersPage() {
             onClick={scrollToDiv}
             cardId="abilitiesCard"
             divId="abilities"
-            text="Abilities"
+            text="Skills"
           />
           <ScrollerCards
             onClick={scrollToDiv}
@@ -251,8 +251,8 @@ export default function CharatersPage() {
         ></div>
         <div id="saves" className="flex flex-row flex-wrap p-2 justify-around">
           <ProficientBox name="strength" value={3} proficiencyBonous={2} />
-          <ProficientBox name="dexterity" value={2} proficiencyBonous={2} />
-          <ProficientBox name="constitution" value={3} />
+          <ProficientBox name="dexterity" value={2} />
+          <ProficientBox name="constitution" value={3} proficiencyBonous={2} />
           <ProficientBox name="intelligence" value={-1} />
           <ProficientBox name="wisdom" value={-1} />
           <ProficientBox name="charisma" value={-1} />
