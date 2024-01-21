@@ -5,6 +5,7 @@ import Bonfire from "../assets/bonfire";
 import StatsBox from "./Characters/StatsBox";
 import ScrollerCards from "./Characters/ScrollerCards";
 import ProficientBox from "./Characters/ProficientBox";
+import ExpertBox from "./Characters/ExpertBox";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -49,7 +50,7 @@ function setActiveTab(primaryColor: string) {
     topArrays[0];
   var selectedTop = 0;
   topArrays.forEach((top) => {
-    if (currentScroll >= top) selectedTop = top;
+    if (currentScroll >= top - topArrays[0] / 2) selectedTop = top;
   });
   var index = topArrays.indexOf(selectedTop);
   if (index == 0) setCardBackgroundColor("statsCard", primaryColor);
@@ -187,7 +188,7 @@ export default function CharatersPage() {
             onClick={scrollToDiv}
             cardId="abilitiesCard"
             divId="abilities"
-            text="Abilities"
+            text="Skills"
           />
           <ScrollerCards
             onClick={scrollToDiv}
@@ -250,8 +251,8 @@ export default function CharatersPage() {
         ></div>
         <div id="saves" className="flex flex-row flex-wrap p-2 justify-around">
           <ProficientBox name="strength" value={3} proficiencyBonous={2} />
-          <ProficientBox name="dexterity" value={2} proficiencyBonous={2} />
-          <ProficientBox name="constitution" value={3} />
+          <ProficientBox name="dexterity" value={2} />
+          <ProficientBox name="constitution" value={3} proficiencyBonous={2} />
           <ProficientBox name="intelligence" value={-1} />
           <ProficientBox name="wisdom" value={-1} />
           <ProficientBox name="charisma" value={-1} />
@@ -262,8 +263,47 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="abilities">
-          <div className="w-80 h-80">abilities</div>
+        <div
+          id="abilities"
+          className="flex flex-row flex-wrap p-2 justify-around"
+        >
+          <ExpertBox
+            attribute="str"
+            name="athletics"
+            value={3}
+            proficiencyBonous={2}
+          />
+          <div className="h-4 w-full"></div>
+          <ExpertBox attribute="dex" name="acrobatics" value={2} />
+          <ExpertBox attribute="dex" name="sleight of hand" value={2} />
+          <ExpertBox
+            attribute="dex"
+            name="stealth"
+            value={2}
+            proficiencyBonous={2}
+          />
+          <div className="h-4 w-full"></div>
+          <ExpertBox attribute="int" name="arcana" value={-1} />
+          <ExpertBox attribute="int" name="history" value={-1} />
+          <ExpertBox attribute="int" name="investigation" value={-1} />
+          <ExpertBox attribute="int" name="nature" value={-1} />
+          <ExpertBox attribute="int" name="religion" value={-1} />
+          <div className="h-4 w-full"></div>
+          <ExpertBox attribute="wis" name="animal handling" value={-1} />
+          <ExpertBox attribute="wis" name="insight" value={-1} />
+          <ExpertBox attribute="wis" name="medicine" value={-1} />
+          <ExpertBox attribute="wis" name="perception" value={-1} />
+          <ExpertBox attribute="wis" name="survival" value={-1} />
+          <div className="h-4 w-full"></div>
+          <ExpertBox attribute="cha" name="deception" value={-1} />
+          <ExpertBox
+            attribute="cha"
+            name="intimidation"
+            value={-1}
+            proficiencyBonous={2}
+          />
+          <ExpertBox attribute="cha" name="performance" value={-1} />
+          <ExpertBox attribute="cha" name="persuasion" value={-1} />
         </div>
         <div
           className="h-0.5 w-screen m-5"
