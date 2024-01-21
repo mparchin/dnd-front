@@ -31,56 +31,49 @@ body {
   animation-fill-mode: forwards;
 }
 
-div.conditions ul {
-  list-style-type: none;
-  padding-left: 1rem;
+div .text-huge {
+  font-size: 1.5rem; /* 24px */
+  line-height: 2rem; /* 32px */
 }
-div.descriptions ul {
-  list-style-type: none;
-  padding-left: 1rem;
+
+div .text-big {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.75rem; /* 28px */
 }
-div.descriptions li::before {
-  content: "•";
-  display: inline-block;
-  width: 1em;
-  margin-left: -1em;
-  font-weight: bold;
-  font-size: large;
+
+div .text-small {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
 }
-div.descriptions.light li::before {
+
+div .text-tiny {
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem; /* 16px */
+}
+
+div ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+div li::marker {
+  font-weight: bolder;
+  line-height: 1.5rem;
+  font-size: x-large;
+}
+div.light li::marker {
   color: rgb(26, 122, 171);
 }
-div.descriptions.light.swappedColors li::before {
+div.light.swappedColors li::marker {
   color: rgb(196, 86, 30);
 }
-div.descriptions.dark li::before {
+div.dark li::marker {
   color: rgb(196, 86, 30);
 }
-div.descriptions.dark.swappedColors li::before {
+div.dark.swappedColors li::marker {
   color: rgb(26, 122, 171);
 }
 
-div.conditions li::before {
-  content: "•";
-  display: inline-block;
-  width: 1em;
-  margin-left: -1em;
-  font-weight: bold;
-  font-size: large;
-}
-div.conditions.light li::before {
-  color: rgb(26, 122, 171);
-}
-div.conditions.light.swappedColors li::before {
-  color: rgb(196, 86, 30);
-}
-div.conditions.dark li::before {
-  color: rgb(196, 86, 30);
-}
-div.conditions.dark.swappedColors li::before {
-  color: rgb(26, 122, 171);
-}
-div.descriptions table {
+div table {
   table-layout: auto;
   border-collapse: collapse;
   border-spacing: 0.5rem 0.5rem;
@@ -90,7 +83,7 @@ div.descriptions table {
   width: 100%;
   max-width: 640px;
 }
-div.descriptions td {
+div td {
   border-width: 1px;
   padding: 0.25rem;
   overflow: hidden;
@@ -98,27 +91,27 @@ div.descriptions td {
   text-overflow: ellipsis;
   word-wrap: break-word;
 }
-div.descriptions th {
+div th {
   border-width: 1px;
   padding: 0.25rem;
   font-size: small;
 }
-div.descriptions.light th {
+div.light th {
   color: rgb(26, 122, 171);
   background-color: #f5f5f5;
 }
-div.descriptions.light.swappedColors th {
+div.light.swappedColors th {
   color: rgb(196, 86, 30);
   background-color: #f5f5f5;
 }
-div.descriptions.light tr:nth-child(even) {
+div.light tr:nth-child(even) {
   background-color: #f5f5f5;
 }
-div.descriptions.dark th {
+div.dark th {
   color: rgb(196, 86, 30);
   background-color: #313131;
 }
-div.descriptions.dark.swappedColors th {
+div.dark.swappedColors th {
   color: rgb(26, 122, 171);
   background-color: #313131;
 }

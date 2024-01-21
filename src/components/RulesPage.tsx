@@ -1,21 +1,19 @@
 import { useTheme } from "@mui/material";
+import { getPrimaryColor, useThemeStore } from "../theme";
 import { useMemo } from "react";
-import { useThemeStore, getPrimaryColor } from "../theme";
+import { FilterData, useRuleListStore } from "../API/rules";
 import { Virtuoso } from "react-virtuoso";
-import { FilterData, useFeatureListStore } from "../API/feature";
 import Dndsvg from "../assets/dndsvg";
-import { useClassFilterStore } from "./ClassesFilterDialog";
 
-export default function ClassesPage() {
+export default function RulesPage() {
   const theme = useTheme();
   const themeStore = useThemeStore();
   const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
     theme,
     themeStore,
   ]);
-  const filter = useClassFilterStore((state) => state);
-  const features = useFeatureListStore((state) => state.features);
-  const query = useMemo(() => FilterData(features, filter), [features, filter]);
+  const rules = useRuleListStore((state) => state.rules);
+  const query = useMemo(() => FilterData(rules), [rules]);
 
   return (
     <div
@@ -34,7 +32,7 @@ export default function ClassesPage() {
         }}
         className="overflow-auto box-border"
         data={query}
-        itemContent={(index, feature) => (
+        itemContent={(index, rule) => (
           <>
             <div className="pt-2 pl-4 pr-4 pb-2">
               <div className="flex flex-col w-full">
@@ -42,30 +40,15 @@ export default function ClassesPage() {
                   className="text-xl"
                   style={{ color: primaryColor.main }}
                 >
-                  {feature.name}
+                  {rule.name}
                 </strong>
-                {feature.subclass &&
-                !(
-                  feature.name.toLowerCase() == feature.subclass.toLowerCase()
-                ) ? (
-                  <>
-                    <span
-                      style={{ color: primaryColor.main }}
-                      className="text-xs"
-                    >
-                      [{feature.subclass}]
-                    </span>
-                  </>
-                ) : (
-                  <></>
-                )}
               </div>
               <div
                 className={`pl-2 pr-2 descriptions ${theme.palette.mode} ${
                   themeStore.isPrimarySwapped ? "swappedColors" : ""
                 }`}
                 dangerouslySetInnerHTML={{
-                  __html: feature.description
+                  __html: rule.description
                     .replace(/color:hsl\(0, 0%, 0%\);/g, "")
                     .replace(/color:hsl\(0,0%,0%\);/g, "")
                     .replace(/style="width:\d*.\d*%;"/g, ""),
