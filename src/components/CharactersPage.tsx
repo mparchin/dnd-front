@@ -3,6 +3,8 @@ import { useMemo } from "react";
 import { useThemeStore, getPrimaryColor } from "../theme";
 import Bonfire from "../assets/bonfire";
 import StatsBox from "./Characters/StatsBox";
+import ScrollerCards from "./Characters/ScrollerCards";
+import ProficientBox from "./Characters/ProficientBox";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -14,6 +16,7 @@ function scrollToDiv(elementId: string) {
 function getTopArrays() {
   var ret: number[] = [];
   ret.push(document.getElementById("stats")?.offsetTop ?? 0);
+  ret.push(document.getElementById("saves")?.offsetTop ?? 0);
   ret.push(document.getElementById("abilities")?.offsetTop ?? 0);
   ret.push(document.getElementById("senses")?.offsetTop ?? 0);
   ret.push(document.getElementById("extras")?.offsetTop ?? 0);
@@ -27,6 +30,7 @@ function getTopArrays() {
 
 function setCardBackgroundColor(cardId: string, primaryColor: string) {
   document.getElementById("statsCard")!.style.backgroundColor = "";
+  document.getElementById("savesCard")!.style.backgroundColor = "";
   document.getElementById("abilitiesCard")!.style.backgroundColor = "";
   document.getElementById("sensesCard")!.style.backgroundColor = "";
   document.getElementById("extrasCard")!.style.backgroundColor = "";
@@ -49,14 +53,15 @@ function setActiveTab(primaryColor: string) {
   });
   var index = topArrays.indexOf(selectedTop);
   if (index == 0) setCardBackgroundColor("statsCard", primaryColor);
-  else if (index == 1) setCardBackgroundColor("abilitiesCard", primaryColor);
-  else if (index == 2) setCardBackgroundColor("sensesCard", primaryColor);
-  else if (index == 3) setCardBackgroundColor("extrasCard", primaryColor);
-  else if (index == 4) setCardBackgroundColor("spellsCard", primaryColor);
-  else if (index == 5) setCardBackgroundColor("inventoryCard", primaryColor);
-  else if (index == 6) setCardBackgroundColor("featuresCard", primaryColor);
-  else if (index == 7) setCardBackgroundColor("notesCard", primaryColor);
-  else if (index == 8) setCardBackgroundColor("namesCard", primaryColor);
+  else if (index == 1) setCardBackgroundColor("savesCard", primaryColor);
+  else if (index == 2) setCardBackgroundColor("abilitiesCard", primaryColor);
+  else if (index == 3) setCardBackgroundColor("sensesCard", primaryColor);
+  else if (index == 4) setCardBackgroundColor("extrasCard", primaryColor);
+  else if (index == 5) setCardBackgroundColor("spellsCard", primaryColor);
+  else if (index == 6) setCardBackgroundColor("inventoryCard", primaryColor);
+  else if (index == 7) setCardBackgroundColor("featuresCard", primaryColor);
+  else if (index == 8) setCardBackgroundColor("notesCard", primaryColor);
+  else if (index == 9) setCardBackgroundColor("namesCard", primaryColor);
 }
 
 export default function CharatersPage() {
@@ -165,124 +170,67 @@ export default function CharatersPage() {
           </div>
         </Card>
         <div className="flex flex-row overflow-auto">
-          <Card
-            elevation={3}
-            className="mt-1 mr-1 shrink-0 h-fit"
-            id="statsCard"
-            style={{ backgroundColor: primaryColor.main }}
-          >
-            <Button
-              color="inherit"
-              className="p-2"
-              onClick={() => scrollToDiv("stats")}
-            >
-              Stats
-            </Button>
-          </Card>
-          <Card
-            elevation={3}
-            className="mt-1 mr-1 shrink-0 h-fit"
-            id="abilitiesCard"
-          >
-            <Button
-              color="inherit"
-              className="p-2"
-              onClick={() => scrollToDiv("abilities")}
-            >
-              Abilities
-            </Button>
-          </Card>
-          <Card
-            elevation={3}
-            className="mt-1 mr-1 shrink-0 h-fit"
-            id="sensesCard"
-          >
-            <Button
-              color="inherit"
-              className="p-2"
-              onClick={() => scrollToDiv("senses")}
-            >
-              Senses
-            </Button>
-          </Card>
-          <Card
-            elevation={3}
-            className="mt-1 mr-1 shrink-0 h-fit"
-            id="extrasCard"
-          >
-            <Button
-              color="inherit"
-              className="p-2"
-              onClick={() => scrollToDiv("extras")}
-            >
-              Extras
-            </Button>
-          </Card>
-          <Card
-            elevation={3}
-            className="mt-1 mr-1 shrink-0 h-fit"
-            id="spellsCard"
-          >
-            <Button
-              color="inherit"
-              className="p-2"
-              onClick={() => scrollToDiv("spells")}
-            >
-              Spells
-            </Button>
-          </Card>
-          <Card
-            elevation={3}
-            className="mt-1 mr-1 shrink-0 h-fit"
-            id="inventoryCard"
-          >
-            <Button
-              color="inherit"
-              className="p-2"
-              onClick={() => scrollToDiv("inventory")}
-            >
-              Inventory
-            </Button>
-          </Card>
-          <Card
-            elevation={3}
-            className="mt-1 mr-1 shrink-0 h-fit"
-            id="featuresCard"
-          >
-            <Button
-              color="inherit"
-              className="p-2"
-              onClick={() => scrollToDiv("features")}
-            >
-              Features
-            </Button>
-          </Card>
-          <Card
-            elevation={3}
-            className="mt-1 mr-1 shrink-0 h-fit"
-            id="notesCard"
-          >
-            <Button
-              color="inherit"
-              className="p-2"
-              onClick={() => scrollToDiv("notes")}
-            >
-              Notes
-            </Button>
-          </Card>
-          <Card
-            elevation={3}
-            className="mt-1 mr-1 shrink-0 h-fit"
-            id="namesCard"
-          >
-            <Button
-              color="inherit"
-              className="p-2"
-              onClick={() => scrollToDiv("names")}
-            >
-              Names
-            </Button>
-          </Card>
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="statsCard"
+            divId="stats"
+            text="Stats"
+            selected
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="savesCard"
+            divId="saves"
+            text="Saves"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="abilitiesCard"
+            divId="abilities"
+            text="Abilities"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="sensesCard"
+            divId="senses"
+            text="Senses"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="extrasCard"
+            divId="extras"
+            text="Extras"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="spellsCard"
+            divId="spells"
+            text="Spells"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="inventoryCard"
+            divId="inventory"
+            text="Inventory"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="featuresCard"
+            divId="features"
+            text="Features"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="notesCard"
+            divId="notes"
+            text="Notes"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="namesCard"
+            divId="names"
+            text="Names"
+          />
         </div>
       </div>
       <div className="w-full flex flex-row flex-wrap">
@@ -294,27 +242,89 @@ export default function CharatersPage() {
           <StatsBox name="wisdom" value={8} />
           <StatsBox name="charisma" value={8} />
         </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
+        <div id="saves" className="flex flex-row flex-wrap p-2 justify-around">
+          <ProficientBox name="strength" value={3} proficiencyBonous={2} />
+          <ProficientBox name="dexterity" value={2} proficiencyBonous={2} />
+          <ProficientBox name="constitution" value={3} />
+          <ProficientBox name="intelligence" value={-1} />
+          <ProficientBox name="wisdom" value={-1} />
+          <ProficientBox name="charisma" value={-1} />
+        </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
         <div id="abilities">
           <div className="w-80 h-80">abilities</div>
         </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
         <div id="senses">
           <div className="w-80 h-80">senses</div>
         </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
         <div id="extras">
           <div className="w-80 h-80">extras</div>
         </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
         <div id="spells">
           <div className="w-80 h-80">spells</div>
         </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
         <div id="inventory">
           <div className="w-80 h-80">inventory</div>
         </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
         <div id="features">
           <div className="w-80 h-80">features</div>
         </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
         <div id="notes">
           <div className="w-80 h-80">notes</div>
         </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
         <div id="names">
           <div className="w-80 h-80">names</div>
         </div>

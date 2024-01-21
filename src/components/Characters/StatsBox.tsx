@@ -17,19 +17,17 @@ export default function (props: stats) {
   var modifire = Math.floor((props.value - 10) / 2);
   return (
     <div
-      className="bg-no-repeat flex flex-col w-28 h-28 mb-2 ml-1 mr-1"
+      className="bg-no-repeat flex flex-col w-28 h-28 m-1"
       style={{
         backgroundImage:
-          (themeStore.mode == ThemeMode.light &&
-            !themeStore.isPrimarySwapped) ||
-          (themeStore.mode == ThemeMode.dark && themeStore.isPrimarySwapped)
-            ? "url('/box-bg-blue.svg')"
-            : "url('/box-bg-orange.svg')",
+          themeStore.mode == ThemeMode.light
+            ? "url('/box-bg-grey.svg')"
+            : "url('/box-bg-white.svg')",
       }}
     >
       <span
         className="grow text-center text-xl"
-        // style={{ color: primaryColor.main }}
+        style={{ color: primaryColor.main }}
       >
         {props.value}
       </span>
