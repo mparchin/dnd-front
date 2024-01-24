@@ -6,6 +6,7 @@ import StatsBox from "./Characters/StatsBox";
 import ScrollerCards from "./Characters/ScrollerCards";
 import ProficientBox from "./Characters/ProficientBox";
 import ExpertBox from "./Characters/ExpertBox";
+import SensesBox from "./Characters/SensesBox";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -311,8 +312,11 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="senses">
-          <div className="w-80 h-80">senses</div>
+        <div id="senses" className="flex flex-row flex-wrap p-2 justify-around">
+          <SensesBox name="Passive Wisdom (Insight)" value={9} />
+          <SensesBox name="Passive Wisdom (Perception)" value={9} />
+          <SensesBox name="Passive Intelligence (Investigation)" value={9} />
+          <SensesBox name="Darkvision" value={60} unit="ft." />
         </div>
         <div
           className="h-0.5 w-screen m-5"
