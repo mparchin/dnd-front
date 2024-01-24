@@ -29,7 +29,7 @@ export default function (props: ProficientBoxProps) {
 
   return (
     <div
-      className="flex flex-row bg-no-repeat h-12 w-64 m-1"
+      className="flex flex-row bg-no-repeat h-12 m-1"
       style={{
         backgroundImage:
           themeStore.mode == ThemeMode.light
@@ -37,12 +37,13 @@ export default function (props: ProficientBoxProps) {
             : "url('/proficient-box-bg-white.svg')",
       }}
     >
-      <div
-        className="h-full"
-        style={{ paddingTop: "0.6rem", width: "0.88rem" }}
-      >
+      <div style={{ paddingTop: "0.5rem", width: "0.93rem" }}>
         {props.proficiencyBonous ? (
-          <Circle color={primaryColorString} style={{ width: "0.88rem" }} />
+          <Circle
+            className="relative z-0"
+            color={primaryColorString}
+            style={{ width: "0.93rem", left: "-0.06rem" }}
+          />
         ) : (
           <></>
         )}

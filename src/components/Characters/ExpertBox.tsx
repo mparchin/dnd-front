@@ -31,7 +31,7 @@ export default function (props: ExpertBoxProps) {
 
   return (
     <div
-      className="flex flex-row bg-no-repeat h-12 w-80 m-1"
+      className="flex flex-row bg-no-repeat h-12 m-1"
       style={{
         backgroundImage:
           themeStore.mode == ThemeMode.light
@@ -39,9 +39,13 @@ export default function (props: ExpertBoxProps) {
             : "url('/expert-box-bg-white.svg')",
       }}
     >
-      <div style={{ paddingTop: "0.18rem", width: "0.88rem" }}>
+      <div style={{ paddingTop: "0.18rem", width: "0.97rem" }}>
         {props.proficiencyBonous ? (
-          <Circle color={primaryColorString} style={{ width: "0.88rem" }} />
+          <Circle
+            color={primaryColorString}
+            className="relative z-0"
+            style={{ width: "0.97rem", left: "-0.07rem" }}
+          />
         ) : (
           <></>
         )}
@@ -50,8 +54,9 @@ export default function (props: ExpertBoxProps) {
             className="relative z-0"
             color={primaryColorString}
             style={{
-              top: "-0.8rem",
-              width: "0.88rem",
+              top: "-0.79rem",
+              width: "0.97rem",
+              left: "-0.07rem",
             }}
           />
         ) : (
