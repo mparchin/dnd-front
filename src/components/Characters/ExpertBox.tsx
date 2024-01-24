@@ -33,36 +33,14 @@ export default function (props: ExpertBoxProps) {
     <div
       className="flex flex-row bg-no-repeat h-12 m-1"
       style={{
-        backgroundImage:
-          themeStore.mode == ThemeMode.light
-            ? "url('/expert-box-bg-grey.svg')"
-            : "url('/expert-box-bg-white.svg')",
+        backgroundImage: `url('/expert-box-bg-${
+          themeStore.mode == ThemeMode.light ? "grey" : "white"
+        }${props.proficiencyBonous ? `-${primaryColorString}` : ""}${
+          props.expert ? `-${primaryColorString}` : ""
+        }.svg')`,
       }}
     >
-      <div style={{ paddingTop: "0.18rem", width: "0.97rem" }}>
-        {props.proficiencyBonous ? (
-          <Circle
-            color={primaryColorString}
-            className="relative z-0"
-            style={{ width: "0.97rem", left: "-0.07rem" }}
-          />
-        ) : (
-          <></>
-        )}
-        {props.expert ? (
-          <Circle
-            className="relative z-0"
-            color={primaryColorString}
-            style={{
-              top: "-0.79rem",
-              width: "0.97rem",
-              left: "-0.07rem",
-            }}
-          />
-        ) : (
-          <></>
-        )}
-      </div>
+      <div className="w-4"></div>
       <div className="w-12 h-full text-center flex flex-col pr-1">
         <span className="grow-[2]"></span>
         <span className="shrink uppercase text-sm">{props.attribute}</span>
@@ -81,7 +59,7 @@ export default function (props: ExpertBoxProps) {
         >
           {props.proficiencyBonous
             ? `${props.expert ? "2" : ""}D${props.proficiencyBonous * 2}`
-            : ""}{" "}
+            : ""}
           {props.value > 0 ? `+${props.value}` : props.value}
         </span>
         <span className="grow-[3]"></span>
