@@ -281,7 +281,6 @@ export default function CharatersPage() {
             name="stealth"
             value={2}
             proficiencyBonous={2}
-            expert
           />
           <div className="h-4 w-full"></div>
           <ExpertBox attribute="int" name="arcana" value={-1} />

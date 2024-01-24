@@ -31,35 +31,24 @@ export default function (props: ProficientBoxProps) {
     <div
       className="flex flex-row bg-no-repeat h-12 m-1"
       style={{
-        backgroundImage:
-          themeStore.mode == ThemeMode.light
-            ? "url('/proficient-box-bg-grey.svg')"
-            : "url('/proficient-box-bg-white.svg')",
+        backgroundImage: `url('/proficient-box-bg-${
+          themeStore.mode == ThemeMode.light ? "grey" : "white"
+        }${props.proficiencyBonous ? `-${primaryColorString}.svg` : ".svg"}')`,
       }}
     >
-      <div style={{ paddingTop: "0.5rem", width: "0.93rem" }}>
-        {props.proficiencyBonous ? (
-          <Circle
-            className="relative z-0"
-            color={primaryColorString}
-            style={{ width: "0.93rem", left: "-0.06rem" }}
-          />
-        ) : (
-          <></>
-        )}
-      </div>
-      <div className="w-28 h-full text-center flex flex-col pr-2">
+      <div className="w-4"></div>
+      <div className="w-28 h-full text-center flex flex-col pr-3">
         <span className="grow-[2]"></span>
         <span className="shrink uppercase text-sm">{props.name}</span>
         <span className="grow-[3]"></span>
       </div>
-      <div className="w-28 h-full text-center flex flex-col pl-3">
+      <div className="w-28 h-full text-center flex flex-col">
         <span className="grow-[2]"></span>
         <span
           className="shrink uppercase text-2xl font-bold"
           style={{ color: primaryColor.main }}
         >
-          {props.proficiencyBonous ? `D${props.proficiencyBonous * 2}` : ""}{" "}
+          {props.proficiencyBonous ? `D${props.proficiencyBonous * 2}` : ""}
           {props.value > 0 ? `+${props.value}` : props.value}
         </span>
         <span className="grow-[3]"></span>
