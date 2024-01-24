@@ -79,7 +79,7 @@ export default function CharatersPage() {
       onScroll={() => setActiveTab(primaryColor.main)}
     >
       <div
-        className="sticky top-0"
+        className="sticky top-0 z-50"
         style={{
           backgroundColor:
             theme.palette.mode == "dark"
@@ -281,6 +281,7 @@ export default function CharatersPage() {
             name="stealth"
             value={2}
             proficiencyBonous={2}
+            expert
           />
           <div className="h-4 w-full"></div>
           <ExpertBox attribute="int" name="arcana" value={-1} />

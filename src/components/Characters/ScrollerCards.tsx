@@ -20,7 +20,7 @@ export default function (props: ScrollerCardsProps) {
   return (
     <Card
       elevation={3}
-      className="mt-1 mr-1 shrink-0 h-fit"
+      className="mt-1 mb-1 mr-1 shrink-0"
       id={props.cardId}
       style={{ backgroundColor: props.selected ? primaryColor.main : "" }}
     >

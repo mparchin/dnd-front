@@ -37,12 +37,12 @@ export default function (props: ProficientBoxProps) {
             : "url('/proficient-box-bg-white.svg')",
       }}
     >
-      <div className="w-4 h-full" style={{ paddingTop: "9px" }}>
+      <div className="w-4 h-full" style={{ paddingTop: "3.5%" }}>
         {props.proficiencyBonous ? (
           <Circle
             className="w-4"
             color={primaryColorString}
-            style={{ paddingRight: "2px" }}
+            style={{ paddingRight: "12%" }}
           />
         ) : (
           <></>
