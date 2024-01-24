@@ -39,21 +39,20 @@ export default function (props: ExpertBoxProps) {
             : "url('/expert-box-bg-white.svg')",
       }}
     >
-      <div className="w-4" style={{ paddingTop: "0.14rem" }}>
+      <div style={{ paddingTop: "0.14rem", width: "0.88rem" }}>
         {props.proficiencyBonous ? (
-          <Circle
-            className="w-4"
-            color={primaryColorString}
-            style={{ paddingRight: "0.11rem" }}
-          />
+          <Circle color={primaryColorString} style={{ width: "0.88rem" }} />
         ) : (
           <></>
         )}
         {props.expert ? (
           <Circle
-            className="w-4 relative z-0"
+            className="relative z-0"
             color={primaryColorString}
-            style={{ paddingRight: "0.11rem", top: "-0.75rem" }}
+            style={{
+              top: "-0.75rem",
+              width: "0.88rem",
+            }}
           />
         ) : (
           <></>
