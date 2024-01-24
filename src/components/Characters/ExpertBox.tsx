@@ -6,7 +6,6 @@ import {
   ThemeMode,
   getPrimaryString,
 } from "../../theme";
-import { Circle } from "@mui/icons-material";
 
 interface ExpertBoxProps {
   name: string;
