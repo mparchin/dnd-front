@@ -1,0 +1,4 @@
+<svg viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <path fill="none" strokeLinecap="round" stroke-width="2" strokeLinejoin="round" stroke="#FFF" 
+    d="M10 1 L170 1 Q170 10 179 10 L179 110 Q170 110 170 119 L10 119 Q10 110 1 110 L1 10 Q10 10 10 0 M1 90 L179 90 M90 1 L90 90" />
+</svg>
