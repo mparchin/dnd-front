@@ -6,6 +6,8 @@ import StatsBox from "./Characters/StatsBox";
 import ScrollerCards from "./Characters/ScrollerCards";
 import ProficientBox from "./Characters/ProficientBox";
 import ExpertBox from "./Characters/ExpertBox";
+import SensesBox from "./Characters/SensesBox";
+import ExtrasBox from "./Characters/ExtrasBox";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -235,7 +237,10 @@ export default function CharatersPage() {
         </div>
       </div>
       <div className="w-full flex flex-row flex-wrap">
-        <div id="stats" className="flex flex-row flex-wrap p-2 justify-between">
+        <div
+          id="stats"
+          className="flex flex-row flex-wrap p-2 justify-around w-full"
+        >
           <StatsBox name="strength" value={17} />
           <StatsBox name="dexterity" value={15} />
           <StatsBox name="constitution" value={16} />
@@ -249,7 +254,10 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="saves" className="flex flex-row flex-wrap p-2 justify-around">
+        <div
+          id="saves"
+          className="flex flex-row flex-wrap p-2 justify-around  w-full"
+        >
           <ProficientBox name="strength" value={3} proficiencyBonous={2} />
           <ProficientBox name="dexterity" value={2} />
           <ProficientBox name="constitution" value={3} proficiencyBonous={2} />
@@ -265,7 +273,7 @@ export default function CharatersPage() {
         ></div>
         <div
           id="abilities"
-          className="flex flex-row flex-wrap p-2 justify-around"
+          className="flex flex-row flex-wrap p-2 justify-around  w-full"
         >
           <ExpertBox
             attribute="str"
@@ -311,8 +319,14 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="senses">
-          <div className="w-80 h-80">senses</div>
+        <div
+          id="senses"
+          className="flex flex-row flex-wrap p-2 justify-around  w-full"
+        >
+          <SensesBox name="Passive Wisdom (Insight)" value={9} />
+          <SensesBox name="Passive Wisdom (Perception)" value={9} />
+          <SensesBox name="Passive Intelligence (Investigation)" value={9} />
+          <SensesBox name="Darkvision" value={60} unit="ft." />
         </div>
         <div
           className="h-0.5 w-screen m-5"
@@ -320,8 +334,13 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="extras">
-          <div className="w-80 h-80">extras</div>
+        <div
+          id="extras"
+          className="flex flex-row flex-wrap p-2 justify-around w-full"
+        >
+          <ExtrasBox name="Hit dice d12" total={3} used={1} />
+          <ExtrasBox name="rage" total={3} used={1} />
+          <ExtrasBox name="healing surge" total={1} used={1} />
         </div>
         <div
           className="h-0.5 w-screen m-5"
