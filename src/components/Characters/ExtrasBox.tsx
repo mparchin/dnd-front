@@ -18,7 +18,7 @@ export default function (props: ExtrasBoxProps) {
 
   return (
     <div
-      className="flex flex-col bg-no-repeat h-32 w-44 m-2 pt-2"
+      className="flex flex-col bg-no-repeat h-28 w-40 m-2"
       style={{
         backgroundImage: `url('/extra-box-bg-${
           themeStore.mode == ThemeMode.light ? "grey" : "white"
@@ -27,7 +27,7 @@ export default function (props: ExtrasBoxProps) {
     >
       <div className="w-full h-20 flex flex-row pl-1">
         <div className="h-full w-20 text-center flex flex-col">
-          <div className="grow flex flex-col pt-2">
+          <div className="grow flex flex-col pt-3">
             <span className="grow"></span>
             <span
               className="grow text-4xl font-bold"
@@ -39,8 +39,8 @@ export default function (props: ExtrasBoxProps) {
           </div>
           <span className="shrink uppercase text-xxs">total</span>
         </div>
-        <div className="h-full w-20 ml-2 text-center flex flex-col">
-          <div className="grow flex flex-col pt-2">
+        <div className="h-full w-20 ml-1 text-center flex flex-col">
+          <div className="grow flex flex-col pt-3">
             <span className="grow"></span>
             <span
               className="grow text-4xl font-bold"
@@ -53,7 +53,7 @@ export default function (props: ExtrasBoxProps) {
           <span className="shrink uppercase text-xxs">used</span>
         </div>
       </div>
-      <div className="w-full h-7 flex flex-col text-center text-sm uppercase">
+      <div className="w-full h-6 flex flex-col text-center text-sm uppercase">
         <span className="grow"></span>
         <span className="grow"></span>
         <span className="grow">{props.name}</span>
