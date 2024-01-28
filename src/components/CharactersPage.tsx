@@ -1,6 +1,6 @@
 import { Avatar, Button, Card, IconButton, useTheme } from "@mui/material";
 import { useMemo } from "react";
-import { useThemeStore, getPrimaryColor } from "../theme";
+import { useThemeStore, getPrimaryColor, getPrimaryString } from "../theme";
 import Bonfire from "../assets/bonfire";
 import StatsBox from "./Characters/StatsBox";
 import ScrollerCards from "./Characters/ScrollerCards";
@@ -8,6 +8,7 @@ import ProficientBox from "./Characters/ProficientBox";
 import ExpertBox from "./Characters/ExpertBox";
 import SensesBox from "./Characters/SensesBox";
 import ExtrasBox from "./Characters/ExtrasBox";
+import CharacterSpells from "./Characters/CharacterSpells";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -74,6 +75,10 @@ export default function CharatersPage() {
     theme,
     themeStore,
   ]);
+  const primaryColorString = useMemo(
+    () => getPrimaryString(theme, themeStore),
+    [theme, themeStore]
+  );
   return (
     <div
       id="scrollingContainer"
@@ -348,9 +353,116 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="spells">
-          <div className="w-80 h-80">spells</div>
+        <div
+          id="spells"
+          className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
+        >
+          <div className="w-full flex flex-row justify-center mb-5">
+            <div className="flex flex-col text-center w-20 mr-5">
+              <div className="grow">
+                <span className="text-2xl font-bold">
+                  <span style={{ color: primaryColor.main }}>+5</span>
+                </span>
+              </div>
+              <div className="text-xxs uppercase">modifire</div>
+            </div>
+            <div className="flex flex-col text-center w-20 mr-5">
+              <div className="grow">
+                <span className="text-2xl font-bold">
+                  <span style={{ color: primaryColor.main }}>D4+5</span>
+                </span>
+              </div>
+              <div className="text-xxs uppercase">Spell attack</div>
+            </div>
+            <div className="flex flex-col text-center w-20">
+              <div className="grow">
+                <span
+                  className="text-2xl font-bold"
+                  style={{ color: primaryColor.main }}
+                >
+                  15
+                </span>
+              </div>
+              <div className="text-xxs uppercase">save DC</div>
+            </div>
+          </div>
+          <div className="w-full flex flex-row">
+            <div className="grow"></div>
+            <Button
+              variant="outlined"
+              color={primaryColorString}
+              className="p-2 mb-10"
+            >
+              Manage spells
+            </Button>
+            <div className="grow"></div>
+          </div>
+          <CharacterSpells
+            spells={[
+              {
+                id: 0,
+                level: 0,
+                name: "primal savagery",
+                time: "action",
+                prepaired: true,
+              },
+              {
+                id: 1,
+                level: 0,
+                name: "primal savagery",
+                time: "action",
+                prepaired: true,
+              },
+              {
+                id: 2,
+                level: 0,
+                name: "primal savagery",
+                time: "action",
+                prepaired: true,
+              },
+              {
+                id: 3,
+                level: 0,
+                name: "primal savagery",
+                time: "action",
+                prepaired: true,
+              },
+              {
+                id: 4,
+                level: 0,
+                name: "primal savagery",
+                time: "action",
+                prepaired: true,
+              },
+              {
+                id: 5,
+                level: 1,
+                name: "primal savagery",
+                time: "action",
+                prepaired: true,
+                concentration: true,
+              },
+              {
+                id: 6,
+                level: 1,
+                name: "primal savagery",
+                time: "action",
+                prepaired: true,
+                concentration: true,
+              },
+              {
+                id: 7,
+                level: 2,
+                name: "primal savagery",
+                time: "action",
+                prepaired: true,
+                concentration: true,
+                ritual: true,
+              },
+            ]}
+          />
         </div>
+
         <div
           className="h-0.5 w-screen m-5"
           style={{
