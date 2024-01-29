@@ -10,6 +10,7 @@ import SensesBox from "./Characters/SensesBox";
 import ExtrasBox from "./Characters/ExtrasBox";
 import CharacterSpells from "./Characters/CharacterSpells";
 import CharacterInventory from "./Characters/CharacterInventory";
+import CharacterAttacks from "./Characters/CharacterAttacks";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -25,6 +26,7 @@ function getTopArrays() {
   ret.push(document.getElementById("abilities")?.offsetTop ?? 0);
   ret.push(document.getElementById("senses")?.offsetTop ?? 0);
   ret.push(document.getElementById("extras")?.offsetTop ?? 0);
+  ret.push(document.getElementById("attacks")?.offsetTop ?? 0);
   ret.push(document.getElementById("spells")?.offsetTop ?? 0);
   ret.push(document.getElementById("inventory")?.offsetTop ?? 0);
   ret.push(document.getElementById("features")?.offsetTop ?? 0);
@@ -39,6 +41,7 @@ function setCardBackgroundColor(cardId: string, primaryColor: string) {
   document.getElementById("abilitiesCard")!.style.backgroundColor = "";
   document.getElementById("sensesCard")!.style.backgroundColor = "";
   document.getElementById("extrasCard")!.style.backgroundColor = "";
+  document.getElementById("attacksCard")!.style.backgroundColor = "";
   document.getElementById("spellsCard")!.style.backgroundColor = "";
   document.getElementById("inventoryCard")!.style.backgroundColor = "";
   document.getElementById("featuresCard")!.style.backgroundColor = "";
@@ -62,11 +65,12 @@ function setActiveTab(primaryColor: string) {
   else if (index == 2) setCardBackgroundColor("abilitiesCard", primaryColor);
   else if (index == 3) setCardBackgroundColor("sensesCard", primaryColor);
   else if (index == 4) setCardBackgroundColor("extrasCard", primaryColor);
-  else if (index == 5) setCardBackgroundColor("spellsCard", primaryColor);
-  else if (index == 6) setCardBackgroundColor("inventoryCard", primaryColor);
-  else if (index == 7) setCardBackgroundColor("featuresCard", primaryColor);
-  else if (index == 8) setCardBackgroundColor("notesCard", primaryColor);
-  else if (index == 9) setCardBackgroundColor("namesCard", primaryColor);
+  else if (index == 5) setCardBackgroundColor("attacksCard", primaryColor);
+  else if (index == 6) setCardBackgroundColor("spellsCard", primaryColor);
+  else if (index == 7) setCardBackgroundColor("inventoryCard", primaryColor);
+  else if (index == 8) setCardBackgroundColor("featuresCard", primaryColor);
+  else if (index == 9) setCardBackgroundColor("notesCard", primaryColor);
+  else if (index == 10) setCardBackgroundColor("namesCard", primaryColor);
 }
 
 export default function CharatersPage() {
@@ -212,6 +216,12 @@ export default function CharatersPage() {
           />
           <ScrollerCards
             onClick={scrollToDiv}
+            cardId="attacksCard"
+            divId="attacks"
+            text="attacks"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
             cardId="spellsCard"
             divId="spells"
             text="Spells"
@@ -348,6 +358,62 @@ export default function CharatersPage() {
           <ExtrasBox name="Hit dice d12" total={3} used={1} />
           <ExtrasBox name="rage" total={3} used={1} />
           <ExtrasBox name="healing surge" total={1} used={1} />
+        </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
+        <div
+          id="attacks"
+          className="flex flex-row flex-wrap p-2 justify-around w-full"
+        >
+          <div className="w-full flex flex-row">
+            <div className="grow"></div>
+            <Button
+              variant="outlined"
+              color={primaryColorString}
+              className="p-2 mb-10"
+            >
+              Manage attacks
+            </Button>
+            <div className="grow"></div>
+          </div>
+          <CharacterAttacks
+            items={[
+              {
+                id: 1,
+                category: "Weapons",
+                damageDices: "1D12",
+                damageModifire: 4,
+                name: "Big fucking +1 hammer",
+                type: "Bludgeoning",
+                toHitModifire: 4,
+                proficiencyBonous: 2,
+              },
+              {
+                id: 2,
+                category: "Weapons",
+                damageDices: "1D4",
+                damageModifire: 4,
+                name: "Shiv +1",
+                type: "Piercing",
+                toHitModifire: 4,
+                proficiencyBonous: 2,
+              },
+              {
+                id: 3,
+                category: "Cantrips",
+                damageDices: "1D10",
+                damageModifire: 0,
+                name: "Primal savagery",
+                type: "Acid",
+                toHitModifire: 5,
+                proficiencyBonous: 2,
+              },
+            ]}
+          />
         </div>
         <div
           className="h-0.5 w-screen m-5"
