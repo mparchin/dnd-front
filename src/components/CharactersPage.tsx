@@ -9,6 +9,9 @@ import ExpertBox from "./Characters/ExpertBox";
 import SensesBox from "./Characters/SensesBox";
 import ExtrasBox from "./Characters/ExtrasBox";
 import CharacterSpells from "./Characters/CharacterSpells";
+import CharacterInventory from "./Characters/CharacterInventory";
+import CharacterAttacks from "./Characters/CharacterAttacks";
+import CharacterFeatures from "./Characters/CharacterFeatures";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -24,6 +27,7 @@ function getTopArrays() {
   ret.push(document.getElementById("abilities")?.offsetTop ?? 0);
   ret.push(document.getElementById("senses")?.offsetTop ?? 0);
   ret.push(document.getElementById("extras")?.offsetTop ?? 0);
+  ret.push(document.getElementById("attacks")?.offsetTop ?? 0);
   ret.push(document.getElementById("spells")?.offsetTop ?? 0);
   ret.push(document.getElementById("inventory")?.offsetTop ?? 0);
   ret.push(document.getElementById("features")?.offsetTop ?? 0);
@@ -38,6 +42,7 @@ function setCardBackgroundColor(cardId: string, primaryColor: string) {
   document.getElementById("abilitiesCard")!.style.backgroundColor = "";
   document.getElementById("sensesCard")!.style.backgroundColor = "";
   document.getElementById("extrasCard")!.style.backgroundColor = "";
+  document.getElementById("attacksCard")!.style.backgroundColor = "";
   document.getElementById("spellsCard")!.style.backgroundColor = "";
   document.getElementById("inventoryCard")!.style.backgroundColor = "";
   document.getElementById("featuresCard")!.style.backgroundColor = "";
@@ -61,11 +66,12 @@ function setActiveTab(primaryColor: string) {
   else if (index == 2) setCardBackgroundColor("abilitiesCard", primaryColor);
   else if (index == 3) setCardBackgroundColor("sensesCard", primaryColor);
   else if (index == 4) setCardBackgroundColor("extrasCard", primaryColor);
-  else if (index == 5) setCardBackgroundColor("spellsCard", primaryColor);
-  else if (index == 6) setCardBackgroundColor("inventoryCard", primaryColor);
-  else if (index == 7) setCardBackgroundColor("featuresCard", primaryColor);
-  else if (index == 8) setCardBackgroundColor("notesCard", primaryColor);
-  else if (index == 9) setCardBackgroundColor("namesCard", primaryColor);
+  else if (index == 5) setCardBackgroundColor("attacksCard", primaryColor);
+  else if (index == 6) setCardBackgroundColor("spellsCard", primaryColor);
+  else if (index == 7) setCardBackgroundColor("inventoryCard", primaryColor);
+  else if (index == 8) setCardBackgroundColor("featuresCard", primaryColor);
+  else if (index == 9) setCardBackgroundColor("notesCard", primaryColor);
+  else if (index == 10) setCardBackgroundColor("namesCard", primaryColor);
 }
 
 export default function CharatersPage() {
@@ -211,6 +217,12 @@ export default function CharatersPage() {
           />
           <ScrollerCards
             onClick={scrollToDiv}
+            cardId="attacksCard"
+            divId="attacks"
+            text="attacks"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
             cardId="spellsCard"
             divId="spells"
             text="Spells"
@@ -264,7 +276,7 @@ export default function CharatersPage() {
           className="flex flex-row flex-wrap p-2 justify-around  w-full"
         >
           <ProficientBox name="strength" value={3} proficiencyBonous={2} />
-          <ProficientBox name="dexterity" value={2} />
+          <ProficientBox name="dexterity" value={2} advantage />
           <ProficientBox name="constitution" value={3} proficiencyBonous={2} />
           <ProficientBox name="intelligence" value={-1} />
           <ProficientBox name="wisdom" value={-1} />
@@ -285,6 +297,7 @@ export default function CharatersPage() {
             name="athletics"
             value={3}
             proficiencyBonous={2}
+            advantage
           />
           <div className="h-4 w-full"></div>
           <ExpertBox attribute="dex" name="acrobatics" value={2} />
@@ -346,6 +359,62 @@ export default function CharatersPage() {
           <ExtrasBox name="Hit dice d12" total={3} used={1} />
           <ExtrasBox name="rage" total={3} used={1} />
           <ExtrasBox name="healing surge" total={1} used={1} />
+        </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
+        <div
+          id="attacks"
+          className="flex flex-row flex-wrap p-2 justify-around w-full"
+        >
+          <div className="w-full flex flex-row">
+            <div className="grow"></div>
+            <Button
+              variant="outlined"
+              color={primaryColorString}
+              className="p-2 mb-10"
+            >
+              Manage attacks
+            </Button>
+            <div className="grow"></div>
+          </div>
+          <CharacterAttacks
+            items={[
+              {
+                id: 1,
+                category: "Weapons",
+                damageDices: "1D12 + 2D6",
+                damageModifire: 6,
+                name: "Big fucking +1 hammer",
+                type: "Bludgeoning",
+                toHitModifire: 4,
+                proficiencyBonous: 2,
+              },
+              {
+                id: 2,
+                category: "Weapons",
+                damageDices: "1D4",
+                damageModifire: 4,
+                name: "Shiv +1",
+                type: "Piercing",
+                toHitModifire: 4,
+                proficiencyBonous: 2,
+              },
+              {
+                id: 3,
+                category: "Cantrips",
+                damageDices: "1D10",
+                damageModifire: 0,
+                name: "Primal savagery",
+                type: "Acid",
+                toHitModifire: 5,
+                proficiencyBonous: 2,
+              },
+            ]}
+          />
         </div>
         <div
           className="h-0.5 w-screen m-5"
@@ -459,6 +528,12 @@ export default function CharatersPage() {
                 concentration: true,
                 ritual: true,
               },
+              {
+                id: 8,
+                level: 2,
+                name: "primal savagery",
+                time: "action",
+              },
             ]}
           />
         </div>
@@ -469,8 +544,116 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="inventory">
-          <div className="w-80 h-80">inventory</div>
+
+        <div
+          id="inventory"
+          className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
+        >
+          <div className="w-full flex flex-row justify-center mb-5">
+            <div className="flex flex-col text-center w-20 mr-5">
+              <div className="grow">
+                <span className="text-2xl font-bold">
+                  <span style={{ color: primaryColor.main }}>59.01</span>
+                  <span className="text-xs">lb.</span>
+                </span>
+              </div>
+              <div className="text-xxs uppercase">weight carried</div>
+            </div>
+            <div className="flex flex-col text-center w-20">
+              <div className="grow">
+                <span
+                  className="text-2xl font-bold"
+                  style={{ color: primaryColor.main }}
+                >
+                  1111
+                </span>
+              </div>
+              <div className="text-xxs uppercase">total gold</div>
+            </div>
+          </div>
+          <div className="w-full flex flex-row">
+            <div className="grow"></div>
+            <Button
+              variant="outlined"
+              color={primaryColorString}
+              className="p-2 mb-10"
+            >
+              Manage inventory
+            </Button>
+            <div className="grow"></div>
+          </div>
+          <CharacterInventory
+            items={[
+              {
+                id: 1,
+                name: "CP",
+                category: "currency",
+                cost: 0.01,
+                weight: 0.02,
+                count: 100,
+              },
+              {
+                id: 2,
+                name: "SP",
+                category: "currency",
+                cost: 0.1,
+                weight: 0.02,
+                count: 100,
+              },
+              {
+                id: 3,
+                name: "GP",
+                category: "currency",
+                cost: 1,
+                weight: 0.02,
+                count: 100,
+              },
+              {
+                id: 4,
+                name: "PP",
+                category: "currency",
+                cost: 10,
+                weight: 0.02,
+                count: 100,
+              },
+              {
+                id: 5,
+                name: "big fucking +1 hammer",
+                category: "weapon",
+                cost: 100,
+                weight: 20,
+                count: 1,
+                attuned: true,
+                needsAttunment: true,
+              },
+              {
+                id: 6,
+                name: "fists",
+                category: "spell materials",
+                cost: 0,
+                weight: 10,
+                count: 2,
+              },
+              {
+                id: 7,
+                name: "bikini +1",
+                category: "armour",
+                cost: 2000,
+                weight: 0.01,
+                count: 1,
+              },
+              {
+                id: 8,
+                name: "shiv +1",
+                category: "weapon",
+                cost: 10,
+                weight: 1,
+                count: 1,
+                attuned: false,
+                needsAttunment: true,
+              },
+            ]}
+          />
         </div>
         <div
           className="h-0.5 w-screen m-5"
@@ -478,8 +661,15 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="features">
-          <div className="w-80 h-80">features</div>
+        <div
+          id="features"
+          className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
+        >
+          <CharacterFeatures
+            class="Barbarian"
+            level={3}
+            subclass="Path of the Berserker"
+          />
         </div>
         <div
           className="h-0.5 w-screen m-5"

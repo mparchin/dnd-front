@@ -6,11 +6,13 @@ import {
   ThemeMode,
   getPrimaryString,
 } from "../../theme";
+import Circle from "../../assets/circle";
 
 interface ProficientBoxProps {
   name: string;
   value: number;
   proficiencyBonous?: number;
+  advantage?: boolean;
 }
 
 export default function (props: ProficientBoxProps) {
@@ -41,7 +43,7 @@ export default function (props: ProficientBoxProps) {
         <span className="shrink uppercase text-sm">{props.name}</span>
         <span className="grow-[3]"></span>
       </div>
-      <div className="w-28 h-full text-center flex flex-col">
+      <div className="w-20 h-full text-center flex flex-col pl-6">
         <span className="grow-[2]"></span>
         <span
           className="shrink uppercase text-2xl font-bold"
@@ -51,6 +53,22 @@ export default function (props: ProficientBoxProps) {
           {props.value > 0 ? `+${props.value}` : props.value}
         </span>
         <span className="grow-[3]"></span>
+      </div>
+      <div className="h-full w-8 flex flex-col pr-1">
+        <div className="grow-[3]"></div>
+
+        {props.advantage ? (
+          <Circle
+            text="A"
+            className="w-5 ml-2"
+            filled
+            color={theme.palette.success.main}
+          />
+        ) : (
+          <></>
+        )}
+
+        <div className="grow-[4]"></div>
       </div>
     </div>
   );
