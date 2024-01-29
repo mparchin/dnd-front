@@ -11,6 +11,7 @@ import ExtrasBox from "./Characters/ExtrasBox";
 import CharacterSpells from "./Characters/CharacterSpells";
 import CharacterInventory from "./Characters/CharacterInventory";
 import CharacterAttacks from "./Characters/CharacterAttacks";
+import CharacterFeatures from "./Characters/CharacterFeatures";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -385,8 +386,8 @@ export default function CharatersPage() {
               {
                 id: 1,
                 category: "Weapons",
-                damageDices: "1D12",
-                damageModifire: 4,
+                damageDices: "1D12 + 2D6",
+                damageModifire: 6,
                 name: "Big fucking +1 hammer",
                 type: "Bludgeoning",
                 toHitModifire: 4,
@@ -660,8 +661,15 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="features">
-          <div className="w-80 h-80">features</div>
+        <div
+          id="features"
+          className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
+        >
+          <CharacterFeatures
+            class="Barbarian"
+            level={3}
+            subclass="Path of the Berserker"
+          />
         </div>
         <div
           className="h-0.5 w-screen m-5"
