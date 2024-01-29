@@ -386,7 +386,7 @@ export default function CharatersPage() {
               {
                 id: 1,
                 category: "Weapons",
-                damageDices: "1D12 + 2D6",
+                damageDices: "1D12",
                 damageModifire: 6,
                 name: "Big fucking +1 hammer",
                 type: "Bludgeoning",
