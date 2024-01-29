@@ -50,17 +50,28 @@ export default function (props: CharacterSpellProps) {
               key={spell.id}
               className="w-full flex flex-row ml-2 pb-2 pt-2 border-b-2 rounded-md"
             >
-              <Circle
-                className="w-4 mr-0.5 shrink-0"
-                filled={spell.prepaired}
-                text="P"
-              />
-              <Circle
-                className="w-4 mr-0.5 shrink-0"
-                filled={spell.concentration}
-                text="C"
-              />
-              <Circle className="w-4 shrink-0" filled={spell.ritual} text="R" />
+              {spell.level > 0 ? (
+                <>
+                  <Circle
+                    className="w-4 mr-0.5 shrink-0"
+                    filled={spell.prepaired}
+                    text="P"
+                  />
+                  <Circle
+                    className="w-4 mr-0.5 shrink-0"
+                    filled={spell.concentration}
+                    text="C"
+                  />
+                  <Circle
+                    className="w-4 shrink-0"
+                    filled={spell.ritual}
+                    text="R"
+                  />
+                </>
+              ) : (
+                <></>
+              )}
+
               <div className="capitalize ml-2 mr-2 grow flex flex-col">
                 <span className="grow"></span>
                 <span className="capitalize">{spell.name}</span>

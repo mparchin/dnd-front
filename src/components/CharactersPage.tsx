@@ -9,6 +9,7 @@ import ExpertBox from "./Characters/ExpertBox";
 import SensesBox from "./Characters/SensesBox";
 import ExtrasBox from "./Characters/ExtrasBox";
 import CharacterSpells from "./Characters/CharacterSpells";
+import CharacterInventory from "./Characters/CharacterInventory";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -459,6 +460,12 @@ export default function CharatersPage() {
                 concentration: true,
                 ritual: true,
               },
+              {
+                id: 8,
+                level: 2,
+                name: "primal savagery",
+                time: "action",
+              },
             ]}
           />
         </div>
@@ -469,8 +476,116 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="inventory">
-          <div className="w-80 h-80">inventory</div>
+
+        <div
+          id="inventory"
+          className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
+        >
+          <div className="w-full flex flex-row justify-center mb-5">
+            <div className="flex flex-col text-center w-20 mr-5">
+              <div className="grow">
+                <span className="text-2xl font-bold">
+                  <span style={{ color: primaryColor.main }}>59.01</span>
+                  <span className="text-xs">lb.</span>
+                </span>
+              </div>
+              <div className="text-xxs uppercase">weight carried</div>
+            </div>
+            <div className="flex flex-col text-center w-20">
+              <div className="grow">
+                <span
+                  className="text-2xl font-bold"
+                  style={{ color: primaryColor.main }}
+                >
+                  1111
+                </span>
+              </div>
+              <div className="text-xxs uppercase">total gold</div>
+            </div>
+          </div>
+          <div className="w-full flex flex-row">
+            <div className="grow"></div>
+            <Button
+              variant="outlined"
+              color={primaryColorString}
+              className="p-2 mb-10"
+            >
+              Manage inventory
+            </Button>
+            <div className="grow"></div>
+          </div>
+          <CharacterInventory
+            items={[
+              {
+                id: 1,
+                name: "CP",
+                category: "currency",
+                cost: 0.01,
+                weight: 0.02,
+                count: 100,
+              },
+              {
+                id: 2,
+                name: "SP",
+                category: "currency",
+                cost: 0.1,
+                weight: 0.02,
+                count: 100,
+              },
+              {
+                id: 3,
+                name: "GP",
+                category: "currency",
+                cost: 1,
+                weight: 0.02,
+                count: 100,
+              },
+              {
+                id: 4,
+                name: "PP",
+                category: "currency",
+                cost: 10,
+                weight: 0.02,
+                count: 100,
+              },
+              {
+                id: 5,
+                name: "big fucking +1 hammer",
+                category: "weapon",
+                cost: 100,
+                weight: 20,
+                count: 1,
+                attuned: true,
+                needsAttunment: true,
+              },
+              {
+                id: 6,
+                name: "fists",
+                category: "spell materials",
+                cost: 0,
+                weight: 10,
+                count: 2,
+              },
+              {
+                id: 7,
+                name: "bikini +1",
+                category: "armour",
+                cost: 2000,
+                weight: 0.01,
+                count: 1,
+              },
+              {
+                id: 8,
+                name: "shiv +1",
+                category: "weapon",
+                cost: 10,
+                weight: 1,
+                count: 1,
+                attuned: false,
+                needsAttunment: true,
+              },
+            ]}
+          />
         </div>
         <div
           className="h-0.5 w-screen m-5"
