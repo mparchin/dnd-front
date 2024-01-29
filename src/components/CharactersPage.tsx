@@ -265,7 +265,7 @@ export default function CharatersPage() {
           className="flex flex-row flex-wrap p-2 justify-around  w-full"
         >
           <ProficientBox name="strength" value={3} proficiencyBonous={2} />
-          <ProficientBox name="dexterity" value={2} />
+          <ProficientBox name="dexterity" value={2} advantage />
           <ProficientBox name="constitution" value={3} proficiencyBonous={2} />
           <ProficientBox name="intelligence" value={-1} />
           <ProficientBox name="wisdom" value={-1} />

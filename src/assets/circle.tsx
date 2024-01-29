@@ -6,6 +6,7 @@ interface CircleProps {
   className?: string;
   filled?: boolean;
   text: string;
+  color?: string;
 }
 
 export default function (props: CircleProps) {
@@ -23,7 +24,7 @@ export default function (props: CircleProps) {
       className={props.className}
     >
       <circle
-        fill={props.filled ? primaryColor.main : "none"}
+        fill={props.filled ? props.color ?? primaryColor.main : "none"}
         cx="5"
         cy="5"
         r="4"
