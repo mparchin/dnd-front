@@ -1,6 +1,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Tune";
 import ClearIcon from "@mui/icons-material/Clear";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   AppBar,
   Box,
@@ -17,6 +18,7 @@ import { useMemo } from "react";
 import { useFeatFilterStore } from "./FeatsFilterDialog";
 import { useClassFilterStore } from "./ClassesFilterDialog";
 import { Home } from "@mui/icons-material";
+import CharacterNameAppBar from "./Characters/CharacterNameAppBar";
 
 export default function SearchAppBar() {
   const navigate = useNavigate();
@@ -53,6 +55,8 @@ export default function SearchAppBar() {
             location.pathname == "/rules" ? (
               // <span>{location.pathname.replace("/", "").toUpperCase()}</span>
               <></>
+            ) : location.pathname == "/characters" ? (
+              <CharacterNameAppBar />
             ) : (
               <TextField
                 id="search"
@@ -136,6 +140,15 @@ export default function SearchAppBar() {
             location.pathname == "/rules" ||
             location.pathname.includes("settings") ? (
               <></>
+            ) : location.pathname == "/characters" ? (
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                className="block ml-1"
+              >
+                <EditIcon />
+              </IconButton>
             ) : (
               <IconButton
                 size="large"

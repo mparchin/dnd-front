@@ -23,6 +23,7 @@ import Animation from "./components/Animation";
 import MenuPage from "./components/MenuPage";
 import GetAndSaveRules from "./API/rules";
 import RulesPage from "./components/RulesPage";
+import CharatersPage from "./components/CharactersPage";
 
 export default function App() {
   const theme = useTheme();
@@ -83,6 +84,8 @@ export default function App() {
             <MenuPage />
           ) : location.pathname == "/rules" ? (
             <RulesPage />
+          ) : location.pathname == "/characters" ? (
+            <CharatersPage />
           ) : (
             <CommingSoon />
           )}
