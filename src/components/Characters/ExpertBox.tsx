@@ -6,6 +6,7 @@ import {
   ThemeMode,
   getPrimaryString,
 } from "../../theme";
+import Circle from "../../assets/circle";
 
 interface ExpertBoxProps {
   name: string;
@@ -13,6 +14,7 @@ interface ExpertBoxProps {
   value: number;
   proficiencyBonous?: number;
   expert?: boolean;
+  advantage?: boolean;
 }
 
 export default function (props: ExpertBoxProps) {
@@ -50,7 +52,7 @@ export default function (props: ExpertBoxProps) {
         <span className="shrink capitalize">{props.name}</span>
         <span className="grow-[3]"></span>
       </div>
-      <div className="w-32 h-full text-center flex flex-col">
+      <div className="w-24 pl-7 h-full text-center flex flex-col">
         <span className="grow-[2]"></span>
         <span
           className="shrink uppercase text-2xl font-bold"
@@ -62,6 +64,22 @@ export default function (props: ExpertBoxProps) {
           {props.value > 0 ? `+${props.value}` : props.value}
         </span>
         <span className="grow-[3]"></span>
+      </div>
+      <div className="h-full w-8 flex flex-col">
+        <div className="grow-[3]"></div>
+
+        {props.advantage ? (
+          <Circle
+            text="A"
+            className="w-5 ml-2"
+            filled
+            color={theme.palette.success.main}
+          />
+        ) : (
+          <></>
+        )}
+
+        <div className="grow-[4]"></div>
       </div>
     </div>
   );

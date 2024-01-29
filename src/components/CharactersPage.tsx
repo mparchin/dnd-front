@@ -286,6 +286,7 @@ export default function CharatersPage() {
             name="athletics"
             value={3}
             proficiencyBonous={2}
+            advantage
           />
           <div className="h-4 w-full"></div>
           <ExpertBox attribute="dex" name="acrobatics" value={2} />

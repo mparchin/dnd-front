@@ -76,7 +76,7 @@ export default function (props: CharacterInventoryProps) {
                   <span className="grow"></span>
                   <div>
                     <span className="capitalize">{item.count}</span>
-                    <span className="text-xxs"> qty</span>
+                    <span className="text-xxs"> x</span>
                   </div>
                   <span className="grow"></span>
                 </div>

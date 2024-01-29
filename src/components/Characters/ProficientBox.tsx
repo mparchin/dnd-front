@@ -43,7 +43,7 @@ export default function (props: ProficientBoxProps) {
         <span className="shrink uppercase text-sm">{props.name}</span>
         <span className="grow-[3]"></span>
       </div>
-      <div className="w-20 h-full text-center flex flex-col pl-4">
+      <div className="w-20 h-full text-center flex flex-col pl-6">
         <span className="grow-[2]"></span>
         <span
           className="shrink uppercase text-2xl font-bold"
