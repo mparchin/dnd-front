@@ -39,6 +39,7 @@ export class Feature {
   description: string = "";
   level: number = 0;
   order?: number = 0;
+  isDetails: boolean = false;
   className: string = "";
   subclass?: string = "";
   time: number = 0;

@@ -29,10 +29,11 @@ function getTopArrays() {
   ret.push(document.getElementById("extras")?.offsetTop ?? 0);
   ret.push(document.getElementById("attacks")?.offsetTop ?? 0);
   ret.push(document.getElementById("spells")?.offsetTop ?? 0);
+  ret.push(document.getElementById("traits")?.offsetTop ?? 0);
   ret.push(document.getElementById("inventory")?.offsetTop ?? 0);
   ret.push(document.getElementById("features")?.offsetTop ?? 0);
-  ret.push(document.getElementById("notes")?.offsetTop ?? 0);
   ret.push(document.getElementById("names")?.offsetTop ?? 0);
+  ret.push(document.getElementById("notes")?.offsetTop ?? 0);
   return ret;
 }
 
@@ -44,10 +45,11 @@ function setCardBackgroundColor(cardId: string, primaryColor: string) {
   document.getElementById("extrasCard")!.style.backgroundColor = "";
   document.getElementById("attacksCard")!.style.backgroundColor = "";
   document.getElementById("spellsCard")!.style.backgroundColor = "";
+  document.getElementById("traitsCard")!.style.backgroundColor = "";
   document.getElementById("inventoryCard")!.style.backgroundColor = "";
   document.getElementById("featuresCard")!.style.backgroundColor = "";
-  document.getElementById("notesCard")!.style.backgroundColor = "";
   document.getElementById("namesCard")!.style.backgroundColor = "";
+  document.getElementById("notesCard")!.style.backgroundColor = "";
   document.getElementById(cardId)!.style.backgroundColor = primaryColor;
 }
 
@@ -68,10 +70,11 @@ function setActiveTab(primaryColor: string) {
   else if (index == 4) setCardBackgroundColor("extrasCard", primaryColor);
   else if (index == 5) setCardBackgroundColor("attacksCard", primaryColor);
   else if (index == 6) setCardBackgroundColor("spellsCard", primaryColor);
-  else if (index == 7) setCardBackgroundColor("inventoryCard", primaryColor);
-  else if (index == 8) setCardBackgroundColor("featuresCard", primaryColor);
-  else if (index == 9) setCardBackgroundColor("notesCard", primaryColor);
+  else if (index == 7) setCardBackgroundColor("traitsCard", primaryColor);
+  else if (index == 8) setCardBackgroundColor("inventoryCard", primaryColor);
+  else if (index == 9) setCardBackgroundColor("featuresCard", primaryColor);
   else if (index == 10) setCardBackgroundColor("namesCard", primaryColor);
+  else if (index == 11) setCardBackgroundColor("notesCard", primaryColor);
 }
 
 export default function CharatersPage() {
@@ -229,6 +232,12 @@ export default function CharatersPage() {
           />
           <ScrollerCards
             onClick={scrollToDiv}
+            cardId="traitsCard"
+            divId="traits"
+            text="Traits"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
             cardId="inventoryCard"
             divId="inventory"
             text="Inventory"
@@ -241,15 +250,15 @@ export default function CharatersPage() {
           />
           <ScrollerCards
             onClick={scrollToDiv}
-            cardId="notesCard"
-            divId="notes"
-            text="Notes"
-          />
-          <ScrollerCards
-            onClick={scrollToDiv}
             cardId="namesCard"
             divId="names"
             text="Names"
+          />
+          <ScrollerCards
+            onClick={scrollToDiv}
+            cardId="notesCard"
+            divId="notes"
+            text="Notes"
           />
         </div>
       </div>
@@ -544,7 +553,15 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-
+        <div id="traits">
+          <div className="w-80 h-80">traits</div>
+        </div>
+        <div
+          className="h-0.5 w-screen m-5"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
         <div
           id="inventory"
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
@@ -677,8 +694,8 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="notes">
-          <div className="w-80 h-80">notes</div>
+        <div id="names">
+          <div className="w-80 h-80">names</div>
         </div>
         <div
           className="h-0.5 w-screen m-5"
@@ -686,8 +703,9 @@ export default function CharatersPage() {
             backgroundColor: primaryColor.main,
           }}
         ></div>
-        <div id="names">
-          <div className="w-80 h-80">names</div>
+
+        <div id="notes">
+          <div className="w-80 h-80">notes</div>
         </div>
       </div>
     </div>

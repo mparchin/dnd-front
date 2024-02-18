@@ -95,6 +95,7 @@ export default function ClassFilterDialog() {
       anchor={"right"}
       open={filter.isOpen}
       transitionDuration={300}
+      disableDiscovery={true}
       onClose={() => CloseRequest()}
       onOpen={() => filter.dialogActions.open()}
       elevation={0}

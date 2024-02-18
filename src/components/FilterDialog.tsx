@@ -304,6 +304,7 @@ export default function FilterDialog() {
       anchor={"right"}
       open={filter.isOpen}
       transitionDuration={300}
+      disableDiscovery={true}
       onClose={() => CloseRequest()}
       onOpen={() => filter.open()}
       elevation={0}
