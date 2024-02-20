@@ -57,6 +57,7 @@ export default function SpellDetailDialog() {
       anchor={"right"}
       open={isOpen}
       transitionDuration={200}
+      disableDiscovery={true}
       onClose={() => CloseRequest()}
       onOpen={() => open(spell)}
       elevation={0}

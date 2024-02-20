@@ -10,6 +10,9 @@ export default {
     extend: {
       fontSize: {
         xxs: ['10px', '12px'],
+      },
+      width:{
+        '88':'22rem'
       }
     },
   },

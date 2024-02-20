@@ -21,12 +21,13 @@ export default function (props: CharacterFeaturesProps) {
       features
         .filter(
           (f) =>
-            (f.className == props.class &&
+            ((f.className == props.class &&
               f.level <= props.level &&
               !f.subclass) ||
-            (f.className == props.class &&
-              f.level <= props.level &&
-              f.subclass == props.subclass)
+              (f.className == props.class &&
+                f.level <= props.level &&
+                f.subclass == props.subclass)) &&
+            !f.isDetails
         )
         .sort(Sort),
     [features, props]
