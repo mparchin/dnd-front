@@ -1,4 +1,5 @@
 import {
+  Card,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -7,7 +8,6 @@ import {
 import { useEffect, useMemo } from "react";
 import { useThemeStore, getPrimaryString } from "../../theme";
 import { create } from "zustand";
-import Circle from "../../assets/circle";
 
 interface ExpertEditState {
   proficientMode: number;
@@ -53,27 +53,27 @@ export default function (props: Props) {
   return (
     <div className={props.className}>
       <div className="flex flex-row">
-        <div className="flex flex-col w-44">
-          <div className="grow"></div>
-          <span className="capitalize">{props.name}:</span>
-          <div className="grow"></div>
-        </div>
+        <Card
+          className="capitalize flex flex-col text-center p-2 pt-4 pr-3 pb-4 mr-2"
+          elevation={3}
+          style={{
+            writingMode: "vertical-lr",
+          }}
+        >
+          {props.name}
+        </Card>
+
         <div className="flex flex-row flex-wrap">
           <ToggleButton
             className="h-14 w-10 mr-1 mb-1 p-2"
             value={true}
             selected={state.hasAdvantage}
-            // color="success"
+            color="success"
             onChange={() => {
               state.setAdvantage(!state.hasAdvantage);
             }}
           >
-            <Circle
-              text="A"
-              color={theme.palette.success.main}
-              filled={state.hasAdvantage}
-              strokeNone
-            />
+            A
           </ToggleButton>
           <ToggleButtonGroup
             className="mr-1 mb-1"
