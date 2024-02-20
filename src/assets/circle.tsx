@@ -7,6 +7,7 @@ interface CircleProps {
   filled?: boolean;
   text: string;
   color?: string;
+  strokeNone?: boolean;
 }
 
 export default function (props: CircleProps) {
@@ -28,7 +29,14 @@ export default function (props: CircleProps) {
         cx="5"
         cy="5"
         r="4"
-        stroke="currentColor"
+        stroke={
+          props.filled
+            ? props.color ?? primaryColor.main
+            : props.strokeNone
+            ? "none"
+            : "currentColor"
+        }
+        strokeWidth={0.5}
       />
       <text
         x="3"

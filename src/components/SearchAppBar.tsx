@@ -146,6 +146,7 @@ export default function SearchAppBar() {
                 edge="start"
                 color="inherit"
                 className="block ml-1"
+                onClick={() => navigate("characterEdit")}
               >
                 <EditIcon />
               </IconButton>

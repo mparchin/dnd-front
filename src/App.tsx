@@ -24,6 +24,7 @@ import MenuPage from "./components/MenuPage";
 import GetAndSaveRules from "./API/rules";
 import RulesPage from "./components/RulesPage";
 import CharatersPage from "./components/CharactersPage";
+import CharacterEdit from "./components/CharacterEdit";
 
 export default function App() {
   const theme = useTheme();
@@ -84,7 +85,7 @@ export default function App() {
             <MenuPage />
           ) : location.pathname == "/rules" ? (
             <RulesPage />
-          ) : location.pathname == "/characters" ? (
+          ) : location.pathname.includes("haracter") ? (
             <CharatersPage />
           ) : (
             <CommingSoon />
@@ -95,6 +96,7 @@ export default function App() {
       <FilterDialog />
       <ClassFilterDialog />
       <FeatsFilterDialog />
+      <CharacterEdit />
 
       <GetAndSaveSpells />
       <GetAndSaveConditions />
