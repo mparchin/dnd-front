@@ -1,7 +1,7 @@
 import { Check, Close } from "@mui/icons-material";
 import {
   AppBar,
-  Autocomplete,
+  Card,
   Dialog,
   IconButton,
   Slide,
@@ -16,6 +16,8 @@ import { create } from "zustand";
 import { getPrimaryColor, getPrimaryString, useThemeStore } from "../theme";
 import DescreteSlider from "./Controls/DescreteSlider";
 import ExpertEdit from "./Characters/ExpertEdit";
+import ExtraField from "./Controls/ExtraField";
+import ComboBox from "./Controls/ComboBox";
 
 export interface CharacterEditDialogState {
   isOpen: boolean;
@@ -43,11 +45,6 @@ const Transition = React.forwardRef(function Transition(
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
-const classes = [
-  { label: "barb", id: 1 },
-  { label: "wizard", id: 2 },
-];
 
 export default function () {
   const editStore = useCharacterEditDialogStore((state) => state);
@@ -123,45 +120,29 @@ export default function () {
           required
         />
 
-        <div className="w-88 m-2 text-center">TODO image</div>
-
-        <Autocomplete
+        <TextField
+          label="Background"
           className="w-88 m-2"
-          disablePortal
-          options={classes}
-          renderInput={(params) => <TextField {...params} label="Class" />}
+          color={primaryString}
+          required
         />
 
-        <Autocomplete
+        <div className="w-88 m-2 text-center">TODO image</div>
+
+        <ComboBox
           className="w-88 m-2"
-          disablePortal
-          options={classes}
-          renderInput={(params) => <TextField {...params} label="Subclass" />}
+          required
+          lable="class"
+          options={[{ value: 1, text: "test" }]}
+        />
+
+        <ComboBox
+          className="w-88 m-2"
+          lable="Subclass"
+          options={[{ value: 1, text: "test" }]}
         />
 
         <DescreteSlider className="w-88 m-2" label="Level" />
-
-        <TextField
-          label="Speed"
-          className="w-88 m-2"
-          color={primaryString}
-          required
-        />
-
-        <ExpertEdit
-          className="w-88 m-2"
-          name="inititive"
-          mainAttributeName="DEX"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
-        />
-
-        <TextField
-          label="Armor Class"
-          className="w-88 m-2"
-          color={primaryString}
-          required
-        />
 
         <div
           className="h-0.5 w-screen mt-4 mb-4"
@@ -204,12 +185,261 @@ export default function () {
           }}
         ></div>
 
+        <TextField
+          label="Speed"
+          className="w-88 m-2"
+          color={primaryString}
+          required
+          type="number"
+        />
+
+        <ExpertEdit
+          className="w-88 m-2"
+          name="inititive"
+          mainAttributeName="DEX"
+          mainAttributeValue={2}
+          proficiencyBonous={2}
+        />
+
+        <ExtraField className="w-88 m-2" label="Armor Class" required />
+
+        <div
+          className="h-0.5 w-screen mt-4 mb-4"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
+
+        <div className="flex flex-row w-88 m-2">
+          <Card
+            className="capitalize flex flex-col text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
+            elevation={3}
+            style={{
+              writingMode: "vertical-lr",
+            }}
+          >
+            HP
+          </Card>
+          <div className="mr-2 flex flex-col grow-[4] basis-0">
+            <span className="capitalize text-center mb-2">average</span>
+            <div className="flex flex-row flex-wrap">
+              <div className="mr-1 w-14 mb-1">
+                <TextField
+                  className="text-center"
+                  label="H-Die"
+                  color={primaryString}
+                  disabled
+                  value={3}
+                  sx={{
+                    "& .MuiInputBase-input": {
+                      textAlign: "center",
+                    },
+                  }}
+                />
+              </div>
+              <div className="flex flex-col mr-1 mb-1">
+                <div className="grow"></div>
+                <span>+</span>
+                <div className="grow"></div>
+              </div>
+              <div className="mr-1 w-14 mb-1">
+                <TextField
+                  className="text-center"
+                  label="CON"
+                  color={primaryString}
+                  disabled
+                  value={3}
+                  sx={{
+                    "& .MuiInputBase-input": {
+                      textAlign: "center",
+                    },
+                  }}
+                />
+              </div>
+              <div className="flex flex-col mr-1 mb-1">
+                <div className="grow"></div>
+                <span>+</span>
+                <div className="grow"></div>
+              </div>
+              <ExtraField className="w-full mb-1" />
+            </div>
+            <div className="grow"></div>
+          </div>
+          <div
+            className="w-0.5 mr-2 shrink-0"
+            style={{
+              backgroundColor: primaryColor.main,
+            }}
+          ></div>
+          <div className="flex flex-col grow-[3] basis-0">
+            <span className="capitalize text-center mb-2">custom</span>
+            <div>
+              <TextField
+                label="Maximum HP"
+                color={primaryString}
+                type="number"
+              />
+            </div>
+            <div className="grow"></div>
+          </div>
+        </div>
+
+        <div
+          className="h-0.5 w-screen mt-4 mb-4"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
+        <ComboBox
+          className="w-88 m-2"
+          lable="spell casting ability"
+          options={[
+            { value: 1, text: "strength" },
+            { value: 2, text: "dextrity" },
+            { value: 3, text: "constitution" },
+            { value: 4, text: "intelligence" },
+            { value: 5, text: "wisdom" },
+            { value: 6, text: "charisma" },
+          ]}
+        />
+        <div className="flex flex-row w-88 m-2">
+          <Card
+            className="capitalize flex flex-col text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
+            elevation={3}
+            style={{
+              writingMode: "vertical-lr",
+            }}
+          >
+            Spell attack
+          </Card>
+          <div className="flex flex-row flex-wrap grow basis-0">
+            <div className="mr-1 w-14 mb-1">
+              <TextField
+                className="text-center"
+                label="Prof"
+                color={primaryString}
+                disabled
+                value="d4"
+                sx={{
+                  "& .MuiInputBase-input": {
+                    textAlign: "center",
+                  },
+                }}
+              />
+            </div>
+            <div className="flex flex-col mr-1 mb-1">
+              <div className="grow"></div>
+              <span>+</span>
+              <div className="grow"></div>
+            </div>
+            <div className="mr-1 w-14 mb-1">
+              <TextField
+                className="text-center"
+                label="CON"
+                color={primaryString}
+                disabled
+                value={3}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    textAlign: "center",
+                  },
+                }}
+              />
+            </div>
+            <div className="flex flex-col mr-1 mb-1">
+              <div className="grow"></div>
+              <span>+</span>
+              <div className="grow"></div>
+            </div>
+            <ExtraField className="w-full mb-1" />
+          </div>
+        </div>
+
+        <div className="flex flex-row w-88 m-2">
+          <Card
+            className="capitalize flex flex-col text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
+            elevation={3}
+            style={{
+              writingMode: "vertical-lr",
+            }}
+          >
+            Spell Save DC
+          </Card>
+          <div className="flex flex-row flex-wrap grow basis-0">
+            <div className="mr-1 w-14 mb-1">
+              <TextField
+                className="text-center"
+                label=""
+                color={primaryString}
+                disabled
+                value={8}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    textAlign: "center",
+                  },
+                }}
+              />
+            </div>
+            <div className="flex flex-col mr-1 mb-1">
+              <div className="grow"></div>
+              <span>+</span>
+              <div className="grow"></div>
+            </div>
+            <div className="mr-1 w-14 mb-1">
+              <TextField
+                className="text-center"
+                label="Prof"
+                color={primaryString}
+                disabled
+                value={2}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    textAlign: "center",
+                  },
+                }}
+              />
+            </div>
+            <div className="flex flex-col mr-1 mb-1">
+              <div className="grow"></div>
+              <span>+</span>
+              <div className="grow"></div>
+            </div>
+            <div className="mr-1 w-14 mb-1">
+              <TextField
+                className="text-center"
+                label="CON"
+                color={primaryString}
+                disabled
+                value={3}
+                sx={{
+                  "& .MuiInputBase-input": {
+                    textAlign: "center",
+                  },
+                }}
+              />
+            </div>
+            <div className="flex flex-col mr-1 mb-1">
+              <div className="grow"></div>
+              <span>+</span>
+              <div className="grow"></div>
+            </div>
+            <ExtraField className="w-full mb-1" />
+          </div>
+        </div>
+        <div
+          className="h-0.5 w-screen mt-4 mb-4"
+          style={{
+            backgroundColor: primaryColor.main,
+          }}
+        ></div>
+
         <ExpertEdit
           className="w-88 m-2"
           name="strength"
           mainAttributeName="STR"
           mainAttributeValue={2}
           proficiencyBonous={2}
+          disableExpertOption
         />
         <ExpertEdit
           className="w-88 m-2"
@@ -217,6 +447,7 @@ export default function () {
           mainAttributeName="DEX"
           mainAttributeValue={2}
           proficiencyBonous={2}
+          disableExpertOption
         />
         <ExpertEdit
           className="w-88 m-2"
@@ -224,6 +455,7 @@ export default function () {
           mainAttributeName="CON"
           mainAttributeValue={2}
           proficiencyBonous={2}
+          disableExpertOption
         />
         <ExpertEdit
           className="w-88 m-2"
@@ -231,6 +463,7 @@ export default function () {
           mainAttributeName="INT"
           mainAttributeValue={2}
           proficiencyBonous={2}
+          disableExpertOption
         />
         <ExpertEdit
           className="w-88 m-2"
@@ -238,6 +471,7 @@ export default function () {
           mainAttributeName="WIS"
           mainAttributeValue={2}
           proficiencyBonous={2}
+          disableExpertOption
         />
         <ExpertEdit
           className="w-88 m-2"
@@ -245,6 +479,7 @@ export default function () {
           mainAttributeName="CHA"
           mainAttributeValue={2}
           proficiencyBonous={2}
+          disableExpertOption
         />
 
         <div

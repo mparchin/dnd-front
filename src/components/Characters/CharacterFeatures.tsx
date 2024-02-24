@@ -34,7 +34,7 @@ export default function (props: CharacterFeaturesProps) {
   );
 
   return query.map((feature) => (
-    <div className="pt-2 pl-4 pr-4 pb-2">
+    <div key={feature.id} className="pt-2 pl-4 pr-4 pb-2">
       <div className="flex flex-col w-full">
         <strong className="text-xl" style={{ color: primaryColor.main }}>
           {feature.name}
