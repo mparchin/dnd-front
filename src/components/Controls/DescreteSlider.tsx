@@ -1,4 +1,4 @@
-import { Slider, useTheme } from "@mui/material";
+import { Card, Slider, useTheme } from "@mui/material";
 import { getPrimaryString, useThemeStore } from "../../theme";
 import { useMemo } from "react";
 
@@ -17,19 +17,30 @@ export default function (props: DescreteSliderProps) {
   ]);
   return (
     <div className={props.className}>
-      <div className="flex flex-col pt-8 pl-5 pr-5">
-        <Slider
-          className="pb-0"
-          color={primaryString}
-          defaultValue={props.defaultValue ?? 1}
-          getAriaValueText={(value) => `${value}`}
-          valueLabelDisplay="on"
-          step={1}
-          marks
-          min={1}
-          max={20}
-        />
-        <label className="text-center">{props.label}</label>
+      <div className="flex flex-row">
+        <Card
+          className="capitalize flex flex-col text-center p-2 pt-4 pr-3 pb-4 mr-4"
+          elevation={3}
+          style={{
+            writingMode: "vertical-lr",
+          }}
+        >
+          {props.label}
+        </Card>
+        <div className="w-full flex flex-col mr-2">
+          <div className="grow"></div>
+          <Slider
+            color={primaryString}
+            defaultValue={props.defaultValue ?? 1}
+            getAriaValueText={(value) => `${value}`}
+            valueLabelDisplay="on"
+            step={1}
+            marks
+            min={1}
+            max={20}
+          />
+          <div className="grow"></div>
+        </div>
       </div>
     </div>
   );

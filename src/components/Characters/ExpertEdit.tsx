@@ -8,6 +8,7 @@ import {
 import { useEffect, useMemo } from "react";
 import { useThemeStore, getPrimaryString } from "../../theme";
 import { create } from "zustand";
+import ExtraField from "../Controls/ExtraField";
 
 interface ExpertEditState {
   proficientMode: number;
@@ -25,6 +26,7 @@ interface Props {
   isProficient?: boolean;
   isExpert?: boolean;
   proficiencyBonous: number;
+  disableExpertOption?: boolean;
 }
 
 const useExpertEditStore = create<ExpertEditState>((set) => ({
@@ -76,7 +78,7 @@ export default function (props: Props) {
             A
           </ToggleButton>
           <ToggleButtonGroup
-            className="mr-1 mb-1"
+            className="mr-1 mb-1 h-14"
             color={primaryString}
             value={state.proficientMode}
             exclusive
@@ -88,7 +90,8 @@ export default function (props: Props) {
             <ToggleButton value="1">
               d{props.proficiencyBonous * 2}
             </ToggleButton>
-            <ToggleButton value="2">
+
+            <ToggleButton disabled={props.disableExpertOption} value="2">
               2d{props.proficiencyBonous * 2}
             </ToggleButton>
           </ToggleButtonGroup>
@@ -111,15 +114,12 @@ export default function (props: Props) {
               }}
             />
           </div>
-
           <div className="flex flex-col mr-1 mb-1">
             <div className="grow"></div>
             <span>+</span>
             <div className="grow"></div>
           </div>
-          <div className="w-full mb-1">
-            <TextField label="Extra" fullWidth color={primaryString} />
-          </div>
+          <ExtraField className="w-full mb-1" />
         </div>
       </div>
     </div>
