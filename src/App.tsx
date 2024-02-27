@@ -4,10 +4,10 @@ import SpellDetailDialog from "./components/SpellDetailDialog";
 import FilterDialog from "./components/FilterDialog";
 import ReloadPrompt from "./reloadPrompt";
 import { useTheme } from "@mui/material";
-import { ThemeMode, getPrimaryColor, useThemeStore } from "./theme";
+import { ThemeMode, useBgColor, usePrimaryColor, useThemeStore } from "./theme";
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import CommingSoon from "./components/CommingSoon";
+import { ComingSoon } from "./components/CommingSoon";
 import SettingsPage from "./components/SettingsPage";
 import { GetAndSaveSpells } from "./API/spell";
 import GetAndSaveConditions from "./API/conditions";
@@ -30,11 +30,13 @@ export default function App() {
   const theme = useTheme();
   const themeStore = useThemeStore((state) => state);
   const location = useLocation();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
-
+  const primaryColor = usePrimaryColor();
+  const bgColor = useBgColor();
+  const bgColorStyle = useMemo(() => {
+    return {
+      backgroundColor: bgColor,
+    };
+  }, [bgColor]);
   return (
     <>
       <Helmet>
@@ -50,12 +52,7 @@ export default function App() {
       <ReloadPrompt />
       <div
         className="flex-col flex w-screen h-screen max-h-screen overflow-hidden"
-        style={{
-          backgroundColor:
-            theme.palette.mode == "dark"
-              ? theme.palette.grey[900]
-              : theme.palette.background.default,
-        }}
+        style={bgColorStyle}
       >
         <div className="flex-grow-0 flex flex-shrink basis-auto flex-col">
           {location.pathname == "/" || location.pathname == "/menu" ? (
@@ -88,15 +85,28 @@ export default function App() {
           ) : location.pathname.includes("haracter") ? (
             <CharatersPage />
           ) : (
-            <CommingSoon />
+            <ComingSoon />
           )}
         </div>
       </div>
-      <SpellDetailDialog />
-      <FilterDialog />
-      <ClassFilterDialog />
-      <FeatsFilterDialog />
-      <CharacterEdit />
+      {location.pathname == "/spells" ||
+      location.pathname == "/filter" ||
+      location.pathname.includes("details") ? (
+        <>
+          <SpellDetailDialog />
+          <FilterDialog />
+        </>
+      ) : location.pathname == "/classes" ||
+        location.pathname == "/classesFilter" ? (
+        <ClassFilterDialog />
+      ) : location.pathname == "/feats" ||
+        location.pathname == "/featsFilter" ? (
+        <FeatsFilterDialog />
+      ) : location.pathname.includes("haracter") ? (
+        <CharacterEdit />
+      ) : (
+        <></>
+      )}
 
       <GetAndSaveSpells />
       <GetAndSaveConditions />

@@ -1,4 +1,4 @@
-import { Theme, ThemeOptions, createTheme } from "@mui/material/styles";
+import { ThemeOptions, createTheme, useTheme } from "@mui/material/styles";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -99,20 +99,33 @@ export function getTheme(mode: ThemeMode) {
   );
 }
 
-export function getPrimaryColor(theme: Theme, themeStore: ThemeState) {
+export function usePrimaryColor() {
+  const theme = useTheme();
+  const themeStore = useThemeStore();
   var ret = theme.palette.mode == "dark";
   if (ret == themeStore.isPrimarySwapped) return theme.palette.primary;
   return theme.palette.secondary;
 }
 
-export function getPrimaryString(theme: Theme, themeStore: ThemeState) {
+export function usePrimaryColorString() {
+  const theme = useTheme();
+  const themeStore = useThemeStore();
   var ret = theme.palette.mode == "dark";
   if (ret == themeStore.isPrimarySwapped) return "primary";
   return "secondary";
 }
 
-export function getSecondaryColor(theme: Theme, themeStore: ThemeState) {
+export function useSecondaryColor() {
+  const theme = useTheme();
+  const themeStore = useThemeStore();
   var ret = theme.palette.mode == "dark";
   if (ret == themeStore.isPrimarySwapped) return theme.palette.secondary;
   return theme.palette.primary;
+}
+
+export function useBgColor() {
+  const theme = useTheme();
+  return theme.palette.mode == "dark"
+    ? theme.palette.grey[900]
+    : theme.palette.background.default;
 }

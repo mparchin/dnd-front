@@ -1,14 +1,9 @@
-import { Paper, Typography, useTheme } from "@mui/material";
-import { getPrimaryString, useThemeStore } from "../theme";
-import { useMemo } from "react";
+import { Paper, Typography } from "@mui/material";
+import { usePrimaryColorString } from "../theme";
+import { memo } from "react";
 
-export default function CommingSoon() {
-  const theme = useTheme();
-  const themeStore = useThemeStore((state) => state);
-  const primaryString = useMemo(() => getPrimaryString(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+export const ComingSoon = memo(() => {
+  const primaryString = usePrimaryColorString();
 
   return (
     <Paper className="w-full h-full pt-24">
@@ -17,8 +12,8 @@ export default function CommingSoon() {
         variant="h4"
         color={primaryString}
       >
-        Comming soon !!!
+        Coming soon !!!
       </Typography>
     </Paper>
   );
-}
+});

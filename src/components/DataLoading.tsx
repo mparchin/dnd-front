@@ -7,23 +7,29 @@ import {
   PaletteColor,
   Skeleton,
 } from "@mui/material";
+import { useMemo } from "react";
 
 export default function (primaryColor: PaletteColor) {
+  const coloredStyle = useMemo(
+    () => ({
+      color: primaryColor.main,
+    }),
+    [primaryColor]
+  );
+  const listStyle = {
+    width: "100%",
+    bgcolor: "background.paper",
+    "& ul": { padding: 0 },
+  };
   return (
     <>
       <CircularProgress
         size={80}
         className="absolute z-20 left-[calc(50%-40px)] top-[calc(50%-40px)]"
-        sx={{
-          color: primaryColor.main,
-        }}
+        sx={coloredStyle}
       />
       <List
-        sx={{
-          width: "100%",
-          bgcolor: "background.paper",
-          "& ul": { padding: 0 },
-        }}
+        sx={listStyle}
         className="overflow-auto box-border z-10"
         subheader={<li />}
       >

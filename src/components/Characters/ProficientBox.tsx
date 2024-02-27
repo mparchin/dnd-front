@@ -2,11 +2,11 @@ import { useTheme } from "@mui/material";
 import { useMemo } from "react";
 import {
   useThemeStore,
-  getPrimaryColor,
   ThemeMode,
-  getPrimaryString,
+  usePrimaryColor,
+  usePrimaryColorString,
 } from "../../theme";
-import Circle from "../../assets/circle";
+import { Circle } from "../../assets/circle";
 
 interface ProficientBoxProps {
   name: string;
@@ -18,25 +18,24 @@ interface ProficientBoxProps {
 export default function (props: ProficientBoxProps) {
   const theme = useTheme();
   const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryColor = usePrimaryColor();
+  const primaryColorString = usePrimaryColorString();
 
-  const primaryColorString = useMemo(
-    () => getPrimaryString(theme, themeStore),
-    [theme, themeStore]
+  const bgImage = useMemo(
+    () => ({
+      backgroundImage: `url('/proficient-box-bg-${
+        themeStore.mode == ThemeMode.light ? "grey" : "white"
+      }${props.proficiencyBonous ? `-${primaryColorString}.svg` : ".svg"}')`,
+    }),
+    [themeStore.mode, props.proficiencyBonous]
   );
 
+  const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
+    primaryColor,
+  ]);
+
   return (
-    <div
-      className="flex flex-row bg-no-repeat h-12 m-1"
-      style={{
-        backgroundImage: `url('/proficient-box-bg-${
-          themeStore.mode == ThemeMode.light ? "grey" : "white"
-        }${props.proficiencyBonous ? `-${primaryColorString}.svg` : ".svg"}')`,
-      }}
-    >
+    <div className="flex flex-row bg-no-repeat h-12 m-1" style={bgImage}>
       <div className="w-4"></div>
       <div className="w-28 h-full text-center flex flex-col pr-3">
         <span className="grow-[2]"></span>
@@ -47,7 +46,7 @@ export default function (props: ProficientBoxProps) {
         <span className="grow-[2]"></span>
         <span
           className="shrink uppercase text-2xl font-bold"
-          style={{ color: primaryColor.main }}
+          style={coloredStyle}
         >
           {props.proficiencyBonous ? `D${props.proficiencyBonous * 2}` : ""}
           {props.value > 0 ? `+${props.value}` : props.value}

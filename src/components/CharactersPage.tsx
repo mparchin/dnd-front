@@ -1,7 +1,7 @@
 import { Avatar, Button, Card, IconButton, useTheme } from "@mui/material";
 import { useMemo } from "react";
-import { useThemeStore, getPrimaryColor, getPrimaryString } from "../theme";
-import Bonfire from "../assets/bonfire";
+import { usePrimaryColor, usePrimaryColorString, useBgColor } from "../theme";
+import { Bonfire } from "../assets/bonfire";
 import StatsBox from "./Characters/StatsBox";
 import ScrollerCards from "./Characters/ScrollerCards";
 import ProficientBox from "./Characters/ProficientBox";
@@ -79,14 +79,31 @@ function setActiveTab(primaryColor: string) {
 
 export default function CharatersPage() {
   const theme = useTheme();
-  const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
+  const primaryColor = usePrimaryColor();
+  const primaryColorString = usePrimaryColorString();
+  const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
+    primaryColor,
   ]);
-  const primaryColorString = useMemo(
-    () => getPrimaryString(theme, themeStore),
-    [theme, themeStore]
+  const bgColor = useBgColor();
+  const bgColorStyle = useMemo(
+    () => ({
+      backgroundColor: bgColor,
+    }),
+    [bgColor]
+  );
+  const HpColor = useMemo(
+    () => ({ backgroundColor: theme.palette.success.main }),
+    [theme.palette.success]
+  );
+  const ManaColor = useMemo(
+    () => ({ backgroundColor: theme.palette.primary.main }),
+    [theme.palette.primary]
+  );
+  const dividerColor = useMemo(
+    () => ({
+      backgroundColor: primaryColor.main,
+    }),
+    [primaryColor]
   );
   return (
     <div
@@ -94,15 +111,7 @@ export default function CharatersPage() {
       className="w-full overflow-auto"
       onScroll={() => setActiveTab(primaryColor.main)}
     >
-      <div
-        className="sticky top-0 z-50"
-        style={{
-          backgroundColor:
-            theme.palette.mode == "dark"
-              ? theme.palette.grey[900]
-              : theme.palette.background.default,
-        }}
-      >
+      <div className="sticky top-0 z-50" style={bgColorStyle}>
         <Card className="w-full p-2" elevation={3}>
           <div className="w-full h-40 flex flex-col">
             <div className="grow-[3] flex flex-row basis-0">
@@ -122,14 +131,14 @@ export default function CharatersPage() {
                   className="w-28 h-28 mt-1 border-2 border-current rounded-lg"
                   src="/asghar.jpg"
                   variant="rounded"
-                  style={{ color: primaryColor.main }}
+                  style={coloredStyle}
                 />
               </div>
               <div className="grow flex flex-col justify-around basis-0">
                 <Button
                   className="flex flex-col"
                   variant="contained"
-                  style={{ backgroundColor: theme.palette.success.main }}
+                  style={HpColor}
                 >
                   <div className="grow basis-0 text-xl">41/41</div>
                   <div className="uppercase text-xxs basis-0">hit points</div>
@@ -137,7 +146,7 @@ export default function CharatersPage() {
                 <Button
                   className="flex flex-col"
                   variant="contained"
-                  style={{ backgroundColor: theme.palette.primary.main }}
+                  style={ManaColor}
                 >
                   <div className="grow basis-0 text-xl">0/0</div>
                   <div className="uppercase text-xxs basis-0">mana</div>
@@ -149,18 +158,15 @@ export default function CharatersPage() {
               <div className="grow basis-0 flex flex-col text-center">
                 <div className="grow">
                   <span className="text-2xl font-bold">
-                    <span style={{ color: primaryColor.main }}>+2</span> /
-                    <span style={{ color: primaryColor.main }}> D4</span>
+                    <span style={coloredStyle}>+2</span>/
+                    <span style={coloredStyle}>D4</span>
                   </span>
                 </div>
                 <div className="text-xxs uppercase">proficiency</div>
               </div>
               <div className="grow basis-0 flex flex-col text-center">
                 <div className="grow">
-                  <span
-                    className="text-2xl font-bold"
-                    style={{ color: primaryColor.main }}
-                  >
+                  <span className="text-2xl font-bold" style={coloredStyle}>
                     30
                   </span>
                   <span className="text-xxs pl-1 align-middle">FT.</span>
@@ -170,7 +176,7 @@ export default function CharatersPage() {
               <div className="grow basis-0 flex flex-col text-center">
                 <div className="grow">
                   <span className="text-2xl font-bold">
-                    <span style={{ color: primaryColor.main }}>+2</span>
+                    <span style={coloredStyle}>+2</span>
                   </span>
                 </div>
                 <div className="text-xxs uppercase">initiative</div>
@@ -178,7 +184,7 @@ export default function CharatersPage() {
               <div className="grow basis-0 flex flex-col text-center">
                 <div className="grow">
                   <span className="text-2xl font-bold">
-                    <span style={{ color: primaryColor.main }}>15</span>
+                    <span style={coloredStyle}>15</span>
                   </span>
                 </div>
                 <div className="text-xxs uppercase">armour class</div>
@@ -274,12 +280,7 @@ export default function CharatersPage() {
           <StatsBox name="wisdom" value={8} />
           <StatsBox name="charisma" value={8} />
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="saves"
           className="flex flex-row flex-wrap p-2 justify-around  w-full"
@@ -291,12 +292,7 @@ export default function CharatersPage() {
           <ProficientBox name="wisdom" value={-1} />
           <ProficientBox name="charisma" value={-1} />
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="abilities"
           className="flex flex-row flex-wrap p-2 justify-around  w-full"
@@ -340,12 +336,7 @@ export default function CharatersPage() {
           <ExpertBox attribute="cha" name="performance" value={-1} />
           <ExpertBox attribute="cha" name="persuasion" value={-1} />
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="senses"
           className="flex flex-row flex-wrap p-2 justify-around  w-full"
@@ -355,12 +346,7 @@ export default function CharatersPage() {
           <SensesBox name="Passive Intelligence (Investigation)" value={9} />
           <SensesBox name="Darkvision" value={60} unit="ft." />
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="extras"
           className="flex flex-row flex-wrap p-2 justify-around w-full"
@@ -369,12 +355,7 @@ export default function CharatersPage() {
           <ExtrasBox name="rage" total={3} used={1} />
           <ExtrasBox name="healing surge" total={1} used={1} />
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="attacks"
           className="flex flex-row flex-wrap p-2 justify-around w-full"
@@ -425,12 +406,7 @@ export default function CharatersPage() {
             ]}
           />
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="spells"
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
@@ -439,7 +415,7 @@ export default function CharatersPage() {
             <div className="flex flex-col text-center w-20 mr-5">
               <div className="grow">
                 <span className="text-2xl font-bold">
-                  <span style={{ color: primaryColor.main }}>+5</span>
+                  <span style={coloredStyle}>+5</span>
                 </span>
               </div>
               <div className="text-xxs uppercase">modifire</div>
@@ -447,17 +423,14 @@ export default function CharatersPage() {
             <div className="flex flex-col text-center w-20 mr-5">
               <div className="grow">
                 <span className="text-2xl font-bold">
-                  <span style={{ color: primaryColor.main }}>D4+5</span>
+                  <span style={coloredStyle}>D4+5</span>
                 </span>
               </div>
               <div className="text-xxs uppercase">Spell attack</div>
             </div>
             <div className="flex flex-col text-center w-20">
               <div className="grow">
-                <span
-                  className="text-2xl font-bold"
-                  style={{ color: primaryColor.main }}
-                >
+                <span className="text-2xl font-bold" style={coloredStyle}>
                   15
                 </span>
               </div>
@@ -547,21 +520,11 @@ export default function CharatersPage() {
           />
         </div>
 
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div id="traits">
           <div className="w-80 h-80">traits</div>
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="inventory"
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
@@ -570,7 +533,7 @@ export default function CharatersPage() {
             <div className="flex flex-col text-center w-20 mr-5">
               <div className="grow">
                 <span className="text-2xl font-bold">
-                  <span style={{ color: primaryColor.main }}>59.01</span>
+                  <span style={coloredStyle}>59.01</span>
                   <span className="text-xs">lb.</span>
                 </span>
               </div>
@@ -578,10 +541,7 @@ export default function CharatersPage() {
             </div>
             <div className="flex flex-col text-center w-20">
               <div className="grow">
-                <span
-                  className="text-2xl font-bold"
-                  style={{ color: primaryColor.main }}
-                >
+                <span className="text-2xl font-bold" style={coloredStyle}>
                   1111
                 </span>
               </div>
@@ -672,12 +632,7 @@ export default function CharatersPage() {
             ]}
           />
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="features"
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
@@ -688,21 +643,11 @@ export default function CharatersPage() {
             subclass="Path of the Berserker"
           />
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div id="names">
           <div className="w-80 h-80">names</div>
         </div>
-        <div
-          className="h-0.5 w-screen m-5"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
 
         <div id="notes">
           <div className="w-80 h-80">notes</div>

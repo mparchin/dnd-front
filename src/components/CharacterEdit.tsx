@@ -7,33 +7,32 @@ import {
   Slide,
   TextField,
   Toolbar,
-  useTheme,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React, { useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
-import { getPrimaryColor, getPrimaryString, useThemeStore } from "../theme";
-import DescreteSlider from "./Controls/DescreteSlider";
+import { useBgColor, usePrimaryColor, usePrimaryColorString } from "../theme";
+import { DescreteSlider } from "./Controls/DescreteSlider";
 import ExpertEdit from "./Characters/ExpertEdit";
-import ExtraField from "./Controls/ExtraField";
-import ComboBox from "./Controls/ComboBox";
+import { ExtraField } from "./Controls/ExtraField";
+import { ComboBox } from "./Controls/ComboBox";
 
 export interface CharacterEditDialogState {
   isOpen: boolean;
-  dialogActions: {
-    open: () => void;
-    close: () => void;
-  };
+  open: () => void;
+  close: () => void;
+  editName: string;
+  setName: (str: string) => void;
 }
 
 export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
   (set) => ({
     isOpen: false,
-    dialogActions: {
-      open: () => set({ isOpen: true }),
-      close: () => set({ isOpen: false }),
-    },
+    open: () => set({ isOpen: true }),
+    close: () => set({ isOpen: false }),
+    editName: "",
+    setName: (str: string) => set({ editName: str }),
   })
 );
 
@@ -47,36 +46,45 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export default function () {
-  const editStore = useCharacterEditDialogStore((state) => state);
+  const state = useCharacterEditDialogStore((state) => state);
   const location = useLocation();
   const navigate = useNavigate();
   const IsOpenRequest = () => location.pathname.includes("characterEdit");
   const CloseRequest = () => {
     if (IsOpenRequest()) navigate(-1);
   };
-  const theme = useTheme();
-  const themeStore = useThemeStore((state) => state);
-  const primaryString = useMemo(() => getPrimaryString(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryString = usePrimaryColorString();
+  const primaryColor = usePrimaryColor();
+  const bgColor = useBgColor();
+  const bgColorStyle = useMemo(
+    () => ({
+      backgroundColor: bgColor,
+    }),
+    [bgColor]
+  );
+  const dividerColor = useMemo(
+    () => ({
+      backgroundColor: primaryColor.main,
+    }),
+    [primaryColor]
+  );
+  const centerTextStyle = {
+    "& .MuiInputBase-input": {
+      textAlign: "center",
+    },
+  };
   useEffect(() => {
-    if (!editStore.isOpen && IsOpenRequest()) editStore.dialogActions.open();
-    else if (editStore.isOpen && !IsOpenRequest())
-      editStore.dialogActions.close();
-  }, [editStore.isOpen, location.pathname]);
+    if (!state.isOpen && IsOpenRequest()) state.open();
+    else if (state.isOpen && !IsOpenRequest()) state.close();
+  }, [state.isOpen, location.pathname]);
   return (
     <Dialog
       fullScreen
-      open={editStore.isOpen}
+      open={state.isOpen}
       onClose={CloseRequest}
       TransitionComponent={Transition}
     >
-      <AppBar sx={{ position: "relative" }} color={primaryString}>
+      <AppBar className="relative" color={primaryString}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -99,18 +107,15 @@ export default function () {
       </AppBar>
       <div
         className="w-full overflow-auto flex flex-row flex-wrap p-2 justify-center"
-        style={{
-          backgroundColor:
-            theme.palette.mode == "dark"
-              ? theme.palette.grey[900]
-              : theme.palette.background.default,
-        }}
+        style={bgColorStyle}
       >
         <TextField
           label="Name"
           className="w-88 m-2"
           color={primaryString}
           required
+          value={state.editName}
+          onChange={(e) => state.setName(e.target.value)}
         />
 
         <TextField
@@ -144,12 +149,7 @@ export default function () {
 
         <DescreteSlider className="w-88 m-2" label="Level" />
 
-        <div
-          className="h-0.5 w-screen mt-4 mb-4"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
         <DescreteSlider
           className="w-88 m-2"
@@ -178,12 +178,7 @@ export default function () {
           defaultValue={10}
         />
 
-        <div
-          className="h-0.5 w-screen mt-4 mb-4"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
         <TextField
           label="Speed"
@@ -203,20 +198,12 @@ export default function () {
 
         <ExtraField className="w-88 m-2" label="Armor Class" required />
 
-        <div
-          className="h-0.5 w-screen mt-4 mb-4"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
         <div className="flex flex-row w-88 m-2">
           <Card
-            className="capitalize flex flex-col text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
+            className="capitalize flex flex-col text-vertical-lr text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
             elevation={3}
-            style={{
-              writingMode: "vertical-lr",
-            }}
           >
             HP
           </Card>
@@ -230,11 +217,7 @@ export default function () {
                   color={primaryString}
                   disabled
                   value={3}
-                  sx={{
-                    "& .MuiInputBase-input": {
-                      textAlign: "center",
-                    },
-                  }}
+                  sx={centerTextStyle}
                 />
               </div>
               <div className="flex flex-col mr-1 mb-1">
@@ -249,11 +232,7 @@ export default function () {
                   color={primaryString}
                   disabled
                   value={3}
-                  sx={{
-                    "& .MuiInputBase-input": {
-                      textAlign: "center",
-                    },
-                  }}
+                  sx={centerTextStyle}
                 />
               </div>
               <div className="flex flex-col mr-1 mb-1">
@@ -265,12 +244,7 @@ export default function () {
             </div>
             <div className="grow"></div>
           </div>
-          <div
-            className="w-0.5 mr-2 shrink-0"
-            style={{
-              backgroundColor: primaryColor.main,
-            }}
-          ></div>
+          <div className="w-0.5 mr-2 shrink-0" style={dividerColor}></div>
           <div className="flex flex-col grow-[3] basis-0">
             <span className="capitalize text-center mb-2">custom</span>
             <div>
@@ -284,12 +258,7 @@ export default function () {
           </div>
         </div>
 
-        <div
-          className="h-0.5 w-screen mt-4 mb-4"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
         <ComboBox
           className="w-88 m-2"
           lable="spell casting ability"
@@ -304,11 +273,8 @@ export default function () {
         />
         <div className="flex flex-row w-88 m-2">
           <Card
-            className="capitalize flex flex-col text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
+            className="capitalize flex flex-col text-vertical-lr text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
             elevation={3}
-            style={{
-              writingMode: "vertical-lr",
-            }}
           >
             Spell attack
           </Card>
@@ -320,11 +286,7 @@ export default function () {
                 color={primaryString}
                 disabled
                 value="d4"
-                sx={{
-                  "& .MuiInputBase-input": {
-                    textAlign: "center",
-                  },
-                }}
+                sx={centerTextStyle}
               />
             </div>
             <div className="flex flex-col mr-1 mb-1">
@@ -339,11 +301,7 @@ export default function () {
                 color={primaryString}
                 disabled
                 value={3}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    textAlign: "center",
-                  },
-                }}
+                sx={centerTextStyle}
               />
             </div>
             <div className="flex flex-col mr-1 mb-1">
@@ -357,11 +315,8 @@ export default function () {
 
         <div className="flex flex-row w-88 m-2">
           <Card
-            className="capitalize flex flex-col text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
+            className="capitalize flex text-vertical-lr flex-col text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
             elevation={3}
-            style={{
-              writingMode: "vertical-lr",
-            }}
           >
             Spell Save DC
           </Card>
@@ -373,11 +328,7 @@ export default function () {
                 color={primaryString}
                 disabled
                 value={8}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    textAlign: "center",
-                  },
-                }}
+                sx={centerTextStyle}
               />
             </div>
             <div className="flex flex-col mr-1 mb-1">
@@ -392,11 +343,7 @@ export default function () {
                 color={primaryString}
                 disabled
                 value={2}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    textAlign: "center",
-                  },
-                }}
+                sx={centerTextStyle}
               />
             </div>
             <div className="flex flex-col mr-1 mb-1">
@@ -411,11 +358,7 @@ export default function () {
                 color={primaryString}
                 disabled
                 value={3}
-                sx={{
-                  "& .MuiInputBase-input": {
-                    textAlign: "center",
-                  },
-                }}
+                sx={centerTextStyle}
               />
             </div>
             <div className="flex flex-col mr-1 mb-1">
@@ -426,12 +369,7 @@ export default function () {
             <ExtraField className="w-full mb-1" />
           </div>
         </div>
-        <div
-          className="h-0.5 w-screen mt-4 mb-4"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
         <ExpertEdit
           className="w-88 m-2"
@@ -482,12 +420,7 @@ export default function () {
           disableExpertOption
         />
 
-        <div
-          className="h-0.5 w-screen mt-4 mb-4"
-          style={{
-            backgroundColor: primaryColor.main,
-          }}
-        ></div>
+        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
         <ExpertEdit
           className="w-88 m-2"

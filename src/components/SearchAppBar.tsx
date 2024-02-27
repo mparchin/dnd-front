@@ -9,174 +9,201 @@ import {
   InputAdornment,
   TextField,
   Toolbar,
-  useTheme,
 } from "@mui/material";
-import { getPrimaryColor, getPrimaryString, useThemeStore } from "../theme";
+import { usePrimaryColor, usePrimaryColorString } from "../theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFilterStore } from "./FilterDialog";
-import { useMemo } from "react";
+import { memo } from "react";
 import { useFeatFilterStore } from "./FeatsFilterDialog";
 import { useClassFilterStore } from "./ClassesFilterDialog";
 import { Home } from "@mui/icons-material";
 import CharacterNameAppBar from "./Characters/CharacterNameAppBar";
 
-export default function SearchAppBar() {
+const HomeIconButton = memo(function () {
   const navigate = useNavigate();
+  return (
+    <IconButton
+      size="large"
+      edge="start"
+      color="inherit"
+      aria-label="open drawer"
+      className="block mr-1"
+      onClick={() => navigate(-1)}
+    >
+      <Home />
+    </IconButton>
+  );
+});
+
+interface SearchBarProps {
+  pathname: string;
+  conditionSearchString?: string;
+  searchString?: string;
+  featSearchString?: string;
+  classSearchString?: string;
+  setConditionSearchString: (str?: string) => void;
+  setSearchString: (str?: string) => void;
+  setFeatSearchString: (str?: string) => void;
+  setClassSearchString: (str?: string) => void;
+  primaryColor: any;
+}
+
+const SearchBar = memo((p: SearchBarProps) => {
+  const sx = {
+    "& .MuiFilledInput-input": {
+      padding: "10px 12px 12px 12px",
+    },
+    color: p.primaryColor.dark,
+  };
+
+  const searchSx = {
+    "& .MuiIconButton-root": {
+      paddingRight: 0,
+    },
+  };
+
+  const inputProps = {
+    endAdornment: (
+      <InputAdornment
+        position="start"
+        className="align-top mb-5 mr-0 pr-0"
+        sx={searchSx}
+      >
+        {(p.pathname == "/spells" && p.searchString) ||
+        (p.pathname.includes("conditions") && p.conditionSearchString) ||
+        (p.pathname.includes("feats") && p.featSearchString) ||
+        (p.pathname.includes("classes") && p.classSearchString) ? (
+          <IconButton
+            onClick={
+              p.pathname.includes("conditions")
+                ? () => p.setConditionSearchString(undefined)
+                : p.pathname.includes("feats")
+                ? () => p.setFeatSearchString(undefined)
+                : p.pathname.includes("classes")
+                ? () => p.setClassSearchString(undefined)
+                : () => p.setSearchString(undefined)
+            }
+          >
+            <ClearIcon className="align-top p-0" />
+          </IconButton>
+        ) : (
+          <IconButton>
+            <SearchIcon className="align-top p-0" />
+          </IconButton>
+        )}
+      </InputAdornment>
+    ),
+  };
+
+  if (p.pathname.includes("settings") || p.pathname == "/rules") return <></>;
+  else if (p.pathname == "/characters") return <CharacterNameAppBar />;
+  else
+    return (
+      <TextField
+        id="search"
+        variant="filled"
+        className="flex-grow"
+        size="small"
+        maxRows={1}
+        value={
+          p.pathname.includes("conditions") && p.conditionSearchString
+            ? p.conditionSearchString
+            : p.pathname == "/spells" && p.searchString
+            ? p.searchString
+            : p.pathname.includes("feats") && p.featSearchString
+            ? p.featSearchString
+            : p.pathname.includes("classes") && p.classSearchString
+            ? p.classSearchString
+            : ""
+        }
+        onChange={
+          p.pathname.includes("conditions")
+            ? (e) => p.setConditionSearchString(e.target.value)
+            : p.pathname.includes("feats")
+            ? (e) => p.setFeatSearchString(e.target.value)
+            : p.pathname.includes("classes")
+            ? (e) => p.setClassSearchString(e.target.value)
+            : (e) => p.setSearchString(e.target.value)
+        }
+        sx={sx}
+        InputProps={inputProps}
+      />
+    );
+});
+
+interface FilterButtonProps {
+  pathname: string;
+}
+
+const FilterButton = memo((props: FilterButtonProps) => {
+  const navigate = useNavigate();
+  if (
+    props.pathname.includes("conditions") ||
+    props.pathname == "/rules" ||
+    props.pathname.includes("settings")
+  )
+    return <></>;
+  else if (props.pathname == "/characters")
+    return (
+      <IconButton
+        size="large"
+        edge="start"
+        color="inherit"
+        className="block ml-1"
+        onClick={() => navigate("characterEdit")}
+      >
+        <EditIcon />
+      </IconButton>
+    );
+  else
+    return (
+      <IconButton
+        size="large"
+        edge="start"
+        color="inherit"
+        aria-label="open drawer"
+        className="block ml-1"
+        onClick={
+          props.pathname == "/spells"
+            ? () => navigate("filter")
+            : props.pathname.includes("feats")
+            ? () => navigate("featsFilter")
+            : () => navigate("classesFilter")
+        }
+      >
+        <MenuIcon />
+      </IconButton>
+    );
+});
+
+export default function () {
   const filter = useFilterStore((state) => state);
   const featFilter = useFeatFilterStore((state) => state);
   const classFilter = useClassFilterStore((state) => state);
-  const theme = useTheme();
-  const themeStore = useThemeStore((state) => state);
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
-  const primaryString = useMemo(() => getPrimaryString(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryColor = usePrimaryColor();
+  const primaryString = usePrimaryColorString();
   const location = useLocation();
+
   return (
     <>
       <Box className="flex-grow">
         <AppBar position="sticky" color={primaryString} className="">
           <Toolbar className="">
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              className="block mr-1"
-              onClick={() => navigate(-1)}
-            >
-              <Home />
-            </IconButton>
-            {location.pathname.includes("settings") ||
-            location.pathname == "/rules" ? (
-              // <span>{location.pathname.replace("/", "").toUpperCase()}</span>
-              <></>
-            ) : location.pathname == "/characters" ? (
-              <CharacterNameAppBar />
-            ) : (
-              <TextField
-                id="search"
-                variant="filled"
-                className="flex-grow"
-                size="small"
-                maxRows={1}
-                value={
-                  location.pathname.includes("conditions") &&
-                  filter.conditionSearchString
-                    ? filter.conditionSearchString
-                    : location.pathname == "/spells" && filter.searchString
-                    ? filter.searchString
-                    : location.pathname.includes("feats") &&
-                      featFilter.searchString
-                    ? featFilter.searchString
-                    : location.pathname.includes("classes") &&
-                      classFilter.searchString
-                    ? classFilter.searchString
-                    : ""
-                }
-                onChange={
-                  location.pathname.includes("conditions")
-                    ? (e) => filter.setConditionSearchString(e.target.value)
-                    : location.pathname.includes("feats")
-                    ? (e) => featFilter.searchActions.set(e.target.value)
-                    : location.pathname.includes("classes")
-                    ? (e) => classFilter.searchActions.set(e.target.value)
-                    : (e) => filter.setSearchString(e.target.value)
-                }
-                sx={{
-                  "& .MuiFilledInput-input": {
-                    padding: "10px 12px 12px 12px",
-                  },
-                  color: primaryColor.dark,
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment
-                      position="start"
-                      className="align-top mb-5 mr-0 pr-0"
-                      sx={{
-                        "& .MuiIconButton-root": {
-                          paddingRight: 0,
-                        },
-                      }}
-                    >
-                      {(location.pathname == "/spells" &&
-                        filter.searchString) ||
-                      (location.pathname.includes("conditions") &&
-                        filter.conditionSearchString) ||
-                      (location.pathname.includes("feats") &&
-                        featFilter.searchString) ||
-                      (location.pathname.includes("classes") &&
-                        classFilter.searchString) ? (
-                        <IconButton
-                          onClick={
-                            location.pathname.includes("conditions")
-                              ? () => filter.setConditionSearchString(undefined)
-                              : location.pathname.includes("feats")
-                              ? () => featFilter.searchActions.set(undefined)
-                              : location.pathname.includes("classes")
-                              ? () => classFilter.searchActions.set(undefined)
-                              : () => filter.setSearchString(undefined)
-                          }
-                        >
-                          <ClearIcon className="align-top p-0" />
-                        </IconButton>
-                      ) : (
-                        <IconButton>
-                          <SearchIcon className="align-top p-0" />
-                        </IconButton>
-                      )}
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            )}
+            <HomeIconButton />
+            <SearchBar
+              pathname={location.pathname}
+              primaryColor={primaryColor}
+              setClassSearchString={classFilter.searchActions.set}
+              setConditionSearchString={filter.setConditionSearchString}
+              setFeatSearchString={featFilter.searchActions.set}
+              setSearchString={filter.setSearchString}
+              classSearchString={classFilter.searchString}
+              conditionSearchString={filter.conditionSearchString}
+              featSearchString={featFilter.searchString}
+              searchString={filter.searchString}
+            />
 
-            {location.pathname.includes("conditions") ||
-            location.pathname == "/rules" ||
-            location.pathname.includes("settings") ? (
-              <></>
-            ) : location.pathname == "/characters" ? (
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                className="block ml-1"
-                onClick={() => navigate("characterEdit")}
-              >
-                <EditIcon />
-              </IconButton>
-            ) : (
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                className="block ml-1"
-                onClick={
-                  location.pathname == "/spells"
-                    ? () => navigate("filter")
-                    : location.pathname.includes("feats")
-                    ? () => navigate("featsFilter")
-                    : () => navigate("classesFilter")
-                }
-              >
-                <MenuIcon />
-              </IconButton>
-            )}
-
-            {/* <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            className="flex-grow hidden md:block"
-          >
-            TEST
-          </Typography> */}
+            <FilterButton pathname={location.pathname} />
           </Toolbar>
         </AppBar>
       </Box>

@@ -4,18 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useFilterStore } from "./FilterDialog";
 import { useMemo } from "react";
 import { GroupedVirtuoso } from "react-virtuoso";
-import Dndsvg from "../assets/dndsvg";
-import { getPrimaryColor, useThemeStore } from "../theme";
+import { Dndsvg } from "../assets/dndsvg";
+import { useBgColor, usePrimaryColor } from "../theme";
 import { FilterData, useSpellListStore } from "../API/spell";
 import DataLoading from "./DataLoading";
 
 export default function SpellList() {
   const theme = useTheme();
-  const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryColor = usePrimaryColor();
+  const bgColor = useBgColor();
   const spells = useSpellListStore((state) => state.spells);
   const navigate = useNavigate();
   const filter = useFilterStore((state) => state);
@@ -30,21 +27,41 @@ export default function SpellList() {
     }));
   }, [query]);
 
+  const bgColorStyle = useMemo(
+    () => ({
+      backgroundColor: bgColor,
+    }),
+    [bgColor]
+  );
+  const cardStyle = useMemo(
+    () => ({
+      bgcolor:
+        theme.palette.mode === "dark"
+          ? theme.palette.background.default
+          : theme.palette.grey[200],
+      color:
+        theme.palette.mode === "dark" ? primaryColor.light : primaryColor.dark,
+    }),
+    [theme.palette.mode, primaryColor]
+  );
+  const dividerStyle = useMemo(
+    () => ({
+      color:
+        theme.palette.mode == "dark" ? primaryColor.dark : primaryColor.light,
+      bgcolor:
+        theme.palette.mode == "dark" ? primaryColor.dark : primaryColor.light,
+    }),
+    [theme.palette.mode, primaryColor]
+  );
+
   if (spells.length == 0) return DataLoading(primaryColor);
 
   if (query) {
     return (
       <>
         <GroupedVirtuoso
-          style={{
-            height: "100%",
-            width: "100%",
-            backgroundColor:
-              theme.palette.mode == "dark"
-                ? theme.palette.grey[900]
-                : theme.palette.background.default,
-          }}
-          className="overflow-auto box-border"
+          style={bgColorStyle}
+          className="overflow-auto box-border w-full h-full"
           groupCounts={groupCounts.map((gc) => gc.count)}
           groupContent={(index) => {
             return (
@@ -52,12 +69,7 @@ export default function SpellList() {
                 <Paper
                   className="flex flex-grow w-full pl-4 pr-4 pt-0.5 pb-0.5 rounded-none"
                   elevation={3}
-                  sx={{
-                    bgcolor:
-                      theme.palette.mode === "dark"
-                        ? theme.palette.grey[900]
-                        : theme.palette.background.default,
-                  }}
+                  sx={bgColorStyle}
                 >
                   <div>{`Level: ${
                     groupCounts[index].level == 0
@@ -73,15 +85,7 @@ export default function SpellList() {
           itemContent={(index, groupIndex) => {
             var spell = query[index];
             return (
-              <div
-                className=""
-                style={{
-                  background:
-                    theme.palette.mode === "dark"
-                      ? theme.palette.grey[900]
-                      : theme.palette.background.default,
-                }}
-              >
+              <div style={bgColorStyle}>
                 <div
                   className="flex flex-row overflow-hidden content-between w-full pr-4"
                   onClick={() => {
@@ -103,16 +107,7 @@ export default function SpellList() {
                           key={`card-${groupIndex}-${spell.id}-${t}`}
                           variant="elevation"
                           elevation={4}
-                          sx={{
-                            bgcolor:
-                              theme.palette.mode === "dark"
-                                ? theme.palette.background.default
-                                : theme.palette.grey[200],
-                            color:
-                              theme.palette.mode === "dark"
-                                ? primaryColor.light
-                                : primaryColor.dark,
-                          }}
+                          sx={cardStyle}
                           className="mr-1 ml-1 mt-1 pl-1 pr-1 mb-3"
                         >
                           <Typography variant="caption" className="text-xs">
@@ -133,7 +128,7 @@ export default function SpellList() {
                         className="text-center flex-grow-0 basis-0 pr-1"
                       >
                         <div className="flex flex-col w-full h-full">
-                          <div className="flex-grow flex-shrink"></div>
+                          <div className="grow"></div>
                           <div>
                             {listName == "Arcane" ? (
                               <AutoStories color="primary" fontSize="small" />
@@ -143,47 +138,14 @@ export default function SpellList() {
                               <Pets color="success" fontSize="small" />
                             )}
                           </div>
-                          <Typography
-                            variant="caption"
-                            className="text-xs flex-grow basis-auto"
-                            sx={{
-                              color:
-                                listName == "Arcane"
-                                  ? theme.palette.primary.main
-                                  : listName == "Divine"
-                                  ? theme.palette.secondary.main
-                                  : theme.palette.success.main,
-                            }}
-                          ></Typography>
+                          <div className="grow"></div>
                         </div>
                       </div>
                     ))}
                 </div>
-                <Divider
-                  sx={{
-                    color:
-                      theme.palette.mode == "dark"
-                        ? primaryColor.dark
-                        : primaryColor.light,
-                    bgcolor:
-                      theme.palette.mode == "dark"
-                        ? primaryColor.dark
-                        : primaryColor.light,
-                  }}
-                />
+                <Divider sx={dividerStyle} />
                 {index == query.length - 1 ? (
-                  <Dndsvg
-                    color={
-                      theme.palette.mode == "dark"
-                        ? primaryColor.main
-                        : primaryColor.main
-                    }
-                    background={
-                      theme.palette.mode == "dark"
-                        ? theme.palette.grey[900]
-                        : theme.palette.background.default
-                    }
-                  />
+                  <Dndsvg color={primaryColor.main} background={bgColor} />
                 ) : (
                   <></>
                 )}
@@ -191,173 +153,6 @@ export default function SpellList() {
             );
           }}
         />
-        {/* <List
-          sx={{
-            width: "100%",
-            bgcolor: "background.paper",
-            position: "relative",
-            "& ul": { padding: 0 },
-          }}
-          style={{
-            backgroundColor:
-              theme.palette.mode == "dark"
-                ? theme.palette.grey[900]
-                : theme.palette.background.default,
-          }}
-          className="overflow-auto box-border"
-          subheader={<li />}
-        >
-          {spellLevels.map((sectionId) => (
-            <li key={`section-${sectionId}`}>
-              <ul>
-                <ListSubheader className="flex p-0 flex-row leading-loose">
-                  <Paper
-                    className="flex flex-grow w-full pl-4 pr-4 rounded-none"
-                    elevation={3}
-                    sx={{
-                      bgcolor:
-                        theme.palette.mode === "dark"
-                          ? theme.palette.grey[900]
-                          : theme.palette.background.default,
-                    }}
-                  >
-                    <div>{`Level: ${sectionId}`}</div>
-                    <div className="flex-grow"></div>
-                    <div>
-                      {`Spells: ${
-                        query.filter((spell) => spell.level == sectionId).length
-                      }`}
-                    </div>
-                  </Paper>
-                </ListSubheader>
-                {query
-                  .filter((spell) => spell.level == sectionId)
-                  .sort((a, b) =>
-                    a.name == b.name ? 0 : a.name > b.name ? 1 : -1
-                  )
-                  .map((spell) => (
-                    <div
-                      key={`item-${sectionId}-${spell.id}`}
-                      onClick={() => {
-                        navigate("details", {
-                          state: { spell: spell },
-                        });
-                      }}
-                    >
-                      <ListItemButton
-                        style={{
-                          backgroundColor:
-                            theme.palette.mode === "dark"
-                              ? theme.palette.grey[900]
-                              : theme.palette.background.default,
-                        }}
-                      >
-                        <div className="flex flex-row overflow-hidden content-between w-full">
-                          <div className="flex-grow flex-shrink basis-auto">
-                            <Typography
-                              variant="body1"
-                              className="text-lg pl-1"
-                            >
-                              <b>{spell.name}</b>
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              className="text-sm pl-1"
-                            >
-                              {spell.schoolName}
-                            </Typography>
-                            <div className="flex flex-row overflow-hidden flex-wrap">
-                              {spell.spellTags?.map((t) => (
-                                <Card
-                                  key={`card-${sectionId}-${spell.id}-${t}`}
-                                  variant="elevation"
-                                  elevation={4}
-                                  sx={{
-                                    bgcolor:
-                                      theme.palette.mode === "dark"
-                                        ? theme.palette.background.default
-                                        : theme.palette.grey[200],
-                                    color:
-                                      theme.palette.mode === "dark"
-                                        ? theme.palette.secondary.light
-                                        : theme.palette.primary.dark,
-                                  }}
-                                  className="mr-1 ml-1 mt-1 pl-1 pr-1 mb-1"
-                                >
-                                  <Typography
-                                    variant="caption"
-                                    className="text-xs"
-                                  >
-                                    {t.toUpperCase()}
-                                  </Typography>
-                                </Card>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="flex-grow flex-shrink basis-1"></div>
-
-                          {spell.spellListName
-                            .split(",")
-                            .sort()
-                            .map((listName) => (
-                              <div
-                                key={`${spell.id}-${listName}`}
-                                className="text-center flex-grow-0 basis-0 pr-1"
-                              >
-                                <div className="flex flex-col w-full h-full">
-                                  <div className="flex-grow flex-shrink"></div>
-                                  <div>
-                                    {listName == "Arcane" ? (
-                                      <AutoStories
-                                        color="primary"
-                                        fontSize="small"
-                                      />
-                                    ) : listName == "Divine" ? (
-                                      <TempleHindu
-                                        color="secondary"
-                                        fontSize="small"
-                                      />
-                                    ) : (
-                                      <Pets color="success" fontSize="small" />
-                                    )}
-                                  </div>
-                                  <Typography
-                                    variant="caption"
-                                    className="text-xs flex-grow basis-auto"
-                                    sx={{
-                                      color:
-                                        listName == "Arcane"
-                                          ? theme.palette.primary.main
-                                          : listName == "Divine"
-                                          ? theme.palette.secondary.main
-                                          : theme.palette.success.main,
-                                    }}
-                                  >
-                                  </Typography>
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-                      </ListItemButton>
-                      <Divider
-                        sx={{
-                          color:
-                            theme.palette.mode == "dark"
-                              ? theme.palette.primary.dark
-                              : theme.palette.primary.light,
-                          bgcolor:
-                            theme.palette.mode == "dark"
-                              ? theme.palette.primary.dark
-                              : theme.palette.primary.light,
-                        }}
-                      />
-                    </div>
-                  ))}
-              </ul>
-            </li>
-          ))}
-          <img src="/dnd.png" className="mt-4 mb-4" />
-        </List> */}
       </>
     );
   }
