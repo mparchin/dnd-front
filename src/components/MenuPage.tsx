@@ -1,6 +1,4 @@
-import { useTheme } from "@mui/material";
-import { getPrimaryColor, useThemeStore } from "../theme";
-import { useMemo } from "react";
+import { useBgColor, usePrimaryColor } from "../theme";
 import {
   AutoStories,
   Settings,
@@ -16,17 +14,9 @@ import NavigationItem from "./navigation/NavigationItem";
 import { useNavigate } from "react-router-dom";
 
 export default function () {
-  const theme = useTheme();
-  const themeStore = useThemeStore();
   const navigate = useNavigate();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
-  const bgColor =
-    theme.palette.mode == "dark"
-      ? theme.palette.grey[900]
-      : theme.palette.background.default;
+  const primaryColor = usePrimaryColor();
+  const bgColor = useBgColor();
   return (
     <div className="flex w-full h-full flex-row flex-wrap justify-evenly content-start pt-1">
       <NavigationItem

@@ -1,5 +1,5 @@
-import { Button, Card, useTheme } from "@mui/material";
-import { getPrimaryColor, useThemeStore } from "../../theme";
+import { Button, Card } from "@mui/material";
+import { usePrimaryColor } from "../../theme";
 import { useMemo } from "react";
 
 interface ScrollerCardsProps {
@@ -11,18 +11,17 @@ interface ScrollerCardsProps {
 }
 
 export default function (props: ScrollerCardsProps) {
-  const theme = useTheme();
-  const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryColor = usePrimaryColor();
+  const bgColor = useMemo(
+    () => ({ backgroundColor: props.selected ? primaryColor.main : "" }),
+    [props.selected, primaryColor]
+  );
   return (
     <Card
       elevation={3}
       className="mt-1 mb-1 mr-1 shrink-0"
       id={props.cardId}
-      style={{ backgroundColor: props.selected ? primaryColor.main : "" }}
+      style={bgColor}
     >
       <Button
         color="inherit"

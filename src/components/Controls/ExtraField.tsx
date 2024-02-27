@@ -1,30 +1,25 @@
-import { TextField, useTheme } from "@mui/material";
-import { useMemo } from "react";
-import { useThemeStore, getPrimaryString } from "../../theme";
+import { TextField } from "@mui/material";
+import { usePrimaryColorString } from "../../theme";
+import { memo } from "react";
 
-interface Props {
+interface ExtraFieldProps {
   className?: string;
   colorString?: any;
   label?: string;
   required?: boolean;
 }
 
-export default function (props: Props) {
-  const theme = useTheme();
-  const themeStore = useThemeStore((state) => state);
-  const primaryString = useMemo(() => getPrimaryString(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+export const ExtraField = memo((p: ExtraFieldProps) => {
+  const primaryColorString = usePrimaryColorString();
   return (
-    <div className={props.className}>
+    <div className={p.className}>
       <TextField
-        label={props.label ?? "Extra"}
+        label={p.label ?? "Extra"}
         fullWidth
-        color={props.colorString ?? primaryString}
-        helperText="Eg. INT+3 / Prof-2 / 3 / charisma / level"
-        required={props.required}
+        color={p.colorString ?? primaryColorString}
+        helperText="Eg. INT+3 / Prof-2 / 3 / charisma / level * 2"
+        required={p.required}
       />
     </div>
   );
-}
+});

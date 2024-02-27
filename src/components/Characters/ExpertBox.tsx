@@ -2,11 +2,11 @@ import { useTheme } from "@mui/material";
 import { useMemo } from "react";
 import {
   useThemeStore,
-  getPrimaryColor,
   ThemeMode,
-  getPrimaryString,
+  usePrimaryColor,
+  usePrimaryColorString,
 } from "../../theme";
-import Circle from "../../assets/circle";
+import { Circle } from "../../assets/circle";
 
 interface ExpertBoxProps {
   name: string;
@@ -20,27 +20,26 @@ interface ExpertBoxProps {
 export default function (props: ExpertBoxProps) {
   const theme = useTheme();
   const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryColor = usePrimaryColor();
+  const primaryColorString = usePrimaryColorString();
 
-  const primaryColorString = useMemo(
-    () => getPrimaryString(theme, themeStore),
-    [theme, themeStore]
+  const bgImage = useMemo(
+    () => ({
+      backgroundImage: `url('/expert-box-bg-${
+        themeStore.mode == ThemeMode.light ? "grey" : "white"
+      }${props.proficiencyBonous ? `-${primaryColorString}` : ""}${
+        props.expert ? `-${primaryColorString}` : ""
+      }.svg')`,
+    }),
+    [themeStore.mode, props.proficiencyBonous, primaryColorString, props.expert]
   );
 
+  const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
+    primaryColor,
+  ]);
+
   return (
-    <div
-      className="flex flex-row bg-no-repeat h-12 m-1"
-      style={{
-        backgroundImage: `url('/expert-box-bg-${
-          themeStore.mode == ThemeMode.light ? "grey" : "white"
-        }${props.proficiencyBonous ? `-${primaryColorString}` : ""}${
-          props.expert ? `-${primaryColorString}` : ""
-        }.svg')`,
-      }}
-    >
+    <div className="flex flex-row bg-no-repeat h-12 m-1" style={bgImage}>
       <div className="w-4"></div>
       <div className="w-12 h-full text-center flex flex-col pr-1">
         <span className="grow-[2]"></span>
@@ -56,7 +55,7 @@ export default function (props: ExpertBoxProps) {
         <span className="grow-[2]"></span>
         <span
           className="shrink uppercase text-2xl font-bold"
-          style={{ color: primaryColor.main }}
+          style={coloredStyle}
         >
           {props.proficiencyBonous
             ? `${props.expert ? "2" : ""}D${props.proficiencyBonous * 2}`

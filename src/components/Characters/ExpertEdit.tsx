@@ -3,19 +3,9 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
-  useTheme,
 } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { useThemeStore, getPrimaryString } from "../../theme";
-import { create } from "zustand";
-import ExtraField from "../Controls/ExtraField";
-
-interface ExpertEditState {
-  proficientMode: number;
-  setProficientMode: (mode: number) => void;
-  hasAdvantage: boolean;
-  setAdvantage: (advantageMode: boolean) => void;
-}
+import { usePrimaryColorString } from "../../theme";
+import { ExtraField } from "../Controls/ExtraField";
 
 interface Props {
   className?: string;
@@ -29,38 +19,20 @@ interface Props {
   disableExpertOption?: boolean;
 }
 
-const useExpertEditStore = create<ExpertEditState>((set) => ({
-  proficientMode: 0,
-  setProficientMode: (mode: number) => set({ proficientMode: mode }),
-  hasAdvantage: false,
-  setAdvantage: (advantageMode: boolean) =>
-    set({ hasAdvantage: advantageMode }),
-}));
-
 export default function (props: Props) {
-  const theme = useTheme();
-  const themeStore = useThemeStore((state) => state);
-  const primaryString = useMemo(() => getPrimaryString(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
-  const state = useExpertEditStore((state) => state);
-
-  useEffect(
-    () =>
-      state.setProficientMode(props.isExpert ? 2 : props.isProficient ? 1 : 0),
-    [props.isProficient, props.isExpert]
-  );
+  const primaryString = usePrimaryColorString();
+  const centerTextStyle = {
+    "& .MuiInputBase-input": {
+      textAlign: "center",
+    },
+  };
 
   return (
     <div className={props.className}>
       <div className="flex flex-row">
         <Card
-          className="capitalize flex flex-col text-center p-2 pt-4 pr-3 pb-4 mr-2"
+          className="capitalize text-vertical-lr flex flex-col text-center p-2 pt-4 pr-3 pb-4 mr-2"
           elevation={3}
-          style={{
-            writingMode: "vertical-lr",
-          }}
         >
           {props.name}
         </Card>
@@ -69,10 +41,10 @@ export default function (props: Props) {
           <ToggleButton
             className="h-14 w-10 mr-1 mb-1 p-2"
             value={true}
-            selected={state.hasAdvantage}
+            selected={true}
             color="success"
             onChange={() => {
-              state.setAdvantage(!state.hasAdvantage);
+              // state.setAdvantage(!state.hasAdvantage);
             }}
           >
             A
@@ -80,12 +52,12 @@ export default function (props: Props) {
           <ToggleButtonGroup
             className="mr-1 mb-1 h-14"
             color={primaryString}
-            value={state.proficientMode}
+            value={1}
             exclusive
-            onChange={(
-              _event: React.MouseEvent<HTMLElement>,
-              newValue: number
-            ) => state.setProficientMode(newValue)}
+            // onChange={(
+            //   _event: React.MouseEvent<HTMLElement>,
+            //   newValue: number
+            // ) => state.setProficientMode(newValue)}
           >
             <ToggleButton value="1">
               d{props.proficiencyBonous * 2}
@@ -107,11 +79,7 @@ export default function (props: Props) {
               color={primaryString}
               disabled
               value={props.mainAttributeValue}
-              sx={{
-                "& .MuiInputBase-input": {
-                  textAlign: "center",
-                },
-              }}
+              sx={centerTextStyle}
             />
           </div>
           <div className="flex flex-col mr-1 mb-1">

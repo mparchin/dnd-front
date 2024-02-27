@@ -1,6 +1,5 @@
-import { useTheme } from "@mui/material";
 import { useMemo } from "react";
-import { useThemeStore, getPrimaryColor, ThemeMode } from "../../theme";
+import { useThemeStore, ThemeMode, usePrimaryColor } from "../../theme";
 
 interface stats {
   name: string;
@@ -8,35 +7,29 @@ interface stats {
 }
 
 export default function (props: stats) {
-  const theme = useTheme();
   const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
+  const primaryColor = usePrimaryColor();
+  const bgImage = useMemo(
+    () => ({
+      backgroundImage:
+        themeStore.mode == ThemeMode.light
+          ? "url('/box-bg-grey.svg')"
+          : "url('/box-bg-white.svg')",
+    }),
+    [themeStore.mode]
+  );
+  const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
+    primaryColor,
   ]);
-  var modifire = Math.floor((props.value - 10) / 2);
+  const modifire = Math.floor((props.value - 10) / 2);
   return (
-    <div
-      className="bg-no-repeat flex flex-col w-28 h-28 m-1"
-      style={{
-        backgroundImage:
-          themeStore.mode == ThemeMode.light
-            ? "url('/box-bg-grey.svg')"
-            : "url('/box-bg-white.svg')",
-      }}
-    >
-      <span
-        className="grow text-center text-xl"
-        style={{ color: primaryColor.main }}
-      >
+    <div className="bg-no-repeat flex flex-col w-28 h-28 m-1" style={bgImage}>
+      <span className="grow text-center text-xl" style={coloredStyle}>
         {props.value}
       </span>
       <div className="grow-[100] text-center flex flex-col">
         <span className="grow"></span>
-        <span
-          className="shrink-0 text-2xl font-bold"
-          style={{ color: primaryColor.main }}
-        >
+        <span className="shrink-0 text-2xl font-bold" style={coloredStyle}>
           {modifire > 0 ? `+${modifire}` : modifire}
         </span>
         <span className="grow"></span>

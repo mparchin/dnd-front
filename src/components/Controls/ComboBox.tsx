@@ -1,14 +1,8 @@
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  useTheme,
-} from "@mui/material";
-import { useMemo } from "react";
-import { useThemeStore, getPrimaryString } from "../../theme";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { usePrimaryColorString } from "../../theme";
+import { memo } from "react";
 
-interface Props {
+interface ComboBoxProps {
   lable: string;
   required?: boolean;
   className?: string;
@@ -21,31 +15,27 @@ interface Option {
   text: string;
 }
 
-export default function (props: Props) {
-  const theme = useTheme();
-  const themeStore = useThemeStore((state) => state);
-  const primaryString = useMemo(() => getPrimaryString(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+export const ComboBox = memo((p: ComboBoxProps) => {
+  const primaryString = usePrimaryColorString();
   return (
-    <FormControl className={props.className}>
+    <FormControl className={p.className}>
       <InputLabel
-        id={`select-label-${props.lable}`}
+        id={`select-label-${p.lable}`}
         className="capitalize"
-        color={props.colorString ?? primaryString}
+        color={p.colorString ?? primaryString}
       >
-        {props.lable + (props.required ? " *" : "")}
+        {p.lable + (p.required ? " *" : "")}
       </InputLabel>
       <Select
+        value={1}
         className="capitalize"
-        labelId={`select-label-${props.lable}`}
-        label={props.lable + (props.required ? " *" : "")}
-        required={props.required}
-        color={props.colorString ?? primaryString}
+        labelId={`select-label-${p.lable}`}
+        label={p.lable + (p.required ? " *" : "")}
+        required={p.required}
+        color={p.colorString ?? primaryString}
         // onChange={handleChange}
       >
-        {props.options.map((option) => (
+        {p.options.map((option) => (
           <MenuItem
             value={option.value}
             key={option.value}
@@ -57,4 +47,4 @@ export default function (props: Props) {
       </Select>
     </FormControl>
   );
-}
+});

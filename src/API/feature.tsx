@@ -103,14 +103,14 @@ export function FilterData(
           .includes(filter.searchString?.toLowerCase() ?? "")
     );
 
-  if (filter.class && filter.subclasses.length > 0) {
+  if (filter.classString && filter.subclasses.length > 0) {
     var ret: Feature[] = [];
     filter.subclasses.forEach((subclass) => {
       ret = ret.concat(query.filter((q) => q.subclass?.includes(subclass)));
     });
     ret = ret.concat(
       query.filter(
-        (q) => q.className == filter.class && q.subclass == undefined
+        (q) => q.className == filter.classString && q.subclass == undefined
       )
     );
     query = [...new Set(ret)];
@@ -120,9 +120,9 @@ export function FilterData(
       ret = ret.concat(query.filter((q) => q.subclass?.includes(subclass)));
     });
     query = [...new Set(ret)];
-  } else if (filter.class) {
+  } else if (filter.classString) {
     query = query.filter(
-      (q) => q.className == filter.class && q.subclass == undefined
+      (q) => q.className == filter.classString && q.subclass == undefined
     );
   }
 

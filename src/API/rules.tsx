@@ -27,7 +27,7 @@ export const useRuleListStore = create(
 export default function GetAndSaveRules() {
   const { setRules, lastTime } = useRuleListStore((state) => state);
   const { data } = useSWR<Rule[], Error>(
-    lastTime ? `rules?lasttime=${lastTime}` : "features",
+    lastTime ? `rules?lasttime=${lastTime}` : "rules",
     getRules,
     {
       refreshInterval: 300000,

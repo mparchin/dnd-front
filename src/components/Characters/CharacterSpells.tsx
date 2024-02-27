@@ -1,7 +1,7 @@
-import { Button, Card, useTheme } from "@mui/material";
-import Circle from "../../assets/circle";
+import { Button, Card } from "@mui/material";
+import { Circle } from "../../assets/circle";
 import { useMemo } from "react";
-import { useThemeStore, getPrimaryString } from "../../theme";
+import { usePrimaryColorString } from "../../theme";
 
 interface CharSpellDetail {
   id: number;
@@ -17,12 +17,7 @@ interface CharacterSpellProps {
   spells: CharSpellDetail[];
 }
 export default function (props: CharacterSpellProps) {
-  const theme = useTheme();
-  const themeStore = useThemeStore();
-  const primaryColorString = useMemo(
-    () => getPrimaryString(theme, themeStore),
-    [theme, themeStore]
-  );
+  const primaryColorString = usePrimaryColorString();
   const spellLevels = useMemo(
     () => [...new Set(props.spells.map((spell) => spell.level))].sort(),
     [props.spells]
@@ -34,11 +29,8 @@ export default function (props: CharacterSpellProps) {
       className="md:w-96 w-full flex flex-row mb-10 mr-4 ml-4 last:mb-2 md:last:mb-10"
     >
       <Card
-        className="uppercase text-sm text-center p-2 pt-4 pb-4"
+        className="uppercase text-vertical-lr text-sm text-center p-2 pt-4 pb-4"
         elevation={3}
-        style={{
-          writingMode: "vertical-lr",
-        }}
       >
         {level == 0 ? "cantrips" : `level ${level}`}
       </Card>

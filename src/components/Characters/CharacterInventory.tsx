@@ -1,6 +1,6 @@
 import { Card } from "@mui/material";
 import { useMemo } from "react";
-import Circle from "../../assets/circle";
+import { Circle } from "../../assets/circle";
 
 interface CharInventoryDetail {
   id: number;
@@ -37,11 +37,8 @@ export default function (props: CharacterInventoryProps) {
       className="md:w-96 w-full flex flex-row mb-10 mr-4 ml-4 last:mb-2 md:last:mb-10"
     >
       <Card
-        className="uppercase text-sm text-center p-2 pt-4 pb-4"
+        className="uppercase text-vertical-lr text-sm text-center p-2 pt-4 pb-4"
         elevation={3}
-        style={{
-          writingMode: "vertical-lr",
-        }}
       >
         {category}
       </Card>

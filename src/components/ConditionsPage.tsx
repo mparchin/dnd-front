@@ -3,17 +3,15 @@ import { Virtuoso } from "react-virtuoso";
 import { useConditionListStore } from "../API/conditions";
 import DataLoading from "./DataLoading";
 import { useMemo } from "react";
-import { useThemeStore, getPrimaryColor } from "../theme";
-import Dndsvg from "../assets/dndsvg";
+import { useThemeStore, usePrimaryColor, useBgColor } from "../theme";
+import { Dndsvg } from "../assets/dndsvg";
 import { useFilterStore } from "./FilterDialog";
 
 export default function ConditionsPage() {
   const theme = useTheme();
   const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryColor = usePrimaryColor();
+  const bgColor = useBgColor();
   const conditions = useConditionListStore((state) => state.conditions);
   const conditionSearchString = useFilterStore(
     (state) => state.conditionSearchString
@@ -26,65 +24,53 @@ export default function ConditionsPage() {
       condition.name.toLowerCase().includes(conditionSearchString.toLowerCase())
     );
 
+  const bgColorStyle = useMemo(
+    () => ({
+      backgroundColor: bgColor,
+    }),
+    [bgColor]
+  );
+
+  const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
+    primaryColor,
+  ]);
+
   return (
-    <div
-      className="w-full h-full"
-      style={{
-        backgroundColor:
-          theme.palette.mode == "dark"
-            ? theme.palette.grey[900]
-            : theme.palette.background.default,
-      }}
-    >
+    <div className="w-full h-full" style={bgColorStyle}>
       <Virtuoso
-        style={{
-          height: "100%",
-          width: "100%",
-        }}
-        className="overflow-auto box-border"
+        className="overflow-auto box-border w-full h-full"
         data={query}
-        itemContent={(index, condition) => (
-          <>
-            <div className="pt-2 pl-4 pr-4 pb-2">
-              <Card elevation={5} className="rounded-2xl pr-4 pl-4 pt-2 pb-2">
-                <div className="flex flex-row w-full">
-                  <strong
-                    className="text-lg"
-                    style={{ color: primaryColor.main }}
-                  >
-                    {condition.name}
-                  </strong>
-                </div>
-                <div
-                  className={`pl-2 pr-2 conditions ${theme.palette.mode} ${
-                    themeStore.isPrimarySwapped ? "swappedColors" : ""
-                  }`}
-                  dangerouslySetInnerHTML={{
-                    __html: condition.description
-                      .replace(/color:hsl\(0, 0%, 0%\);/g, "")
-                      .replace(/color:hsl\(0,0%,0%\);/g, ""),
-                  }}
-                />
-              </Card>
-            </div>
-            {index == query.length - 1 ? (
-              <Dndsvg
-                color={
-                  theme.palette.mode == "dark"
-                    ? primaryColor.main
-                    : primaryColor.main
-                }
-                background={
-                  theme.palette.mode == "dark"
-                    ? theme.palette.grey[900]
-                    : theme.palette.background.default
-                }
-              />
-            ) : (
-              <></>
-            )}
-          </>
-        )}
+        itemContent={(index, condition) => {
+          const html = {
+            __html: condition.description
+              .replace(/color:hsl\(0, 0%, 0%\);/g, "")
+              .replace(/color:hsl\(0,0%,0%\);/g, ""),
+          };
+          return (
+            <>
+              <div className="pt-2 pl-4 pr-4 pb-2">
+                <Card elevation={5} className="rounded-2xl pr-4 pl-4 pt-2 pb-2">
+                  <div className="flex flex-row w-full">
+                    <strong className="text-lg" style={coloredStyle}>
+                      {condition.name}
+                    </strong>
+                  </div>
+                  <div
+                    className={`pl-2 pr-2 conditions ${theme.palette.mode} ${
+                      themeStore.isPrimarySwapped ? "swappedColors" : ""
+                    }`}
+                    dangerouslySetInnerHTML={html}
+                  />
+                </Card>
+              </div>
+              {index == query.length - 1 ? (
+                <Dndsvg color={primaryColor.main} background={bgColor} />
+              ) : (
+                <></>
+              )}
+            </>
+          );
+        }}
       />
     </div>
   );
