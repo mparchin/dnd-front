@@ -6,7 +6,9 @@ import { useTheme } from "@mui/material";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxImportSource: "@welldone-software/why-did-you-render",
+    }),
     VitePWA({
       registerType: "prompt",
       devOptions: {

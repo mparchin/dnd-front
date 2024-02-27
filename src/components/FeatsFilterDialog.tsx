@@ -1,27 +1,13 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Button,
-  IconButton,
-  SwipeableDrawer,
-  ToggleButton,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Button, SwipeableDrawer, ToggleButton, useTheme } from "@mui/material";
 import { create } from "zustand";
-import { getPrimaryColor, useThemeStore } from "../theme";
-import {
-  ArrowBackIosNew,
-  FilterAltOff,
-  ExpandMore,
-  FiberManualRecord,
-} from "@mui/icons-material";
-import { useMemo } from "react";
+import { useBgColor, usePrimaryColor, usePrimaryColorString } from "../theme";
+import { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Dndsvg from "../assets/dndsvg";
-import FilterButtonText from "./FilterButtonText";
+import { Dndsvg } from "../assets/dndsvg";
+import { FilterButtonText } from "./Filter/FilterButtonText";
 import { FilterData, useFeatListStore } from "../API/feat";
+import { Header } from "./Filter/Header";
+import { FilterAccordion } from "./Filter/FilterAccordion";
 
 export interface FeatFilterState {
   searchString?: string;
@@ -109,11 +95,9 @@ export const useFeatFilterStore = create<FeatFilterState>()((set) => ({
 
 export default function FeatsFilterDialog() {
   const theme = useTheme();
-  const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryColor = usePrimaryColor();
+  const primaryColorString = usePrimaryColorString();
+  const bgColor = useBgColor();
   const feats = useFeatListStore((state) => state);
   const location = useLocation();
   const navigate = useNavigate();
@@ -122,205 +106,155 @@ export default function FeatsFilterDialog() {
     return FilterData(feats.feats, filter);
   }, [feats.feats, filter]);
   const IsOpenRequest = () => location.pathname.includes("featsFilter");
-  const CloseRequest = () => {
+  const CloseRequest = useCallback(() => {
     if (IsOpenRequest()) navigate(-1);
-  };
-  if (!filter.isOpen && IsOpenRequest()) filter.dialogActions.open();
-  else if (filter.isOpen && !IsOpenRequest()) filter.dialogActions.close();
+  }, [location.pathname]);
+  useEffect(() => {
+    if (!filter.isOpen && IsOpenRequest()) filter.dialogActions.open();
+    else if (filter.isOpen && !IsOpenRequest()) filter.dialogActions.close();
+  }, [filter.isOpen, location.pathname]);
+  const drawerSx = useMemo(
+    () => ({
+      "& .MuiDrawer-paper": {
+        width: "100%",
+        bgcolor: bgColor,
+      },
+    }),
+    [bgColor]
+  );
+  const buttonStyle = useMemo(
+    () => ({
+      background: primaryColor.main,
+      color: theme.palette.text.primary,
+    }),
+    [primaryColor.main]
+  );
+  const clearAll = useCallback(() => {
+    filter.levelsActions.clear();
+    filter.prerequisitesActions.clear();
+    filter.booksActions.clear();
+    filter.repeatablesActions.clear();
+  }, []);
+
+  const LevelOptions = useMemo(() => {
+    return feats.filterList.levels?.map((level) => (
+      <ToggleButton
+        key={level}
+        value="Level"
+        selected={filter.levels.includes(level)}
+        className="w-full"
+        onChange={() => filter.levelsActions.toggle(level)}
+      >
+        <FilterButtonText
+          text={`${level}+${level >= 18 ? "(Epic boon)" : ""}`}
+          checkCondition={filter.levels.includes(level)}
+        />
+      </ToggleButton>
+    ));
+  }, [filter.levels, feats.filterList.levels]);
+
+  const PrerequisteOptions = useMemo(() => {
+    return feats.filterList.prerequisite?.map((prerequisite) => (
+      <ToggleButton
+        key={prerequisite}
+        value="prerequisite"
+        selected={filter.prerequisites.includes(prerequisite)}
+        className="w-full"
+        onChange={() => filter.prerequisitesActions.toggle(prerequisite)}
+      >
+        <FilterButtonText
+          text={prerequisite}
+          checkCondition={filter.prerequisites.includes(prerequisite)}
+        />
+      </ToggleButton>
+    ));
+  }, [filter.prerequisites, feats.filterList.prerequisite]);
+
+  const BookOptions = useMemo(() => {
+    return feats.filterList.books?.map((book) => (
+      <ToggleButton
+        key={book}
+        value="book"
+        selected={filter.books.includes(book)}
+        className="w-full"
+        onChange={() => filter.booksActions.toggle(book)}
+      >
+        <FilterButtonText
+          text={book}
+          checkCondition={filter.books.includes(book)}
+        />
+      </ToggleButton>
+    ));
+  }, [feats.filterList.books, filter.books]);
+
+  const RepeatableOptions = useMemo(() => {
+    return feats.filterList.repeatable?.map((repeatable) => (
+      <ToggleButton
+        key={repeatable}
+        value="repeatable"
+        selected={filter.repeatable.includes(repeatable)}
+        className="w-full"
+        onChange={() => filter.repeatablesActions.toggle(repeatable)}
+      >
+        <FilterButtonText
+          text={repeatable}
+          checkCondition={filter.repeatable.includes(repeatable)}
+        />
+      </ToggleButton>
+    ));
+  }, [filter.repeatable, feats.filterList.repeatable]);
+
   return (
     <SwipeableDrawer
       anchor={"right"}
       open={filter.isOpen}
       transitionDuration={300}
+      disableDiscovery={true}
       onClose={() => CloseRequest()}
       onOpen={() => filter.dialogActions.open()}
       elevation={0}
-      sx={{
-        "& .MuiDrawer-paper": {
-          width: "100%",
-          bgcolor:
-            theme.palette.mode == "dark"
-              ? theme.palette.grey[900]
-              : theme.palette.background.default,
-        },
-      }}
+      sx={drawerSx}
     >
       <div className="flex w-full h-full overflow-x-hidden overflow-y-auto flex-col">
-        <div className="flex w-full overflow-hidden h-16 flex-shrink-0 flex-row">
-          <div className="flex-grow basis-0 pt-2 pl-2">
-            <IconButton onClick={() => CloseRequest()}>
-              <ArrowBackIosNew sx={{ color: primaryColor.main }} />
-            </IconButton>
-          </div>
-          <div
-            className="grow-[3] basis-0 pt-4 text-center"
-            style={{
-              color: primaryColor.main,
-            }}
-          >
-            Filters
-          </div>
-          <div className="flex-grow basis-0 pt-2 pr-4 text-right">
-            <IconButton
-              onClick={() => {
-                filter.levelsActions.clear();
-                filter.prerequisitesActions.clear();
-                filter.booksActions.clear();
-                filter.repeatablesActions.clear();
-              }}
-            >
-              <FilterAltOff sx={{ color: primaryColor.main }} />
-            </IconButton>
-          </div>
-        </div>
+        <Header
+          Clear={clearAll}
+          CloseRequest={CloseRequest}
+          primaryColorString={primaryColorString}
+          className="flex w-full overflow-hidden h-16 flex-shrink-0 flex-row"
+        />
         <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-1 pr-1 pb-1 pt-1">
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <div className="flex flex-row w-full">
-                <Typography className="flex-grow">LEVEL</Typography>
-                {filter.levels.length > 0 ? (
-                  <FiberManualRecord
-                    fontSize="small"
-                    className="pr-2 pt-1"
-                    sx={{ color: primaryColor.main }}
-                  />
-                ) : (
-                  <></>
-                )}
-              </div>
-            </AccordionSummary>
-            <AccordionDetails>
-              {feats.filterList.levels?.map((level) => (
-                <ToggleButton
-                  key={level}
-                  value="Level"
-                  selected={filter.levels.includes(level)}
-                  className="w-full"
-                  onChange={() => filter.levelsActions.toggle(level)}
-                >
-                  <FilterButtonText
-                    text={`${level}+${level >= 18 ? "(Epic boon)" : ""}`}
-                    checkCondition={filter.levels.includes(level)}
-                  />
-                </ToggleButton>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <div className="flex flex-row w-full">
-                <Typography className="flex-grow">PREREQUISITE</Typography>
-                {filter.prerequisites.length > 0 ? (
-                  <FiberManualRecord
-                    fontSize="small"
-                    className="pr-2 pt-1"
-                    sx={{ color: primaryColor.main }}
-                  />
-                ) : (
-                  <></>
-                )}
-              </div>
-            </AccordionSummary>
-            <AccordionDetails>
-              {feats.filterList.prerequisite?.map((prerequisite) => (
-                <ToggleButton
-                  key={prerequisite}
-                  value="prerequisite"
-                  selected={filter.prerequisites.includes(prerequisite)}
-                  className="w-full"
-                  onChange={() =>
-                    filter.prerequisitesActions.toggle(prerequisite)
-                  }
-                >
-                  <FilterButtonText
-                    text={prerequisite}
-                    checkCondition={filter.prerequisites.includes(prerequisite)}
-                  />
-                </ToggleButton>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <div className="flex flex-row w-full">
-                <Typography className="flex-grow">BOOK</Typography>
-                {filter.books.length > 0 ? (
-                  <FiberManualRecord
-                    fontSize="small"
-                    className="pr-2 pt-1"
-                    sx={{ color: primaryColor.main }}
-                  />
-                ) : (
-                  <></>
-                )}
-              </div>
-            </AccordionSummary>
-            <AccordionDetails>
-              {feats.filterList.books?.map((book) => (
-                <ToggleButton
-                  key={book}
-                  value="book"
-                  selected={filter.books.includes(book)}
-                  className="w-full"
-                  onChange={() => filter.booksActions.toggle(book)}
-                >
-                  <FilterButtonText
-                    text={book}
-                    checkCondition={filter.books.includes(book)}
-                  />
-                </ToggleButton>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-              <div className="flex flex-row w-full">
-                <Typography className="flex-grow">REPATABLE</Typography>
-                {filter.repeatable.length > 0 ? (
-                  <FiberManualRecord
-                    fontSize="small"
-                    className="pr-2 pt-1"
-                    sx={{ color: primaryColor.main }}
-                  />
-                ) : (
-                  <></>
-                )}
-              </div>
-            </AccordionSummary>
-            <AccordionDetails>
-              {feats.filterList.repeatable?.map((repeatable) => (
-                <ToggleButton
-                  key={repeatable}
-                  value="repeatable"
-                  selected={filter.repeatable.includes(repeatable)}
-                  className="w-full"
-                  onChange={() => filter.repeatablesActions.toggle(repeatable)}
-                >
-                  <FilterButtonText
-                    text={repeatable}
-                    checkCondition={filter.repeatable.includes(repeatable)}
-                  />
-                </ToggleButton>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-          <Dndsvg
-            color={primaryColor.main}
-            background={
-              theme.palette.mode == "dark"
-                ? theme.palette.grey[900]
-                : theme.palette.background.default
-            }
-          />
+          <FilterAccordion
+            name="level"
+            anyOptionsSelected={filter.levels.length > 0}
+          >
+            {LevelOptions}
+          </FilterAccordion>
+          <FilterAccordion
+            name="prerequisite"
+            anyOptionsSelected={filter.prerequisites.length > 0}
+          >
+            {PrerequisteOptions}
+          </FilterAccordion>
+          <FilterAccordion
+            name="book"
+            anyOptionsSelected={filter.books.length > 0}
+          >
+            {BookOptions}
+          </FilterAccordion>
+          <FilterAccordion
+            name="repeatable"
+            anyOptionsSelected={filter.repeatable.length > 0}
+          >
+            {RepeatableOptions}
+          </FilterAccordion>
+
+          <Dndsvg color={primaryColor.main} background={bgColor} />
         </div>
         <div className="flex w-full overflow-hidden flex-shrink-0">
           <Button
             className="w-full h-16"
             onClick={() => CloseRequest()}
-            style={{
-              background: primaryColor.main,
-              color: theme.palette.text.primary,
-            }}
+            style={buttonStyle}
           >
             Feats Found {query.length}
           </Button>

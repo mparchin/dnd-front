@@ -16,8 +16,13 @@ import SpellArgs from "./SpellArgs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import { useEffect, useMemo } from "react";
-import Dndsvg from "../assets/dndsvg";
-import { getPrimaryColor, useThemeStore } from "../theme";
+import { Dndsvg } from "../assets/dndsvg";
+import {
+  useBgColor,
+  usePrimaryColor,
+  usePrimaryColorString,
+  useThemeStore,
+} from "../theme";
 
 interface SpellDetailState {
   spell?: Spell;
@@ -36,10 +41,9 @@ const useSpellDetailStore = create<SpellDetailState>()((set) => ({
 export default function SpellDetailDialog() {
   const theme = useTheme();
   const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryColor = usePrimaryColor();
+  const primaryColorString = usePrimaryColorString();
+  const bgColor = useBgColor();
   const location = useLocation();
   const navigate = useNavigate();
   const IsOpenRequest = () => location.pathname.includes("details");
@@ -52,38 +56,67 @@ export default function SpellDetailDialog() {
     else if (isOpen && !IsOpenRequest()) close(spell);
   }, [isOpen, IsOpenRequest, spell]);
 
+  const drawerSx = useMemo(
+    () => ({
+      "& .MuiDrawer-paper": {
+        width: "100%",
+        bgcolor: bgColor,
+      },
+    }),
+    [bgColor]
+  );
+
+  const cardSx = useMemo(
+    () => ({
+      bgcolor:
+        theme.palette.mode === "dark"
+          ? theme.palette.background.default
+          : theme.palette.grey[200],
+      color:
+        theme.palette.mode === "dark" ? primaryColor.light : primaryColor.dark,
+    }),
+    [theme.palette.mode]
+  );
+
+  const descriptionInnerHtml = useMemo(
+    () => ({
+      __html:
+        spell?.description
+          .replace(/color:hsl\(0, 0%, 0%\);/g, "")
+          .replace(/color:hsl\(0,0%,0%\);/g, "") ?? "",
+    }),
+    [spell?.description]
+  );
+
+  const higherDescriptionInnerHtml = useMemo(
+    () => ({
+      __html: (spell?.higherLevelDescription ?? "")
+        .replace(/color:hsl\(0, 0%, 0%\);/g, "")
+        .replace(/color:hsl\(0,0%,0%\);/g, ""),
+    }),
+    [spell?.higherLevelDescription]
+  );
+
   return (
     <SwipeableDrawer
       anchor={"right"}
       open={isOpen}
       transitionDuration={200}
+      disableDiscovery={true}
       onClose={() => CloseRequest()}
       onOpen={() => open(spell)}
       elevation={0}
-      sx={{
-        "& .MuiDrawer-paper": {
-          width: "100%",
-          bgcolor:
-            theme.palette.mode == "dark"
-              ? theme.palette.grey[900]
-              : theme.palette.background.default,
-        },
-      }}
+      sx={drawerSx}
     >
       <div className="flex w-full h-full overflow-x-hidden overflow-y-hidden flex-col">
         <div className="flex w-full overflow-hidden flex-shrink-0 flex-row h-16">
           <div className="flex-grow basis-0 pt-2 ">
             <IconButton onClick={() => CloseRequest()}>
-              <ArrowBackIosNew sx={{ color: primaryColor.main }} />
+              <ArrowBackIosNew color={primaryColorString} />
             </IconButton>
           </div>
-          <div
-            className="grow-[3] basis-0 pt-4 text-center"
-            style={{
-              color: primaryColor.main,
-            }}
-          >
-            {spell?.name}
+          <div className="grow-[3] basis-0 pt-4 text-center">
+            <Typography color={primaryColorString}>{spell?.name}</Typography>
           </div>
           <div className="flex-grow basis-0 pt-4 pr-1 text-right">
             {spell?.spellListName
@@ -169,16 +202,7 @@ export default function SpellDetailDialog() {
                   key={`card-${spell.id}-${t}`}
                   variant="elevation"
                   elevation={4}
-                  sx={{
-                    bgcolor:
-                      theme.palette.mode === "dark"
-                        ? theme.palette.background.default
-                        : theme.palette.grey[200],
-                    color:
-                      theme.palette.mode === "dark"
-                        ? primaryColor.light
-                        : primaryColor.dark,
-                  }}
+                  sx={cardSx}
                   className="mr-1 ml-1 mt-2 pl-1 pr-1 mb-1"
                 >
                   <Typography variant="caption" className="text-xs">
@@ -190,12 +214,7 @@ export default function SpellDetailDialog() {
                 className={`pt-4 descriptions ${theme.palette.mode} ${
                   themeStore.isPrimarySwapped ? "swappedColors" : ""
                 }`}
-                dangerouslySetInnerHTML={{
-                  __html:
-                    spell?.description
-                      .replace(/color:hsl\(0, 0%, 0%\);/g, "")
-                      .replace(/color:hsl\(0,0%,0%\);/g, "") ?? "",
-                }}
+                dangerouslySetInnerHTML={descriptionInnerHtml}
               ></div>
               {spell?.higherLevelDescription ? (
                 <div className="pt-4">
@@ -203,11 +222,7 @@ export default function SpellDetailDialog() {
                     At Higher Levels:{" "}
                   </strong>
                   <div
-                    dangerouslySetInnerHTML={{
-                      __html: spell?.higherLevelDescription
-                        .replace(/color:hsl\(0, 0%, 0%\);/g, "")
-                        .replace(/color:hsl\(0,0%,0%\);/g, ""),
-                    }}
+                    dangerouslySetInnerHTML={higherDescriptionInnerHtml}
                   ></div>
                 </div>
               ) : (
@@ -220,33 +235,29 @@ export default function SpellDetailDialog() {
               <Typography variant="h6" color={primaryColor.main}>
                 Conditions
               </Typography>
-              {spell?.relatedConditions?.map((condition) => (
-                <div key={condition.name} className="pt-2 pl-2 pr-2">
-                  <strong className="text-lg">{condition.name}</strong>
-                  <div
-                    className={`pl-2 pr-2 conditions ${theme.palette.mode} ${
-                      themeStore.isPrimarySwapped ? "swappedColors" : ""
-                    }`}
-                    dangerouslySetInnerHTML={{
-                      __html: condition.description
-                        .replace(/color:hsl\(0, 0%, 0%\);/g, "")
-                        .replace(/color:hsl\(0,0%,0%\);/g, ""),
-                    }}
-                  />
-                </div>
-              ))}
+              {spell?.relatedConditions?.map((condition) => {
+                const html = {
+                  __html: condition.description
+                    .replace(/color:hsl\(0, 0%, 0%\);/g, "")
+                    .replace(/color:hsl\(0,0%,0%\);/g, ""),
+                };
+                return (
+                  <div key={condition.name} className="pt-2 pl-2 pr-2">
+                    <strong className="text-lg">{condition.name}</strong>
+                    <div
+                      className={`pl-2 pr-2 conditions ${theme.palette.mode} ${
+                        themeStore.isPrimarySwapped ? "swappedColors" : ""
+                      }`}
+                      dangerouslySetInnerHTML={html}
+                    />
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <></>
           )}
-          <Dndsvg
-            background={
-              theme.palette.mode == "dark"
-                ? theme.palette.grey[900]
-                : theme.palette.background.default
-            }
-            color={primaryColor.main}
-          />
+          <Dndsvg background={bgColor} color={primaryColor.main} />
         </div>
       </div>
     </SwipeableDrawer>

@@ -1,8 +1,8 @@
 import { Card, Paper, useTheme } from "@mui/material";
 import DataLoading from "./DataLoading";
 import { useMemo } from "react";
-import { useThemeStore, getPrimaryColor } from "../theme";
-import Dndsvg from "../assets/dndsvg";
+import { useThemeStore, usePrimaryColor, useBgColor } from "../theme";
+import { Dndsvg } from "../assets/dndsvg";
 import { FilterData, useFeatListStore } from "../API/feat";
 import { useFeatFilterStore } from "./FeatsFilterDialog";
 import { GroupedVirtuoso } from "react-virtuoso";
@@ -10,10 +10,8 @@ import { GroupedVirtuoso } from "react-virtuoso";
 export default function FeatsPage() {
   const theme = useTheme();
   const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+  const primaryColor = usePrimaryColor();
+  const bgColor = useBgColor();
   const feats = useFeatListStore((state) => state.feats);
   const filter = useFeatFilterStore((state) => state);
   const query = useMemo(() => FilterData(feats, filter), [feats, filter]);
@@ -25,27 +23,25 @@ export default function FeatsPage() {
     }));
   }, [query]);
   if (feats.length == 0) return DataLoading(primaryColor);
+  const bgColorStyle = useMemo(
+    () => ({
+      backgroundColor: bgColor,
+    }),
+    [bgColor]
+  );
+
+  const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
+    primaryColor,
+  ]);
+
+  const bgColoredStyle = useMemo(() => ({ background: primaryColor.main }), [
+    primaryColor,
+  ]);
 
   return (
-    <div
-      className="w-full h-full"
-      style={{
-        backgroundColor:
-          theme.palette.mode == "dark"
-            ? theme.palette.grey[900]
-            : theme.palette.background.default,
-      }}
-    >
+    <div className="w-full h-full" style={bgColorStyle}>
       <GroupedVirtuoso
-        style={{
-          height: "100%",
-          width: "100%",
-          backgroundColor:
-            theme.palette.mode == "dark"
-              ? theme.palette.grey[900]
-              : theme.palette.background.default,
-        }}
-        className="overflow-auto box-border"
+        className="overflow-auto box-border w-full h-full"
         groupCounts={groupCounts.map((gc) => gc.count)}
         groupContent={(index) => {
           return (
@@ -53,12 +49,7 @@ export default function FeatsPage() {
               <Paper
                 className="flex flex-grow w-full pl-4 pr-4 pt-0.5 pb-0.5 rounded-none"
                 elevation={3}
-                sx={{
-                  bgcolor:
-                    theme.palette.mode === "dark"
-                      ? theme.palette.grey[900]
-                      : theme.palette.background.default,
-                }}
+                sx={bgColorStyle}
               >
                 <div>{`Level: ${groupCounts[index].level}+${
                   groupCounts[index].level >= 18 ? "(Epic boon)" : ""
@@ -70,7 +61,12 @@ export default function FeatsPage() {
           );
         }}
         itemContent={(index, _groupIndex) => {
-          var feat = query[index];
+          const feat = query[index];
+          const html = {
+            __html: feat.description
+              .replace(/color:hsl\(0, 0%, 0%\);/g, "")
+              .replace(/color:hsl\(0,0%,0%\);/g, ""),
+          };
           return (
             <>
               <div
@@ -80,10 +76,7 @@ export default function FeatsPage() {
               >
                 <Card elevation={5} className="rounded-2xl pr-4 pl-4 pt-2 pb-2">
                   <div className="flex flex-col w-full">
-                    <strong
-                      className="text-2xl"
-                      style={{ color: primaryColor.main }}
-                    >
+                    <strong className="text-2xl" style={coloredStyle}>
                       {feat.name}
                     </strong>
 
@@ -108,34 +101,19 @@ export default function FeatsPage() {
                     </div>
                   </div>
                   <div
-                    style={{ background: primaryColor.main }}
+                    style={bgColoredStyle}
                     className="w-full h-0.5 mt-1 mb-1"
                   ></div>
                   <div
                     className={`descriptions ${theme.palette.mode} ${
                       themeStore.isPrimarySwapped ? "swappedColors" : ""
                     }`}
-                    dangerouslySetInnerHTML={{
-                      __html: feat.description
-                        .replace(/color:hsl\(0, 0%, 0%\);/g, "")
-                        .replace(/color:hsl\(0,0%,0%\);/g, ""),
-                    }}
+                    dangerouslySetInnerHTML={html}
                   />
                 </Card>
               </div>
               {index == query.length - 1 ? (
-                <Dndsvg
-                  color={
-                    theme.palette.mode == "dark"
-                      ? primaryColor.main
-                      : primaryColor.main
-                  }
-                  background={
-                    theme.palette.mode == "dark"
-                      ? theme.palette.grey[900]
-                      : theme.palette.background.default
-                  }
-                />
+                <Dndsvg color={primaryColor.main} background={bgColor} />
               ) : (
                 <></>
               )}

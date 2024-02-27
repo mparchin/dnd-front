@@ -1,34 +1,36 @@
-import { useTheme } from "@mui/material";
-import { useMemo } from "react";
-import { useThemeStore, getPrimaryColor } from "../theme";
+import { memo } from "react";
+import { usePrimaryColor } from "../theme";
 
 interface CircleProps {
   className?: string;
   filled?: boolean;
   text: string;
   color?: string;
+  strokeNone?: boolean;
 }
 
-export default function (props: CircleProps) {
-  const theme = useTheme();
-  const themeStore = useThemeStore();
-  const primaryColor = useMemo(() => getPrimaryColor(theme, themeStore), [
-    theme,
-    themeStore,
-  ]);
+export const Circle = memo((p: CircleProps) => {
+  const primaryColor = usePrimaryColor();
   return (
     <svg
       viewBox="0 0 10 10"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
-      className={props.className}
+      className={p.className}
     >
       <circle
-        fill={props.filled ? props.color ?? primaryColor.main : "none"}
+        fill={p.filled ? p.color ?? primaryColor.main : "none"}
         cx="5"
         cy="5"
         r="4"
-        stroke="currentColor"
+        stroke={
+          p.filled
+            ? p.color ?? primaryColor.main
+            : p.strokeNone
+            ? "none"
+            : "currentColor"
+        }
+        strokeWidth={0.5}
       />
       <text
         x="3"
@@ -37,8 +39,8 @@ export default function (props: CircleProps) {
         className="uppercase"
         style={{ fontSize: "0.4rem" }}
       >
-        {props.text}
+        {p.text}
       </text>
     </svg>
   );
-}
+});

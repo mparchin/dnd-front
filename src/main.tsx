@@ -1,3 +1,4 @@
+// import "./wdyr.ts";
 import React, { useMemo } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -33,6 +34,7 @@ const router = createHashRouter([
       { path: "characters", element: <></> },
       { path: "spells", element: <></> },
       { path: "menu", element: <></> },
+      { path: "characterEdit", element: <></> },
     ],
   },
 ]);
