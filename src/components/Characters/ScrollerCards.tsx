@@ -1,6 +1,6 @@
 import { Button, Card } from "@mui/material";
 import { usePrimaryColor } from "../../theme";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 
 interface ScrollerCardsProps {
   onClick: (divId: string) => void;
@@ -10,7 +10,7 @@ interface ScrollerCardsProps {
   selected?: boolean;
 }
 
-export default function (props: ScrollerCardsProps) {
+export const ScrollerCards = memo((props: ScrollerCardsProps) => {
   const primaryColor = usePrimaryColor();
   const bgColor = useMemo(
     () => ({ backgroundColor: props.selected ? primaryColor.main : "" }),
@@ -32,4 +32,4 @@ export default function (props: ScrollerCardsProps) {
       </Button>
     </Card>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { useThemeStore, ThemeMode, usePrimaryColor } from "../../theme";
 
 interface stats {
@@ -6,7 +6,7 @@ interface stats {
   value: number;
 }
 
-export default function (props: stats) {
+export const StatsBox = memo((props: stats) => {
   const themeStore = useThemeStore();
   const primaryColor = usePrimaryColor();
   const bgImage = useMemo(
@@ -39,4 +39,4 @@ export default function (props: stats) {
       </span>
     </div>
   );
-}
+});

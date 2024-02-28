@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { useThemeStore, ThemeMode, usePrimaryColor } from "../../theme";
 
 interface ExtrasBoxProps {
@@ -7,7 +7,7 @@ interface ExtrasBoxProps {
   used: number;
 }
 
-export default function (props: ExtrasBoxProps) {
+export const ExtrasBox = memo((props: ExtrasBoxProps) => {
   const themeStore = useThemeStore();
   const primaryColor = usePrimaryColor();
   const bgImage = useMemo(
@@ -53,4 +53,4 @@ export default function (props: ExtrasBoxProps) {
       </div>
     </div>
   );
-}
+});

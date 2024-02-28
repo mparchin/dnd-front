@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import {
   useThemeStore,
   ThemeMode,
@@ -17,7 +17,7 @@ interface ExpertBoxProps {
   advantage?: boolean;
 }
 
-export default function (props: ExpertBoxProps) {
+export const ExpertBox = memo((props: ExpertBoxProps) => {
   const theme = useTheme();
   const themeStore = useThemeStore();
   const primaryColor = usePrimaryColor();
@@ -82,4 +82,4 @@ export default function (props: ExpertBoxProps) {
       </div>
     </div>
   );
-}
+});

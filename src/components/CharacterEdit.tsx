@@ -1,27 +1,24 @@
-import { Check, Close } from "@mui/icons-material";
-import {
-  AppBar,
-  Card,
-  Dialog,
-  IconButton,
-  Slide,
-  TextField,
-  Toolbar,
-} from "@mui/material";
+import { Dialog, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
-import { useBgColor, usePrimaryColor, usePrimaryColorString } from "../theme";
+import { useBgColor, usePrimaryColor } from "../theme";
 import { DescreteSlider } from "./Controls/DescreteSlider";
-import ExpertEdit from "./Characters/ExpertEdit";
+import { ExpertEdit } from "./Characters/Edit/ExpertEdit";
 import { ExtraField } from "./Controls/ExtraField";
 import { ComboBox } from "./Controls/ComboBox";
+import { DialogAppBar } from "./Characters/Edit/DialogAppBar";
+import { EditTextField } from "./Characters/Edit/EditTextField";
+import { HPEdit } from "./Characters/Edit/HPEdit";
+import { SpellCastingEdit } from "./Characters/Edit/SpellCastingEdit";
 
 export interface CharacterEditDialogState {
   isOpen: boolean;
-  open: () => void;
-  close: () => void;
+  dialogActions: {
+    open: () => void;
+    close: () => void;
+  };
   editName: string;
   setName: (str: string) => void;
 }
@@ -29,8 +26,10 @@ export interface CharacterEditDialogState {
 export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
   (set) => ({
     isOpen: false,
-    open: () => set({ isOpen: true }),
-    close: () => set({ isOpen: false }),
+    dialogActions: {
+      open: () => set({ isOpen: true }),
+      close: () => set({ isOpen: false }),
+    },
     editName: "",
     setName: (str: string) => set({ editName: str }),
   })
@@ -50,10 +49,9 @@ export default function () {
   const location = useLocation();
   const navigate = useNavigate();
   const IsOpenRequest = () => location.pathname.includes("characterEdit");
-  const CloseRequest = () => {
+  const CloseRequest = useCallback(() => {
     if (IsOpenRequest()) navigate(-1);
-  };
-  const primaryString = usePrimaryColorString();
+  }, [location.pathname]);
   const primaryColor = usePrimaryColor();
   const bgColor = useBgColor();
   const bgColorStyle = useMemo(
@@ -68,15 +66,11 @@ export default function () {
     }),
     [primaryColor]
   );
-  const centerTextStyle = {
-    "& .MuiInputBase-input": {
-      textAlign: "center",
-    },
-  };
   useEffect(() => {
-    if (!state.isOpen && IsOpenRequest()) state.open();
-    else if (state.isOpen && !IsOpenRequest()) state.close();
+    if (!state.isOpen && IsOpenRequest()) state.dialogActions.open();
+    else if (state.isOpen && !IsOpenRequest()) state.dialogActions.close();
   }, [state.isOpen, location.pathname]);
+  const comboOptions = useMemo(() => [{ value: 1, text: "test" }], []);
   return (
     <Dialog
       fullScreen
@@ -84,53 +78,20 @@ export default function () {
       onClose={CloseRequest}
       TransitionComponent={Transition}
     >
-      <AppBar className="relative" color={primaryString}>
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={CloseRequest}
-            aria-label="close"
-          >
-            <Close />
-          </IconButton>
-          <div className="grow"></div>
-          <IconButton
-            autoFocus
-            color="inherit"
-            onClick={CloseRequest}
-            aria-label="save"
-          >
-            <Check />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+      <DialogAppBar closeRequest={CloseRequest} />
       <div
         className="w-full overflow-auto flex flex-row flex-wrap p-2 justify-center"
         style={bgColorStyle}
       >
-        <TextField
+        <EditTextField
           label="Name"
-          className="w-88 m-2"
-          color={primaryString}
-          required
           value={state.editName}
-          onChange={(e) => state.setName(e.target.value)}
+          onChange={state.setName}
         />
 
-        <TextField
-          label="Race"
-          className="w-88 m-2"
-          color={primaryString}
-          required
-        />
+        <EditTextField label="Race" />
 
-        <TextField
-          label="Background"
-          className="w-88 m-2"
-          color={primaryString}
-          required
-        />
+        <EditTextField label="Background" />
 
         <div className="w-88 m-2 text-center">TODO image</div>
 
@@ -138,13 +99,13 @@ export default function () {
           className="w-88 m-2"
           required
           lable="class"
-          options={[{ value: 1, text: "test" }]}
+          options={comboOptions}
         />
 
         <ComboBox
           className="w-88 m-2"
           lable="Subclass"
-          options={[{ value: 1, text: "test" }]}
+          options={comboOptions}
         />
 
         <DescreteSlider className="w-88 m-2" label="Level" />
@@ -180,13 +141,7 @@ export default function () {
 
         <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
-        <TextField
-          label="Speed"
-          className="w-88 m-2"
-          color={primaryString}
-          required
-          type="number"
-        />
+        <EditTextField label="Speed" type="number" />
 
         <ExpertEdit
           className="w-88 m-2"
@@ -200,175 +155,12 @@ export default function () {
 
         <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
-        <div className="flex flex-row w-88 m-2">
-          <Card
-            className="capitalize flex flex-col text-vertical-lr text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
-            elevation={3}
-          >
-            HP
-          </Card>
-          <div className="mr-2 flex flex-col grow-[4] basis-0">
-            <span className="capitalize text-center mb-2">average</span>
-            <div className="flex flex-row flex-wrap">
-              <div className="mr-1 w-14 mb-1">
-                <TextField
-                  className="text-center"
-                  label="H-Die"
-                  color={primaryString}
-                  disabled
-                  value={3}
-                  sx={centerTextStyle}
-                />
-              </div>
-              <div className="flex flex-col mr-1 mb-1">
-                <div className="grow"></div>
-                <span>+</span>
-                <div className="grow"></div>
-              </div>
-              <div className="mr-1 w-14 mb-1">
-                <TextField
-                  className="text-center"
-                  label="CON"
-                  color={primaryString}
-                  disabled
-                  value={3}
-                  sx={centerTextStyle}
-                />
-              </div>
-              <div className="flex flex-col mr-1 mb-1">
-                <div className="grow"></div>
-                <span>+</span>
-                <div className="grow"></div>
-              </div>
-              <ExtraField className="w-full mb-1" />
-            </div>
-            <div className="grow"></div>
-          </div>
-          <div className="w-0.5 mr-2 shrink-0" style={dividerColor}></div>
-          <div className="flex flex-col grow-[3] basis-0">
-            <span className="capitalize text-center mb-2">custom</span>
-            <div>
-              <TextField
-                label="Maximum HP"
-                color={primaryString}
-                type="number"
-              />
-            </div>
-            <div className="grow"></div>
-          </div>
-        </div>
+        <HPEdit />
 
         <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
-        <ComboBox
-          className="w-88 m-2"
-          lable="spell casting ability"
-          options={[
-            { value: 1, text: "strength" },
-            { value: 2, text: "dextrity" },
-            { value: 3, text: "constitution" },
-            { value: 4, text: "intelligence" },
-            { value: 5, text: "wisdom" },
-            { value: 6, text: "charisma" },
-          ]}
-        />
-        <div className="flex flex-row w-88 m-2">
-          <Card
-            className="capitalize flex flex-col text-vertical-lr text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
-            elevation={3}
-          >
-            Spell attack
-          </Card>
-          <div className="flex flex-row flex-wrap grow basis-0">
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label="Prof"
-                color={primaryString}
-                disabled
-                value="d4"
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label="CON"
-                color={primaryString}
-                disabled
-                value={3}
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <ExtraField className="w-full mb-1" />
-          </div>
-        </div>
 
-        <div className="flex flex-row w-88 m-2">
-          <Card
-            className="capitalize flex text-vertical-lr flex-col text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
-            elevation={3}
-          >
-            Spell Save DC
-          </Card>
-          <div className="flex flex-row flex-wrap grow basis-0">
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label=""
-                color={primaryString}
-                disabled
-                value={8}
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label="Prof"
-                color={primaryString}
-                disabled
-                value={2}
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label="CON"
-                color={primaryString}
-                disabled
-                value={3}
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <ExtraField className="w-full mb-1" />
-          </div>
-        </div>
+        <SpellCastingEdit />
+
         <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
         <ExpertEdit

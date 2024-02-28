@@ -4,8 +4,9 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-import { usePrimaryColorString } from "../../theme";
-import { ExtraField } from "../Controls/ExtraField";
+import { usePrimaryColorString } from "../../../theme";
+import { ExtraField } from "../../Controls/ExtraField";
+import { memo } from "react";
 
 interface Props {
   className?: string;
@@ -19,7 +20,7 @@ interface Props {
   disableExpertOption?: boolean;
 }
 
-export default function (props: Props) {
+export const ExpertEdit = memo((props: Props) => {
   const primaryString = usePrimaryColorString();
   const centerTextStyle = {
     "& .MuiInputBase-input": {
@@ -92,4 +93,4 @@ export default function (props: Props) {
       </div>
     </div>
   );
-}
+});

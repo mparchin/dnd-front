@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import {
   useThemeStore,
   ThemeMode,
@@ -15,7 +15,7 @@ interface ProficientBoxProps {
   advantage?: boolean;
 }
 
-export default function (props: ProficientBoxProps) {
+export const ProficientBox = memo((props: ProficientBoxProps) => {
   const theme = useTheme();
   const themeStore = useThemeStore();
   const primaryColor = usePrimaryColor();
@@ -71,4 +71,4 @@ export default function (props: ProficientBoxProps) {
       </div>
     </div>
   );
-}
+});

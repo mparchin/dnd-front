@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Sort, useFeatureListStore } from "../../API/feature";
 import { useTheme } from "@mui/material";
 import { usePrimaryColor, useThemeStore } from "../../theme";
@@ -8,7 +8,7 @@ interface CharacterFeaturesProps {
   subclass: string;
 }
 
-export default function (props: CharacterFeaturesProps) {
+export const CharacterFeatures = memo((props: CharacterFeaturesProps) => {
   const theme = useTheme();
   const themeStore = useThemeStore();
   const primaryColor = usePrimaryColor();
@@ -66,4 +66,4 @@ export default function (props: CharacterFeaturesProps) {
       </div>
     );
   });
-}
+});

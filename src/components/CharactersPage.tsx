@@ -1,17 +1,16 @@
-import { Avatar, Button, Card, IconButton, useTheme } from "@mui/material";
 import { useMemo } from "react";
-import { usePrimaryColor, usePrimaryColorString, useBgColor } from "../theme";
-import { Bonfire } from "../assets/bonfire";
-import StatsBox from "./Characters/StatsBox";
-import ScrollerCards from "./Characters/ScrollerCards";
-import ProficientBox from "./Characters/ProficientBox";
-import ExpertBox from "./Characters/ExpertBox";
-import SensesBox from "./Characters/SensesBox";
-import ExtrasBox from "./Characters/ExtrasBox";
-import CharacterSpells from "./Characters/CharacterSpells";
-import CharacterInventory from "./Characters/CharacterInventory";
-import CharacterAttacks from "./Characters/CharacterAttacks";
-import CharacterFeatures from "./Characters/CharacterFeatures";
+import { usePrimaryColor, useBgColor } from "../theme";
+import { StatsBox } from "./Characters/StatsBox";
+import { ScrollerCards } from "./Characters/ScrollerCards";
+import { ProficientBox } from "./Characters/ProficientBox";
+import { ExpertBox } from "./Characters/ExpertBox";
+import { SensesBox } from "./Characters/SensesBox";
+import { ExtrasBox } from "./Characters/ExtrasBox";
+import { CharacterSpells } from "./Characters/CharacterSpells";
+import { CharacterInventory } from "./Characters/CharacterInventory";
+import { CharacterAttacks } from "./Characters/CharacterAttacks";
+import { CharacterFeatures } from "./Characters/CharacterFeatures";
+import { StickyCard } from "./Characters/StickyCard";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -78,26 +77,13 @@ function setActiveTab(primaryColor: string) {
 }
 
 export default function CharatersPage() {
-  const theme = useTheme();
   const primaryColor = usePrimaryColor();
-  const primaryColorString = usePrimaryColorString();
-  const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
-    primaryColor,
-  ]);
   const bgColor = useBgColor();
   const bgColorStyle = useMemo(
     () => ({
       backgroundColor: bgColor,
     }),
     [bgColor]
-  );
-  const HpColor = useMemo(
-    () => ({ backgroundColor: theme.palette.success.main }),
-    [theme.palette.success]
-  );
-  const ManaColor = useMemo(
-    () => ({ backgroundColor: theme.palette.primary.main }),
-    [theme.palette.primary]
   );
   const dividerColor = useMemo(
     () => ({
@@ -112,86 +98,7 @@ export default function CharatersPage() {
       onScroll={() => setActiveTab(primaryColor.main)}
     >
       <div className="sticky top-0 z-50" style={bgColorStyle}>
-        <Card className="w-full p-2" elevation={3}>
-          <div className="w-full h-40 flex flex-col">
-            <div className="grow-[3] flex flex-row basis-0">
-              <div className="grow flex flex-col justify-around basis-0">
-                <IconButton
-                  className="flex flex-col h-12 text-base"
-                  color="default"
-                >
-                  Conditions
-                </IconButton>
-                <IconButton className="flex flex-col h-12" color="default">
-                  <Bonfire />
-                </IconButton>
-              </div>
-              <div className="pr-2 pl-2 basis-0">
-                <Avatar
-                  className="w-28 h-28 mt-1 border-2 border-current rounded-lg"
-                  src="/asghar.jpg"
-                  variant="rounded"
-                  style={coloredStyle}
-                />
-              </div>
-              <div className="grow flex flex-col justify-around basis-0">
-                <Button
-                  className="flex flex-col"
-                  variant="contained"
-                  style={HpColor}
-                >
-                  <div className="grow basis-0 text-xl">41/41</div>
-                  <div className="uppercase text-xxs basis-0">hit points</div>
-                </Button>
-                <Button
-                  className="flex flex-col"
-                  variant="contained"
-                  style={ManaColor}
-                >
-                  <div className="grow basis-0 text-xl">0/0</div>
-                  <div className="uppercase text-xxs basis-0">mana</div>
-                </Button>
-              </div>
-            </div>
-
-            <div className="grow flex flex-row basis-0">
-              <div className="grow basis-0 flex flex-col text-center">
-                <div className="grow">
-                  <span className="text-2xl font-bold">
-                    <span style={coloredStyle}>+2</span>/
-                    <span style={coloredStyle}>D4</span>
-                  </span>
-                </div>
-                <div className="text-xxs uppercase">proficiency</div>
-              </div>
-              <div className="grow basis-0 flex flex-col text-center">
-                <div className="grow">
-                  <span className="text-2xl font-bold" style={coloredStyle}>
-                    30
-                  </span>
-                  <span className="text-xxs pl-1 align-middle">FT.</span>
-                </div>
-                <div className="text-xxs uppercase">Walk Speed</div>
-              </div>
-              <div className="grow basis-0 flex flex-col text-center">
-                <div className="grow">
-                  <span className="text-2xl font-bold">
-                    <span style={coloredStyle}>+2</span>
-                  </span>
-                </div>
-                <div className="text-xxs uppercase">initiative</div>
-              </div>
-              <div className="grow basis-0 flex flex-col text-center">
-                <div className="grow">
-                  <span className="text-2xl font-bold">
-                    <span style={coloredStyle}>15</span>
-                  </span>
-                </div>
-                <div className="text-xxs uppercase">armour class</div>
-              </div>
-            </div>
-          </div>
-        </Card>
+        <StickyCard />
         <div className="flex flex-row overflow-auto">
           <ScrollerCards
             onClick={scrollToDiv}
@@ -360,17 +267,6 @@ export default function CharatersPage() {
           id="attacks"
           className="flex flex-row flex-wrap p-2 justify-around w-full"
         >
-          <div className="w-full flex flex-row">
-            <div className="grow"></div>
-            <Button
-              variant="outlined"
-              color={primaryColorString}
-              className="p-2 mb-10"
-            >
-              Manage attacks
-            </Button>
-            <div className="grow"></div>
-          </div>
           <CharacterAttacks
             items={[
               {
@@ -411,43 +307,6 @@ export default function CharatersPage() {
           id="spells"
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
         >
-          <div className="w-full flex flex-row justify-center mb-5">
-            <div className="flex flex-col text-center w-20 mr-5">
-              <div className="grow">
-                <span className="text-2xl font-bold">
-                  <span style={coloredStyle}>+5</span>
-                </span>
-              </div>
-              <div className="text-xxs uppercase">modifire</div>
-            </div>
-            <div className="flex flex-col text-center w-20 mr-5">
-              <div className="grow">
-                <span className="text-2xl font-bold">
-                  <span style={coloredStyle}>D4+5</span>
-                </span>
-              </div>
-              <div className="text-xxs uppercase">Spell attack</div>
-            </div>
-            <div className="flex flex-col text-center w-20">
-              <div className="grow">
-                <span className="text-2xl font-bold" style={coloredStyle}>
-                  15
-                </span>
-              </div>
-              <div className="text-xxs uppercase">save DC</div>
-            </div>
-          </div>
-          <div className="w-full flex flex-row">
-            <div className="grow"></div>
-            <Button
-              variant="outlined"
-              color={primaryColorString}
-              className="p-2 mb-10"
-            >
-              Manage spells
-            </Button>
-            <div className="grow"></div>
-          </div>
           <CharacterSpells
             spells={[
               {
@@ -529,36 +388,6 @@ export default function CharatersPage() {
           id="inventory"
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
         >
-          <div className="w-full flex flex-row justify-center mb-5">
-            <div className="flex flex-col text-center w-20 mr-5">
-              <div className="grow">
-                <span className="text-2xl font-bold">
-                  <span style={coloredStyle}>59.01</span>
-                  <span className="text-xs">lb.</span>
-                </span>
-              </div>
-              <div className="text-xxs uppercase">weight carried</div>
-            </div>
-            <div className="flex flex-col text-center w-20">
-              <div className="grow">
-                <span className="text-2xl font-bold" style={coloredStyle}>
-                  1111
-                </span>
-              </div>
-              <div className="text-xxs uppercase">total gold</div>
-            </div>
-          </div>
-          <div className="w-full flex flex-row">
-            <div className="grow"></div>
-            <Button
-              variant="outlined"
-              color={primaryColorString}
-              className="p-2 mb-10"
-            >
-              Manage inventory
-            </Button>
-            <div className="grow"></div>
-          </div>
           <CharacterInventory
             items={[
               {
