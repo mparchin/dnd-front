@@ -8,16 +8,29 @@ import { usePrimaryColorString } from "../../../theme";
 import { ExtraField } from "../../Controls/ExtraField";
 import { memo } from "react";
 
+export interface ExpertEditState {
+  hasAdvantage: boolean;
+  isProficient: boolean;
+  isExpert: boolean;
+  attributeValue: number;
+  extra: string;
+  actions: {
+    setAdvantage: (flag: boolean) => void;
+    setProficient: (flag: boolean) => void;
+    setExpert: (flag: boolean) => void;
+    setAttribute: (val: number) => void;
+    setExtra: (str: string) => void;
+  };
+}
+
 interface Props {
   className?: string;
   name: string;
   mainAttributeName: string;
   mainAttributeValue: number;
-  modifireValue?: number;
-  isProficient?: boolean;
-  isExpert?: boolean;
   proficiencyBonous: number;
   disableExpertOption?: boolean;
+  editState?: ExpertEditState;
 }
 
 export const ExpertEdit = memo((props: Props) => {
@@ -41,11 +54,14 @@ export const ExpertEdit = memo((props: Props) => {
         <div className="flex flex-row flex-wrap">
           <ToggleButton
             className="h-14 w-10 mr-1 mb-1 p-2"
-            value={true}
-            selected={true}
+            value={props.editState?.hasAdvantage ?? false}
+            selected={props.editState?.hasAdvantage ?? false}
             color="success"
             onChange={() => {
-              // state.setAdvantage(!state.hasAdvantage);
+              if (props.editState)
+                props.editState.actions.setAdvantage(
+                  !(props.editState?.hasAdvantage ?? false)
+                );
             }}
           >
             A
@@ -53,18 +69,54 @@ export const ExpertEdit = memo((props: Props) => {
           <ToggleButtonGroup
             className="mr-1 mb-1 h-14"
             color={primaryString}
-            value={1}
+            value={2}
             exclusive
-            // onChange={(
-            //   _event: React.MouseEvent<HTMLElement>,
-            //   newValue: number
-            // ) => state.setProficientMode(newValue)}
+            onChange={(_e, v) => {
+              if (!props.editState) return;
+              if (v == 1) {
+                if (!props.editState.isProficient && !props.editState.isExpert)
+                  props.editState.actions.setProficient(true);
+                else if (
+                  props.editState.isProficient &&
+                  !props.editState.isExpert
+                ) {
+                  props.editState.actions.setProficient(false);
+                } else if (props.editState.isExpert) {
+                  props.editState.actions.setExpert(false);
+                  props.editState.actions.setProficient(true);
+                }
+              } else {
+                if (
+                  !props.editState.isProficient &&
+                  !props.editState.isExpert
+                ) {
+                  props.editState.actions.setExpert(true);
+                } else if (
+                  !props.editState.isProficient &&
+                  props.editState.isExpert
+                ) {
+                  props.editState.actions.setExpert(false);
+                } else if (props.editState.isProficient) {
+                  props.editState.actions.setExpert(true);
+                  props.editState.actions.setProficient(false);
+                }
+              }
+            }}
           >
-            <ToggleButton value="1">
+            <ToggleButton
+              value="1"
+              color={primaryString}
+              selected={props.editState?.isProficient ?? false}
+            >
               d{props.proficiencyBonous * 2}
             </ToggleButton>
 
-            <ToggleButton disabled={props.disableExpertOption} value="2">
+            <ToggleButton
+              disabled={props.disableExpertOption}
+              value="2"
+              color={primaryString}
+              selected={props.editState?.isExpert ?? false}
+            >
               2d{props.proficiencyBonous * 2}
             </ToggleButton>
           </ToggleButtonGroup>
@@ -79,7 +131,7 @@ export const ExpertEdit = memo((props: Props) => {
               label={props.mainAttributeName}
               color={primaryString}
               disabled
-              value={props.mainAttributeValue}
+              value={Math.floor((props.mainAttributeValue - 10) / 2)}
               sx={centerTextStyle}
             />
           </div>
@@ -88,7 +140,11 @@ export const ExpertEdit = memo((props: Props) => {
             <span>+</span>
             <div className="grow"></div>
           </div>
-          <ExtraField className="w-full mb-1" />
+          <ExtraField
+            className="w-full mb-1"
+            value={props.editState?.extra ?? ""}
+            onChange={props.editState?.actions.setExtra}
+          />
         </div>
       </div>
     </div>

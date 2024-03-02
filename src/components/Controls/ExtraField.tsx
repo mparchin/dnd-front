@@ -7,6 +7,8 @@ interface ExtraFieldProps {
   colorString?: any;
   label?: string;
   required?: boolean;
+  value?: string;
+  onChange?: (str: string) => void;
 }
 
 export const ExtraField = memo((p: ExtraFieldProps) => {
@@ -19,6 +21,10 @@ export const ExtraField = memo((p: ExtraFieldProps) => {
         color={p.colorString ?? primaryColorString}
         helperText="Eg. INT+3 / Prof-2 / 3 / charisma / level * 2"
         required={p.required}
+        value={p.value}
+        onChange={(e) => {
+          if (p.onChange) p.onChange(e.target.value);
+        }}
       />
     </div>
   );

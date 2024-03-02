@@ -25,6 +25,7 @@ import GetAndSaveRules from "./API/rules";
 import RulesPage from "./components/RulesPage";
 import CharatersPage from "./components/CharactersPage";
 import CharacterEdit from "./components/CharacterEdit";
+import GetAndSaveClasses from "./API/classes";
 
 export default function App() {
   const theme = useTheme();
@@ -113,6 +114,7 @@ export default function App() {
       <GetAndSaveFeatures />
       <GetAndSaveFeats />
       <GetAndSaveRules />
+      <GetAndSaveClasses />
     </>
   );
 }

@@ -1,4 +1,8 @@
 import { immerable } from "immer";
+import {
+  ExtraFieldCalculations,
+  calculateProficiencyBonous,
+} from "./extraCalculations";
 
 export class Spell {
   [immerable] = true;
@@ -104,6 +108,9 @@ export class Class {
   [immerable] = true;
   id: number = 0;
   name: string = "";
+  proficiencyBonous: string = "";
+  hitDie: number = 0;
+  time: number = 0;
 }
 
 class CharacterAttributes {
@@ -125,50 +132,6 @@ class CharacterAttributes {
 
   private getModifire: (attribute: number) => number = (attribute) =>
     Math.floor((attribute - 10) / 2);
-}
-
-export function ExtraFieldCalculations(extra: string, char: Character) {
-  extra = extra.replace(/\s/g, "");
-  extra = extra.toLowerCase();
-  extra = extra.replace(/proficiency/g, char.proficiencyBonous().toString());
-  extra = extra.replace(/prof/g, char.proficiencyBonous().toString());
-  extra = extra.replace(/expert/g, (char.proficiencyBonous() * 2).toString());
-  extra = extra.replace(/exp/g, (char.proficiencyBonous() * 2).toString());
-  extra = extra.replace(
-    /strength/g,
-    char.attributes.strengthModifire().toString()
-  );
-  extra = extra.replace(/str/g, char.attributes.strengthModifire().toString());
-  extra = extra.replace(
-    /dextrity/g,
-    char.attributes.dextrityModifire().toString()
-  );
-  extra = extra.replace(/dex/g, char.attributes.dextrityModifire().toString());
-  extra = extra.replace(
-    /constitution/g,
-    char.attributes.constitutionModifire().toString()
-  );
-  extra = extra.replace(
-    /con/g,
-    char.attributes.constitutionModifire().toString()
-  );
-  extra = extra.replace(
-    /intelligence/g,
-    char.attributes.intelligenceModifire().toString()
-  );
-  extra = extra.replace(
-    /int/g,
-    char.attributes.intelligenceModifire().toString()
-  );
-  extra = extra.replace(/wisdom/g, char.attributes.wisdomModifire().toString());
-  extra = extra.replace(/wis/g, char.attributes.wisdomModifire().toString());
-  extra = extra.replace(
-    /charisma/g,
-    char.attributes.charismaModifire().toString()
-  );
-  extra = extra.replace(/cha/g, char.attributes.charismaModifire().toString());
-  extra = extra.replace(/level/g, char.level.toString());
-  return Math.floor(eval(extra));
 }
 
 class CharacterExpert {
@@ -282,6 +245,7 @@ export class Character {
 
   time: number = 0;
 
-  proficiencyBonous: () => number = () => 2;
-  hitDie: () => number = () => 6;
+  proficiencyBonous: () => number = () =>
+    calculateProficiencyBonous(this.class.proficiencyBonous, this.level);
+  hitDie: () => number = () => this.class.hitDie;
 }

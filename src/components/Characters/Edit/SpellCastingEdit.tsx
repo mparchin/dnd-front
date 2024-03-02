@@ -4,7 +4,18 @@ import { ComboBox } from "../../Controls/ComboBox";
 import { ExtraField } from "../../Controls/ExtraField";
 import { usePrimaryColorString } from "../../../theme";
 
-export const SpellCastingEdit = memo(() => {
+interface Props {
+  castingAbility?: string;
+  onCastingAbilityChange?: (str: string) => void;
+  profiencyBonous?: number;
+  castingAbilityValue?: number;
+  spellAttackExtra?: string;
+  onSpellAttackExtraChange?: (str: string) => void;
+  spellSaveDCExtra?: string;
+  onSpellSaveDCExtra?: (str: string) => void;
+}
+
+export const SpellCastingEdit = memo((p: Props) => {
   const primaryColorString = usePrimaryColorString();
   const centerTextStyle = {
     "& .MuiInputBase-input": {
@@ -17,13 +28,15 @@ export const SpellCastingEdit = memo(() => {
         className="w-88 m-2"
         lable="spell casting ability"
         options={[
-          { value: 1, text: "strength" },
-          { value: 2, text: "dextrity" },
-          { value: 3, text: "constitution" },
-          { value: 4, text: "intelligence" },
-          { value: 5, text: "wisdom" },
-          { value: 6, text: "charisma" },
+          { value: "str", text: "strength" },
+          { value: "dex", text: "dextrity" },
+          { value: "con", text: "constitution" },
+          { value: "int", text: "intelligence" },
+          { value: "wis", text: "wisdom" },
+          { value: "cha", text: "charisma" },
         ]}
+        value={p.castingAbility}
+        onChange={p.onCastingAbilityChange}
       />
       <div className="flex flex-row w-88 m-2">
         <Card
@@ -39,7 +52,7 @@ export const SpellCastingEdit = memo(() => {
               label="Prof"
               color={primaryColorString}
               disabled
-              value="d4"
+              value={`d${(p.profiencyBonous ?? 2) * 2}`}
               sx={centerTextStyle}
             />
           </div>
@@ -51,10 +64,10 @@ export const SpellCastingEdit = memo(() => {
           <div className="mr-1 w-14 mb-1">
             <TextField
               className="text-center"
-              label="CON"
+              label={p.castingAbility?.toUpperCase()}
               color={primaryColorString}
               disabled
-              value={3}
+              value={Math.floor(((p.castingAbilityValue ?? 10) - 10) / 2)}
               sx={centerTextStyle}
             />
           </div>
@@ -63,7 +76,11 @@ export const SpellCastingEdit = memo(() => {
             <span>+</span>
             <div className="grow"></div>
           </div>
-          <ExtraField className="w-full mb-1" />
+          <ExtraField
+            className="w-full mb-1"
+            value={p.spellAttackExtra}
+            onChange={p.onSpellAttackExtraChange}
+          />
         </div>
       </div>
 
@@ -96,7 +113,7 @@ export const SpellCastingEdit = memo(() => {
               label="Prof"
               color={primaryColorString}
               disabled
-              value={2}
+              value={p.profiencyBonous ?? 2}
               sx={centerTextStyle}
             />
           </div>
@@ -108,10 +125,10 @@ export const SpellCastingEdit = memo(() => {
           <div className="mr-1 w-14 mb-1">
             <TextField
               className="text-center"
-              label="CON"
+              label={p.castingAbility?.toUpperCase()}
               color={primaryColorString}
               disabled
-              value={3}
+              value={Math.floor(((p.castingAbilityValue ?? 10) - 10) / 2)}
               sx={centerTextStyle}
             />
           </div>
@@ -120,7 +137,11 @@ export const SpellCastingEdit = memo(() => {
             <span>+</span>
             <div className="grow"></div>
           </div>
-          <ExtraField className="w-full mb-1" />
+          <ExtraField
+            className="w-full mb-1"
+            value={p.spellSaveDCExtra}
+            onChange={p.onSpellSaveDCExtra}
+          />
         </div>
       </div>
     </>

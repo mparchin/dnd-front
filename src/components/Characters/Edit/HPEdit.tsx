@@ -3,7 +3,16 @@ import { memo, useMemo } from "react";
 import { ExtraField } from "../../Controls/ExtraField";
 import { usePrimaryColor, usePrimaryColorString } from "../../../theme";
 
-export const HPEdit = memo(() => {
+interface Props {
+  hitDie?: number;
+  constitution?: number;
+  extraValue?: string;
+  onExtraChange?: (str: string) => void;
+  customValue?: string;
+  onCustomChange?: (str: string) => void;
+}
+
+export const HPEdit = memo((p: Props) => {
   const primaryColorString = usePrimaryColorString();
   const primaryColor = usePrimaryColor();
   const dividerColor = useMemo(
@@ -34,7 +43,7 @@ export const HPEdit = memo(() => {
               label="H-Die"
               color={primaryColorString}
               disabled
-              value={3}
+              value={(p.hitDie ?? 3) / 2 + 1}
               sx={centerTextStyle}
             />
           </div>
@@ -49,7 +58,7 @@ export const HPEdit = memo(() => {
               label="CON"
               color={primaryColorString}
               disabled
-              value={3}
+              value={Math.floor(((p.constitution ?? 15) - 10) / 2)}
               sx={centerTextStyle}
             />
           </div>
@@ -58,7 +67,11 @@ export const HPEdit = memo(() => {
             <span>+</span>
             <div className="grow"></div>
           </div>
-          <ExtraField className="w-full mb-1" />
+          <ExtraField
+            className="w-full mb-1"
+            value={p.extraValue}
+            onChange={p.onExtraChange}
+          />
         </div>
         <div className="grow"></div>
       </div>
@@ -70,6 +83,10 @@ export const HPEdit = memo(() => {
             label="Maximum HP"
             color={primaryColorString}
             type="number"
+            value={p.customValue}
+            onChange={(e) => {
+              if (p.onCustomChange) p.onCustomChange(e.target.value);
+            }}
           />
         </div>
         <div className="grow"></div>
