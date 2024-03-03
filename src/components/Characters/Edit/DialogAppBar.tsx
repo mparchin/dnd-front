@@ -5,6 +5,7 @@ import { AppBar, Toolbar, IconButton } from "@mui/material";
 
 interface Props {
   closeRequest: () => void;
+  Save: () => void;
 }
 
 export const DialogAppBar = memo((p: Props) => {
@@ -24,7 +25,10 @@ export const DialogAppBar = memo((p: Props) => {
         <IconButton
           autoFocus
           color="inherit"
-          onClick={p.closeRequest}
+          onClick={() => {
+            p.Save();
+            p.closeRequest();
+          }}
           aria-label="save"
         >
           <Check />

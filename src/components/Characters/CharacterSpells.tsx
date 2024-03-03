@@ -15,6 +15,9 @@ interface CharSpellDetail {
 
 interface CharacterSpellProps {
   spells: CharSpellDetail[];
+  attributeModifire: number;
+  attackBonous: string;
+  saveDc: number;
 }
 export const CharacterSpells = memo((props: CharacterSpellProps) => {
   const primaryColorString = usePrimaryColorString();
@@ -33,7 +36,11 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
         <div className="flex flex-col text-center w-20 mr-5">
           <div className="grow">
             <span className="text-2xl font-bold">
-              <span style={coloredStyle}>+5</span>
+              <span style={coloredStyle}>
+                {props.attributeModifire >= 0
+                  ? `+${props.attributeModifire}`
+                  : props.attributeModifire}
+              </span>
             </span>
           </div>
           <div className="text-xxs uppercase">modifire</div>
@@ -41,7 +48,7 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
         <div className="flex flex-col text-center w-20 mr-5">
           <div className="grow">
             <span className="text-2xl font-bold">
-              <span style={coloredStyle}>D4+5</span>
+              <span style={coloredStyle}>{props.attackBonous}</span>
             </span>
           </div>
           <div className="text-xxs uppercase">Spell attack</div>
@@ -49,7 +56,7 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
         <div className="flex flex-col text-center w-20">
           <div className="grow">
             <span className="text-2xl font-bold" style={coloredStyle}>
-              15
+              {props.saveDc}
             </span>
           </div>
           <div className="text-xxs uppercase">save DC</div>

@@ -52,7 +52,7 @@ export const SpellCastingEdit = memo((p: Props) => {
               label="Prof"
               color={primaryColorString}
               disabled
-              value={`d${(p.profiencyBonous ?? 2) * 2}`}
+              value={`D${(p.profiencyBonous ?? 2) * 2}`}
               sx={centerTextStyle}
             />
           </div>

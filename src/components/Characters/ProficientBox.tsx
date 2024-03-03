@@ -10,9 +10,9 @@ import { Circle } from "../../assets/circle";
 
 interface ProficientBoxProps {
   name: string;
-  value: number;
-  proficiencyBonous?: number;
   advantage?: boolean;
+  isProficient?: boolean;
+  total: string;
 }
 
 export const ProficientBox = memo((props: ProficientBoxProps) => {
@@ -25,9 +25,9 @@ export const ProficientBox = memo((props: ProficientBoxProps) => {
     () => ({
       backgroundImage: `url('/proficient-box-bg-${
         themeStore.mode == ThemeMode.light ? "grey" : "white"
-      }${props.proficiencyBonous ? `-${primaryColorString}.svg` : ".svg"}')`,
+      }${props.isProficient ? `-${primaryColorString}.svg` : ".svg"}')`,
     }),
-    [themeStore.mode, props.proficiencyBonous]
+    [themeStore.mode, props.isProficient]
   );
 
   const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
@@ -48,8 +48,7 @@ export const ProficientBox = memo((props: ProficientBoxProps) => {
           className="shrink uppercase text-2xl font-bold"
           style={coloredStyle}
         >
-          {props.proficiencyBonous ? `D${props.proficiencyBonous * 2}` : ""}
-          {props.value > 0 ? `+${props.value}` : props.value}
+          {props.total}
         </span>
         <span className="grow-[3]"></span>
       </div>

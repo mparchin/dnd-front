@@ -1,7 +1,7 @@
 import { Dialog, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import { useBgColor, usePrimaryColor } from "../theme";
 import { DescreteSlider } from "./Controls/DescreteSlider";
@@ -17,19 +17,25 @@ import { useFeatureListStore } from "../API/feature";
 import { calculateProficiencyBonous } from "../models/extraCalculations";
 import { immer } from "zustand/middleware/immer";
 import { immerable } from "immer";
+import { CharactersListState, useCharacterListStore } from "../API/characters";
+import {
+  Character,
+  CharacterAttributes,
+  CharacterExpert,
+  Class,
+  Subclass,
+} from "../models/spell";
 
 class ExpertEditClass implements ExpertEditState {
   [immerable] = true;
   hasAdvantage: boolean;
   isProficient: boolean;
   isExpert: boolean;
-  attributeValue: number;
   extra: string;
   actions: {
     setAdvantage: (flag: boolean) => void;
     setProficient: (flag: boolean) => void;
     setExpert: (flag: boolean) => void;
-    setAttribute: (val: number) => void;
     setExtra: (str: string) => void;
   };
   constructor(
@@ -50,7 +56,6 @@ class ExpertEditClass implements ExpertEditState {
     this.hasAdvantage = false;
     this.isProficient = false;
     this.isExpert = false;
-    this.attributeValue = 10;
     this.extra = "";
     this.actions = {
       setAdvantage: (flag: boolean) => {
@@ -68,11 +73,6 @@ class ExpertEditClass implements ExpertEditState {
           selector(state).isExpert = flag;
         });
       },
-      setAttribute: (val: number) => {
-        set((state) => {
-          selector(state).attributeValue = val;
-        });
-      },
       setExtra: (str: string) => {
         set((state) => {
           selector(state).extra = str;
@@ -83,6 +83,7 @@ class ExpertEditClass implements ExpertEditState {
 }
 
 export interface CharacterEditDialogState {
+  characterLocalId: number;
   isOpen: boolean;
   dialogActions: {
     open: () => void;
@@ -136,6 +137,7 @@ export interface CharacterEditDialogState {
   persuasion: ExpertEditState;
 
   actions: {
+    setLocalId: (val: number) => void;
     setName: (str: string) => void;
     setRace: (str: string) => void;
     setBackground: (str: string) => void;
@@ -161,6 +163,7 @@ export interface CharacterEditDialogState {
 export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
   immer((set) => ({
     [immerable]: true,
+    characterLocalId: 0,
     isOpen: false,
     dialogActions: {
       open: () => set({ isOpen: true }),
@@ -202,7 +205,7 @@ export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
 
     athletics: new ExpertEditClass(set, (state) => state.athletics),
     acrobatics: new ExpertEditClass(set, (state) => state.acrobatics),
-    sleightOfHands: new ExpertEditClass(set, (state) => state.slightOfHands),
+    sleightOfHands: new ExpertEditClass(set, (state) => state.sleightOfHands),
     stealth: new ExpertEditClass(set, (state) => state.stealth),
     arcana: new ExpertEditClass(set, (state) => state.arcana),
     history: new ExpertEditClass(set, (state) => state.history),
@@ -220,6 +223,7 @@ export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
     persuasion: new ExpertEditClass(set, (state) => state.persuasion),
 
     actions: {
+      setLocalId: (val: number) => set({ characterLocalId: val }),
       setName: (str: string) => set({ name: str }),
       setRace: (str: string) => set({ race: str }),
       setBackground: (str: string) => set({ background: str }),
@@ -243,6 +247,151 @@ export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
   }))
 );
 
+function SaveExperts(char: CharacterExpert, edit: ExpertEditState) {
+  char.hasAdvantage = edit.hasAdvantage;
+  char.isExpert = edit.isExpert;
+  char.isProficient = edit.isProficient;
+  char.extraText = edit.extra;
+}
+
+function Save(
+  state: CharacterEditDialogState,
+  charactersStore: CharactersListState,
+  selectedClass: Class
+) {
+  const character =
+    charactersStore.characters.find(
+      (c) => c.localId == state.characterLocalId
+    ) ?? new Character();
+
+  if (character.localId == 0)
+    character.localId =
+      Math.max(
+        ...charactersStore.characters.map((char) => char.localId),
+        character.localId
+      ) + 1;
+
+  character.name = state.name;
+  character.race = state.race;
+  character.background = state.background;
+  character.class = selectedClass;
+  character.subClass = new Subclass(state.subclassName, character.class.name);
+  character.level = state.level;
+  character.attributes = new CharacterAttributes(
+    state.strength,
+    state.dextrity,
+    state.constitution,
+    state.intelligence,
+    state.wisdom,
+    state.charisma
+  );
+  character.speed = Number(state.speed);
+  SaveExperts(character.inititive, state.inititive);
+  character.armorClassExtra = state.armourClassExtra;
+  character.HP.averageMaximumExtra = state.HPExtra;
+  character.HP.customMaximum = Number(state.customHP);
+  character.spellCasting.castingAbility = state.castingAbility;
+  character.spellCasting.attackExtra = state.spellAttackExtra;
+  character.spellCasting.DCExtra = state.spellSaveExtra;
+
+  SaveExperts(character.strengthSave, state.strengthSave);
+  SaveExperts(character.dextritySave, state.dextritySave);
+  SaveExperts(character.constitutionSave, state.constitutionSave);
+  SaveExperts(character.intelligenceSave, state.intelligenceSave);
+  SaveExperts(character.wisdomSave, state.wisdomSave);
+  SaveExperts(character.charismaSave, state.charismaSave);
+
+  SaveExperts(character.athletics, state.athletics);
+  SaveExperts(character.acrobatics, state.acrobatics);
+  SaveExperts(character.sleightOfHands, state.sleightOfHands);
+  SaveExperts(character.stealth, state.stealth);
+  SaveExperts(character.arcana, state.arcana);
+  SaveExperts(character.history, state.history);
+  SaveExperts(character.investigation, state.investigation);
+  SaveExperts(character.nature, state.nature);
+  SaveExperts(character.religion, state.religion);
+  SaveExperts(character.animalHandling, state.animalHandling);
+  SaveExperts(character.insight, state.insight);
+  SaveExperts(character.medicine, state.medicine);
+  SaveExperts(character.perception, state.perception);
+  SaveExperts(character.survival, state.survival);
+  SaveExperts(character.deception, state.deception);
+  SaveExperts(character.intimidation, state.intimidation);
+  SaveExperts(character.performance, state.performance);
+  SaveExperts(character.persuasion, state.persuasion);
+
+  const chars = charactersStore.characters.filter(
+    (char) => char.localId != character.localId
+  );
+  chars.push(character);
+  charactersStore.setCharacters(chars);
+}
+
+function LoadExperts(edit: ExpertEditState, char: CharacterExpert) {
+  edit.actions.setAdvantage(char.hasAdvantage);
+  edit.actions.setExpert(char.isExpert);
+  edit.actions.setProficient(char.isProficient);
+  edit.actions.setExtra(char.extraText);
+}
+
+function Load(
+  state: CharacterEditDialogState,
+  charactersStore: CharactersListState,
+  location: Location<any>
+) {
+  const character =
+    charactersStore.characters.find(
+      (c) => c.localId == (location.state?.characterLocalId ?? 0)
+    ) ?? new Character();
+
+  state.actions.setLocalId(character.localId);
+  state.actions.setName(character.name);
+  state.actions.setRace(character.race);
+  state.actions.setBackground(character.background);
+  state.actions.setClassId(character.class.id.toString());
+  state.actions.setSubclassName(character.subClass.name);
+  state.actions.setLevel(character.level);
+  state.actions.setStrength(character.attributes.strength);
+  state.actions.setDextrity(character.attributes.dextrity);
+  state.actions.setConstitution(character.attributes.constitution);
+  state.actions.setIntelligence(character.attributes.intelligence);
+  state.actions.setWisdom(character.attributes.wisdom);
+  state.actions.setCharisma(character.attributes.charisma);
+  state.actions.setSpeed(character.speed.toString());
+  LoadExperts(state.inititive, character.inititive);
+  state.actions.setArmourClassExtra(character.armorClassExtra);
+  state.actions.setHPExtra(character.HP.averageMaximumExtra);
+  state.actions.setCustomHp(character.HP.customMaximum?.toString() ?? "");
+  state.actions.setCastingAbility(character.spellCasting.castingAbility);
+  state.actions.setSpellAttackExtra(character.spellCasting.attackExtra);
+  state.actions.setSpellSaveExtra(character.spellCasting.DCExtra);
+  LoadExperts(state.strengthSave, character.strengthSave);
+  LoadExperts(state.dextritySave, character.dextritySave);
+  LoadExperts(state.constitutionSave, character.constitutionSave);
+  LoadExperts(state.intelligenceSave, character.intelligenceSave);
+  LoadExperts(state.wisdomSave, character.wisdomSave);
+  LoadExperts(state.charismaSave, character.charismaSave);
+
+  LoadExperts(state.athletics, character.athletics);
+  LoadExperts(state.acrobatics, character.acrobatics);
+  LoadExperts(state.sleightOfHands, character.sleightOfHands);
+  LoadExperts(state.stealth, character.stealth);
+  LoadExperts(state.arcana, character.arcana);
+  LoadExperts(state.history, character.history);
+  LoadExperts(state.investigation, character.investigation);
+  LoadExperts(state.nature, character.nature);
+  LoadExperts(state.religion, character.religion);
+  LoadExperts(state.animalHandling, character.animalHandling);
+  LoadExperts(state.insight, character.insight);
+  LoadExperts(state.medicine, character.medicine);
+  LoadExperts(state.perception, character.perception);
+  LoadExperts(state.survival, character.survival);
+  LoadExperts(state.deception, character.deception);
+  LoadExperts(state.intimidation, character.intimidation);
+  LoadExperts(state.performance, character.performance);
+  LoadExperts(state.persuasion, character.persuasion);
+}
+
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement;
@@ -260,6 +409,7 @@ export default function () {
   const CloseRequest = useCallback(() => {
     if (IsOpenRequest()) navigate(-1);
   }, [location.pathname]);
+  const charactersStore = useCharacterListStore((state) => state);
   const classes = useClassListStore((state) => state.classes);
   const classesComboOptions = useMemo(
     () =>
@@ -328,10 +478,19 @@ export default function () {
     }),
     [primaryColor]
   );
+  const saveFunction = useCallback(
+    () => Save(state, charactersStore, selectedClass),
+    [state.characterLocalId, selectedClass, state]
+  );
   useEffect(() => {
     if (!state.isOpen && IsOpenRequest()) state.dialogActions.open();
     else if (state.isOpen && !IsOpenRequest()) state.dialogActions.close();
   }, [state.isOpen, location.pathname]);
+  useEffect(() => Load(state, charactersStore, location), [
+    state.characterLocalId,
+    state.isOpen,
+    location,
+  ]);
   return (
     <Dialog
       fullScreen
@@ -339,7 +498,7 @@ export default function () {
       onClose={CloseRequest}
       TransitionComponent={Transition}
     >
-      <DialogAppBar closeRequest={CloseRequest} />
+      <DialogAppBar closeRequest={CloseRequest} Save={saveFunction} />
       <div
         className="w-full overflow-auto flex flex-row flex-wrap p-2 justify-center"
         style={bgColorStyle}

@@ -2,8 +2,21 @@ import { Card, IconButton, Avatar, Button, useTheme } from "@mui/material";
 import { memo, useMemo } from "react";
 import { Bonfire } from "../../assets/bonfire";
 import { usePrimaryColor } from "../../theme";
+import { Circle } from "../../assets/circle";
 
-export const StickyCard = memo(() => {
+interface Props {
+  currentHp: number;
+  maximumHp: number;
+  currentMana: number;
+  maximumMana: number;
+  profBonous: number;
+  speed: number;
+  inititive: string;
+  inititiveAdvantage: boolean;
+  armourClass: number;
+}
+
+export const StickyCard = memo((p: Props) => {
   const theme = useTheme();
   const primaryColor = usePrimaryColor();
   const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
@@ -46,7 +59,9 @@ export const StickyCard = memo(() => {
               variant="contained"
               style={HpColor}
             >
-              <div className="grow basis-0 text-xl">41/41</div>
+              <div className="grow basis-0 text-xl">
+                {p.currentHp}/{p.maximumHp}
+              </div>
               <div className="uppercase text-xxs basis-0">hit points</div>
             </Button>
             <Button
@@ -54,7 +69,9 @@ export const StickyCard = memo(() => {
               variant="contained"
               style={ManaColor}
             >
-              <div className="grow basis-0 text-xl">0/0</div>
+              <div className="grow basis-0 text-xl">
+                {p.currentMana}/{p.maximumMana}
+              </div>
               <div className="uppercase text-xxs basis-0">mana</div>
             </Button>
           </div>
@@ -64,8 +81,8 @@ export const StickyCard = memo(() => {
           <div className="grow basis-0 flex flex-col text-center">
             <div className="grow">
               <span className="text-2xl font-bold">
-                <span style={coloredStyle}>+2</span>/
-                <span style={coloredStyle}>D4</span>
+                <span style={coloredStyle}>+{p.profBonous}</span>/
+                <span style={coloredStyle}>D{p.profBonous * 2}</span>
               </span>
             </div>
             <div className="text-xxs uppercase">proficiency</div>
@@ -73,7 +90,7 @@ export const StickyCard = memo(() => {
           <div className="grow basis-0 flex flex-col text-center">
             <div className="grow">
               <span className="text-2xl font-bold" style={coloredStyle}>
-                30
+                {p.speed}
               </span>
               <span className="text-xxs pl-1 align-middle">FT.</span>
             </div>
@@ -81,16 +98,31 @@ export const StickyCard = memo(() => {
           </div>
           <div className="grow basis-0 flex flex-col text-center">
             <div className="grow">
-              <span className="text-2xl font-bold">
-                <span style={coloredStyle}>+2</span>
-              </span>
+              <div className="flex flex-row">
+                <div className="grow"></div>
+                <span className="text-2xl font-bold" style={coloredStyle}>
+                  {p.inititive}
+                </span>
+                <div className="grow">
+                  {p.inititiveAdvantage ? (
+                    <Circle
+                      text="A"
+                      className="w-5 ml-1 mt-1"
+                      filled
+                      color={theme.palette.success.main}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="text-xxs uppercase">initiative</div>
           </div>
           <div className="grow basis-0 flex flex-col text-center">
             <div className="grow">
               <span className="text-2xl font-bold">
-                <span style={coloredStyle}>15</span>
+                <span style={coloredStyle}>{p.armourClass}</span>
               </span>
             </div>
             <div className="text-xxs uppercase">armour class</div>

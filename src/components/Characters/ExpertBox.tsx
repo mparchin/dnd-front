@@ -10,9 +10,9 @@ import { Circle } from "../../assets/circle";
 
 interface ExpertBoxProps {
   name: string;
+  total: string;
   attribute: string;
-  value: number;
-  proficiencyBonous?: number;
+  proficient?: boolean;
   expert?: boolean;
   advantage?: boolean;
 }
@@ -27,11 +27,11 @@ export const ExpertBox = memo((props: ExpertBoxProps) => {
     () => ({
       backgroundImage: `url('/expert-box-bg-${
         themeStore.mode == ThemeMode.light ? "grey" : "white"
-      }${props.proficiencyBonous ? `-${primaryColorString}` : ""}${
+      }${props.proficient || props.expert ? `-${primaryColorString}` : ""}${
         props.expert ? `-${primaryColorString}` : ""
       }.svg')`,
     }),
-    [themeStore.mode, props.proficiencyBonous, primaryColorString, props.expert]
+    [themeStore.mode, props.proficient, primaryColorString, props.expert]
   );
 
   const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
@@ -57,10 +57,7 @@ export const ExpertBox = memo((props: ExpertBoxProps) => {
           className="shrink uppercase text-2xl font-bold"
           style={coloredStyle}
         >
-          {props.proficiencyBonous
-            ? `${props.expert ? "2" : ""}D${props.proficiencyBonous * 2}`
-            : ""}
-          {props.value > 0 ? `+${props.value}` : props.value}
+          {props.total}
         </span>
         <span className="grow-[3]"></span>
       </div>

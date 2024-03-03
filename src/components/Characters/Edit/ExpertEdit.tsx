@@ -12,13 +12,11 @@ export interface ExpertEditState {
   hasAdvantage: boolean;
   isProficient: boolean;
   isExpert: boolean;
-  attributeValue: number;
   extra: string;
   actions: {
     setAdvantage: (flag: boolean) => void;
     setProficient: (flag: boolean) => void;
     setExpert: (flag: boolean) => void;
-    setAttribute: (val: number) => void;
     setExtra: (str: string) => void;
   };
 }

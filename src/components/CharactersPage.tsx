@@ -11,6 +11,9 @@ import { CharacterInventory } from "./Characters/CharacterInventory";
 import { CharacterAttacks } from "./Characters/CharacterAttacks";
 import { CharacterFeatures } from "./Characters/CharacterFeatures";
 import { StickyCard } from "./Characters/StickyCard";
+import { useLocation } from "react-router-dom";
+import { useCharacterListStore } from "../API/characters";
+import { Character } from "../models/spell";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -77,6 +80,14 @@ function setActiveTab(primaryColor: string) {
 }
 
 export default function CharatersPage() {
+  const location = useLocation();
+  const characterList = useCharacterListStore((state) => state.characters);
+  const localId = location.state?.characterLocalId ?? 0;
+  const character = useMemo(
+    () =>
+      characterList.find((char) => char.localId == localId) ?? new Character(),
+    [localId, characterList]
+  );
   const primaryColor = usePrimaryColor();
   const bgColor = useBgColor();
   const bgColorStyle = useMemo(
@@ -98,7 +109,17 @@ export default function CharatersPage() {
       onScroll={() => setActiveTab(primaryColor.main)}
     >
       <div className="sticky top-0 z-50" style={bgColorStyle}>
-        <StickyCard />
+        <StickyCard
+          armourClass={character.AC()}
+          currentHp={character.HP.current}
+          maximumHp={character.HP.currentMaximum(character)}
+          currentMana={character.spellCasting.currentMana}
+          maximumMana={character.spellCasting.maximumMana(character)}
+          profBonous={character.proficiencyBonous()}
+          speed={character.speed}
+          inititive={character.inititive.totalValue(character)}
+          inititiveAdvantage={character.inititive.hasAdvantage}
+        />
         <div className="flex flex-row overflow-auto">
           <ScrollerCards
             onClick={scrollToDiv}
@@ -180,24 +201,60 @@ export default function CharatersPage() {
           id="stats"
           className="flex flex-row flex-wrap p-2 justify-around w-full"
         >
-          <StatsBox name="strength" value={17} />
-          <StatsBox name="dexterity" value={15} />
-          <StatsBox name="constitution" value={16} />
-          <StatsBox name="intelligence" value={8} />
-          <StatsBox name="wisdom" value={8} />
-          <StatsBox name="charisma" value={8} />
+          <StatsBox name="strength" value={character.attributes.strength} />
+          <StatsBox name="dexterity" value={character.attributes.dextrity} />
+          <StatsBox
+            name="constitution"
+            value={character.attributes.constitution}
+          />
+          <StatsBox
+            name="intelligence"
+            value={character.attributes.intelligence}
+          />
+          <StatsBox name="wisdom" value={character.attributes.wisdom} />
+          <StatsBox name="charisma" value={character.attributes.charisma} />
         </div>
         <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="saves"
           className="flex flex-row flex-wrap p-2 justify-around  w-full"
         >
-          <ProficientBox name="strength" value={3} proficiencyBonous={2} />
-          <ProficientBox name="dexterity" value={2} advantage />
-          <ProficientBox name="constitution" value={3} proficiencyBonous={2} />
-          <ProficientBox name="intelligence" value={-1} />
-          <ProficientBox name="wisdom" value={-1} />
-          <ProficientBox name="charisma" value={-1} />
+          <ProficientBox
+            name="strength"
+            total={character.strengthSave.totalValue(character)}
+            advantage={character.strengthSave.hasAdvantage}
+            isProficient={character.strengthSave.isProficient}
+          />
+          <ProficientBox
+            name="dexterity"
+            total={character.dextritySave.totalValue(character)}
+            advantage={character.dextritySave.hasAdvantage}
+            isProficient={character.dextritySave.isProficient}
+          />
+          <ProficientBox
+            name="constitution"
+            total={character.constitutionSave.totalValue(character)}
+            advantage={character.constitutionSave.hasAdvantage}
+            isProficient={character.constitutionSave.isProficient}
+          />
+          <ProficientBox
+            name="intelligence"
+            total={character.intelligenceSave.totalValue(character)}
+            advantage={character.intelligenceSave.hasAdvantage}
+            isProficient={character.intelligenceSave.isProficient}
+          />
+          <ProficientBox
+            name="wisdom"
+            total={character.wisdomSave.totalValue(character)}
+            advantage={character.wisdomSave.hasAdvantage}
+            isProficient={character.wisdomSave.isProficient}
+          />
+          <ProficientBox
+            name="charisma"
+            total={character.charismaSave.totalValue(character)}
+            advantage={character.charismaSave.hasAdvantage}
+            isProficient={character.charismaSave.isProficient}
+          />
         </div>
         <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
@@ -207,51 +264,169 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="str"
             name="athletics"
-            value={3}
-            proficiencyBonous={2}
-            advantage
+            total={character.athletics.totalValue(character)}
+            advantage={character.athletics.hasAdvantage}
+            expert={character.athletics.isExpert}
+            proficient={character.athletics.isProficient}
           />
           <div className="h-4 w-full"></div>
-          <ExpertBox attribute="dex" name="acrobatics" value={2} />
-          <ExpertBox attribute="dex" name="sleight of hand" value={2} />
+          <ExpertBox
+            attribute="dex"
+            name="acrobatics"
+            total={character.acrobatics.totalValue(character)}
+            advantage={character.acrobatics.hasAdvantage}
+            expert={character.acrobatics.isExpert}
+            proficient={character.acrobatics.isProficient}
+          />
+          <ExpertBox
+            attribute="dex"
+            name="sleight of hand"
+            total={character.sleightOfHands.totalValue(character)}
+            advantage={character.sleightOfHands.hasAdvantage}
+            expert={character.sleightOfHands.isExpert}
+            proficient={character.sleightOfHands.isProficient}
+          />
           <ExpertBox
             attribute="dex"
             name="stealth"
-            value={2}
-            proficiencyBonous={2}
+            total={character.stealth.totalValue(character)}
+            advantage={character.stealth.hasAdvantage}
+            expert={character.stealth.isExpert}
+            proficient={character.stealth.isProficient}
           />
           <div className="h-4 w-full"></div>
-          <ExpertBox attribute="int" name="arcana" value={-1} />
-          <ExpertBox attribute="int" name="history" value={-1} />
-          <ExpertBox attribute="int" name="investigation" value={-1} />
-          <ExpertBox attribute="int" name="nature" value={-1} />
-          <ExpertBox attribute="int" name="religion" value={-1} />
+          <ExpertBox
+            attribute="int"
+            name="arcana"
+            total={character.arcana.totalValue(character)}
+            advantage={character.arcana.hasAdvantage}
+            expert={character.arcana.isExpert}
+            proficient={character.arcana.isProficient}
+          />
+          <ExpertBox
+            attribute="int"
+            name="history"
+            total={character.history.totalValue(character)}
+            advantage={character.history.hasAdvantage}
+            expert={character.history.isExpert}
+            proficient={character.history.isProficient}
+          />
+          <ExpertBox
+            attribute="int"
+            name="investigation"
+            total={character.investigation.totalValue(character)}
+            advantage={character.investigation.hasAdvantage}
+            expert={character.investigation.isExpert}
+            proficient={character.investigation.isProficient}
+          />
+          <ExpertBox
+            attribute="int"
+            name="nature"
+            total={character.nature.totalValue(character)}
+            advantage={character.nature.hasAdvantage}
+            expert={character.nature.isExpert}
+            proficient={character.nature.isProficient}
+          />
+          <ExpertBox
+            attribute="int"
+            name="religion"
+            total={character.religion.totalValue(character)}
+            advantage={character.religion.hasAdvantage}
+            expert={character.religion.isExpert}
+            proficient={character.religion.isProficient}
+          />
           <div className="h-4 w-full"></div>
-          <ExpertBox attribute="wis" name="animal handling" value={-1} />
-          <ExpertBox attribute="wis" name="insight" value={-1} />
-          <ExpertBox attribute="wis" name="medicine" value={-1} />
-          <ExpertBox attribute="wis" name="perception" value={-1} />
-          <ExpertBox attribute="wis" name="survival" value={-1} />
+          <ExpertBox
+            attribute="wis"
+            name="animal handling"
+            total={character.animalHandling.totalValue(character)}
+            advantage={character.animalHandling.hasAdvantage}
+            expert={character.animalHandling.isExpert}
+            proficient={character.animalHandling.isProficient}
+          />
+          <ExpertBox
+            attribute="wis"
+            name="insight"
+            total={character.insight.totalValue(character)}
+            advantage={character.insight.hasAdvantage}
+            expert={character.insight.isExpert}
+            proficient={character.insight.isProficient}
+          />
+          <ExpertBox
+            attribute="wis"
+            name="medicine"
+            total={character.medicine.totalValue(character)}
+            advantage={character.medicine.hasAdvantage}
+            expert={character.medicine.isExpert}
+            proficient={character.medicine.isProficient}
+          />
+          <ExpertBox
+            attribute="wis"
+            name="perception"
+            total={character.perception.totalValue(character)}
+            advantage={character.perception.hasAdvantage}
+            expert={character.perception.isExpert}
+            proficient={character.perception.isProficient}
+          />
+          <ExpertBox
+            attribute="wis"
+            name="survival"
+            total={character.survival.totalValue(character)}
+            advantage={character.survival.hasAdvantage}
+            expert={character.survival.isExpert}
+            proficient={character.survival.isProficient}
+          />
           <div className="h-4 w-full"></div>
-          <ExpertBox attribute="cha" name="deception" value={-1} />
+          <ExpertBox
+            attribute="cha"
+            name="deception"
+            total={character.deception.totalValue(character)}
+            advantage={character.deception.hasAdvantage}
+            expert={character.deception.isExpert}
+            proficient={character.deception.isProficient}
+          />
           <ExpertBox
             attribute="cha"
             name="intimidation"
-            value={-1}
-            proficiencyBonous={2}
+            total={character.intimidation.totalValue(character)}
+            advantage={character.intimidation.hasAdvantage}
+            expert={character.intimidation.isExpert}
+            proficient={character.intimidation.isProficient}
           />
-          <ExpertBox attribute="cha" name="performance" value={-1} />
-          <ExpertBox attribute="cha" name="persuasion" value={-1} />
+          <ExpertBox
+            attribute="cha"
+            name="performance"
+            total={character.performance.totalValue(character)}
+            advantage={character.performance.hasAdvantage}
+            expert={character.performance.isExpert}
+            proficient={character.performance.isProficient}
+          />
+          <ExpertBox
+            attribute="cha"
+            name="persuasion"
+            total={character.persuasion.totalValue(character)}
+            advantage={character.persuasion.hasAdvantage}
+            expert={character.persuasion.isExpert}
+            proficient={character.persuasion.isProficient}
+          />
         </div>
         <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
           id="senses"
           className="flex flex-row flex-wrap p-2 justify-around  w-full"
         >
-          <SensesBox name="Passive Wisdom (Insight)" value={9} />
-          <SensesBox name="Passive Wisdom (Perception)" value={9} />
-          <SensesBox name="Passive Intelligence (Investigation)" value={9} />
-          <SensesBox name="Darkvision" value={60} unit="ft." />
+          <SensesBox
+            name="Passive Wisdom (Insight)"
+            value={character.insight.totalPassiveValue(character)}
+          />
+          <SensesBox
+            name="Passive Wisdom (Perception)"
+            value={character.perception.totalPassiveValue(character)}
+          />
+          <SensesBox
+            name="Passive Intelligence (Investigation)"
+            value={character.investigation.totalPassiveValue(character)}
+          />
         </div>
         <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div
@@ -308,6 +483,11 @@ export default function CharatersPage() {
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
         >
           <CharacterSpells
+            attributeModifire={character.attributes.getAttributeModifire(
+              character.spellCasting.castingAbility
+            )}
+            attackBonous={character.spellCasting.attackModifire(character)}
+            saveDc={character.spellCasting.DC(character)}
             spells={[
               {
                 id: 0,
@@ -467,9 +647,9 @@ export default function CharatersPage() {
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
         >
           <CharacterFeatures
-            class="Barbarian"
-            level={3}
-            subclass="Path of the Berserker"
+            class={character.class.name}
+            level={character.level}
+            subclass={character.subClass.name}
           />
         </div>
         <div className="h-0.5 w-screen m-5" style={dividerColor}></div>

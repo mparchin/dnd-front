@@ -26,6 +26,7 @@ import RulesPage from "./components/RulesPage";
 import CharatersPage from "./components/CharactersPage";
 import CharacterEdit from "./components/CharacterEdit";
 import GetAndSaveClasses from "./API/classes";
+import CharactersList from "./components/CharactersList";
 
 export default function App() {
   const theme = useTheme();
@@ -83,7 +84,10 @@ export default function App() {
             <MenuPage />
           ) : location.pathname == "/rules" ? (
             <RulesPage />
-          ) : location.pathname.includes("haracter") ? (
+          ) : location.pathname.includes("characters") ? (
+            // <CharatersPage />
+            <CharactersList />
+          ) : location.pathname.includes("character") ? (
             <CharatersPage />
           ) : (
             <ComingSoon />

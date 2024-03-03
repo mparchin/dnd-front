@@ -9,6 +9,7 @@ export function calculateProficiencyBonous(extra: string, level: number) {
 }
 
 export function ExtraFieldCalculations(extra: string, char: Character) {
+  if (!extra) return 0;
   extra = extra.replace(/\s/g, "");
   extra = extra.toLowerCase();
   extra = extra.replace(/proficiency/g, char.proficiencyBonous().toString());
@@ -50,5 +51,9 @@ export function ExtraFieldCalculations(extra: string, char: Character) {
   extra = extra.replace(/cha/g, char.attributes.charismaModifire().toString());
   extra = extra.replace(/level/g, char.level.toString());
   extra = extra.replace(/lvl/g, char.level.toString());
-  return Math.floor(eval(extra));
+  try {
+    return Math.floor(eval(extra));
+  } catch {
+    return 0;
+  }
 }
