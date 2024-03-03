@@ -1,40 +1,396 @@
-import { Check, Close } from "@mui/icons-material";
-import {
-  AppBar,
-  Card,
-  Dialog,
-  IconButton,
-  Slide,
-  TextField,
-  Toolbar,
-} from "@mui/material";
+import { Dialog, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import React, { useEffect, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
-import { useBgColor, usePrimaryColor, usePrimaryColorString } from "../theme";
+import { useBgColor, usePrimaryColor } from "../theme";
 import { DescreteSlider } from "./Controls/DescreteSlider";
-import ExpertEdit from "./Characters/ExpertEdit";
+import { ExpertEdit, ExpertEditState } from "./Characters/Edit/ExpertEdit";
 import { ExtraField } from "./Controls/ExtraField";
 import { ComboBox } from "./Controls/ComboBox";
+import { DialogAppBar } from "./Characters/Edit/DialogAppBar";
+import { EditTextField } from "./Characters/Edit/EditTextField";
+import { HPEdit } from "./Characters/Edit/HPEdit";
+import { SpellCastingEdit } from "./Characters/Edit/SpellCastingEdit";
+import { useClassListStore } from "../API/classes";
+import { useFeatureListStore } from "../API/feature";
+import { calculateProficiencyBonous } from "../models/extraCalculations";
+import { immer } from "zustand/middleware/immer";
+import { immerable } from "immer";
+import { CharactersListState, useCharacterListStore } from "../API/characters";
+import {
+  Character,
+  CharacterAttributes,
+  CharacterExpert,
+  Class,
+  Subclass,
+} from "../models/spell";
+
+class ExpertEditClass implements ExpertEditState {
+  [immerable] = true;
+  hasAdvantage: boolean;
+  isProficient: boolean;
+  isExpert: boolean;
+  extra: string;
+  actions: {
+    setAdvantage: (flag: boolean) => void;
+    setProficient: (flag: boolean) => void;
+    setExpert: (flag: boolean) => void;
+    setExtra: (str: string) => void;
+  };
+  constructor(
+    set: (
+      nextStateOrUpdater:
+        | CharacterEditDialogState
+        | Partial<CharacterEditDialogState>
+        // @ts-ignore
+        | ((state: WritableDraft<CharacterEditDialogState>) => void),
+      shouldReplace?: boolean | undefined
+    ) => void,
+    selector: (
+      // @ts-ignore
+      state: WritableDraft<CharacterEditDialogState>
+      // @ts-ignore
+    ) => WritableDraft<ExpertEditState>
+  ) {
+    this.hasAdvantage = false;
+    this.isProficient = false;
+    this.isExpert = false;
+    this.extra = "";
+    this.actions = {
+      setAdvantage: (flag: boolean) => {
+        set((state) => {
+          selector(state).hasAdvantage = flag;
+        });
+      },
+      setProficient: (flag: boolean) => {
+        set((state) => {
+          selector(state).isProficient = flag;
+        });
+      },
+      setExpert: (flag: boolean) => {
+        set((state) => {
+          selector(state).isExpert = flag;
+        });
+      },
+      setExtra: (str: string) => {
+        set((state) => {
+          selector(state).extra = str;
+        });
+      },
+    };
+  }
+}
 
 export interface CharacterEditDialogState {
+  characterLocalId: number;
   isOpen: boolean;
-  open: () => void;
-  close: () => void;
-  editName: string;
-  setName: (str: string) => void;
+  dialogActions: {
+    open: () => void;
+    close: () => void;
+  };
+  name: string;
+  race: string;
+  background: string;
+  classId: string;
+  subclassName?: string;
+  level: number;
+  strength: number;
+  dextrity: number;
+  constitution: number;
+  intelligence: number;
+  wisdom: number;
+  charisma: number;
+  speed: string;
+  inititive: ExpertEditState;
+  armourClassExtra: string;
+  HPExtra: string;
+  customHP: string;
+  castingAbility: string;
+  spellAttackExtra: string;
+  spellSaveExtra: string;
+
+  strengthSave: ExpertEditState;
+  dextritySave: ExpertEditState;
+  constitutionSave: ExpertEditState;
+  intelligenceSave: ExpertEditState;
+  wisdomSave: ExpertEditState;
+  charismaSave: ExpertEditState;
+
+  athletics: ExpertEditState;
+  acrobatics: ExpertEditState;
+  sleightOfHands: ExpertEditState;
+  stealth: ExpertEditState;
+  arcana: ExpertEditState;
+  history: ExpertEditState;
+  investigation: ExpertEditState;
+  nature: ExpertEditState;
+  religion: ExpertEditState;
+  animalHandling: ExpertEditState;
+  insight: ExpertEditState;
+  medicine: ExpertEditState;
+  perception: ExpertEditState;
+  survival: ExpertEditState;
+  deception: ExpertEditState;
+  intimidation: ExpertEditState;
+  performance: ExpertEditState;
+  persuasion: ExpertEditState;
+
+  actions: {
+    setLocalId: (val: number) => void;
+    setName: (str: string) => void;
+    setRace: (str: string) => void;
+    setBackground: (str: string) => void;
+    setClassId: (str: string) => void;
+    setSubclassName: (str?: string) => void;
+    setLevel: (val: number) => void;
+    setStrength: (val: number) => void;
+    setDextrity: (val: number) => void;
+    setConstitution: (val: number) => void;
+    setIntelligence: (val: number) => void;
+    setWisdom: (val: number) => void;
+    setCharisma: (val: number) => void;
+    setSpeed: (str: string) => void;
+    setArmourClassExtra: (str: string) => void;
+    setHPExtra: (str: string) => void;
+    setCustomHp: (str: string) => void;
+    setCastingAbility: (str: string) => void;
+    setSpellAttackExtra: (str: string) => void;
+    setSpellSaveExtra: (str: string) => void;
+  };
 }
 
 export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
-  (set) => ({
+  immer((set) => ({
+    [immerable]: true,
+    characterLocalId: 0,
     isOpen: false,
-    open: () => set({ isOpen: true }),
-    close: () => set({ isOpen: false }),
-    editName: "",
-    setName: (str: string) => set({ editName: str }),
-  })
+    dialogActions: {
+      open: () => set({ isOpen: true }),
+      close: () => set({ isOpen: false }),
+    },
+    name: "",
+    race: "",
+    background: "",
+    classId: "",
+    subclassName: undefined,
+    level: 1,
+    strength: 10,
+    dextrity: 10,
+    constitution: 10,
+    intelligence: 10,
+    wisdom: 10,
+    charisma: 10,
+    speed: "30",
+    inititive: new ExpertEditClass(set, (state) => state.inititive),
+    armourClassExtra: "",
+    HPExtra: "",
+    customHP: "",
+    castingAbility: "",
+    spellAttackExtra: "",
+    spellSaveExtra: "",
+
+    strengthSave: new ExpertEditClass(set, (state) => state.strengthSave),
+    dextritySave: new ExpertEditClass(set, (state) => state.dextritySave),
+    constitutionSave: new ExpertEditClass(
+      set,
+      (state) => state.constitutionSave
+    ),
+    intelligenceSave: new ExpertEditClass(
+      set,
+      (state) => state.intelligenceSave
+    ),
+    wisdomSave: new ExpertEditClass(set, (state) => state.wisdomSave),
+    charismaSave: new ExpertEditClass(set, (state) => state.charismaSave),
+
+    athletics: new ExpertEditClass(set, (state) => state.athletics),
+    acrobatics: new ExpertEditClass(set, (state) => state.acrobatics),
+    sleightOfHands: new ExpertEditClass(set, (state) => state.sleightOfHands),
+    stealth: new ExpertEditClass(set, (state) => state.stealth),
+    arcana: new ExpertEditClass(set, (state) => state.arcana),
+    history: new ExpertEditClass(set, (state) => state.history),
+    investigation: new ExpertEditClass(set, (state) => state.investigation),
+    nature: new ExpertEditClass(set, (state) => state.nature),
+    religion: new ExpertEditClass(set, (state) => state.religion),
+    animalHandling: new ExpertEditClass(set, (state) => state.animalHandling),
+    insight: new ExpertEditClass(set, (state) => state.insight),
+    medicine: new ExpertEditClass(set, (state) => state.medicine),
+    perception: new ExpertEditClass(set, (state) => state.perception),
+    survival: new ExpertEditClass(set, (state) => state.survival),
+    deception: new ExpertEditClass(set, (state) => state.deception),
+    intimidation: new ExpertEditClass(set, (state) => state.intimidation),
+    performance: new ExpertEditClass(set, (state) => state.performance),
+    persuasion: new ExpertEditClass(set, (state) => state.persuasion),
+
+    actions: {
+      setLocalId: (val: number) => set({ characterLocalId: val }),
+      setName: (str: string) => set({ name: str }),
+      setRace: (str: string) => set({ race: str }),
+      setBackground: (str: string) => set({ background: str }),
+      setClassId: (str: string) => set({ classId: str }),
+      setSubclassName: (str?: string) => set({ subclassName: str }),
+      setLevel: (val: number) => set({ level: val }),
+      setStrength: (val: number) => set({ strength: val }),
+      setDextrity: (val: number) => set({ dextrity: val }),
+      setConstitution: (val: number) => set({ constitution: val }),
+      setIntelligence: (val: number) => set({ intelligence: val }),
+      setWisdom: (val: number) => set({ wisdom: val }),
+      setCharisma: (val: number) => set({ charisma: val }),
+      setSpeed: (str: string) => set({ speed: str }),
+      setArmourClassExtra: (str: string) => set({ armourClassExtra: str }),
+      setHPExtra: (str: string) => set({ HPExtra: str }),
+      setCustomHp: (str: string) => set({ customHP: str }),
+      setCastingAbility: (str: string) => set({ castingAbility: str }),
+      setSpellAttackExtra: (str: string) => set({ spellAttackExtra: str }),
+      setSpellSaveExtra: (str: string) => set({ spellSaveExtra: str }),
+    },
+  }))
 );
+
+function SaveExperts(char: CharacterExpert, edit: ExpertEditState) {
+  char.hasAdvantage = edit.hasAdvantage;
+  char.isExpert = edit.isExpert;
+  char.isProficient = edit.isProficient;
+  char.extraText = edit.extra;
+}
+
+function Save(
+  state: CharacterEditDialogState,
+  charactersStore: CharactersListState,
+  selectedClass: Class
+) {
+  const character =
+    charactersStore.characters.find(
+      (c) => c.localId == state.characterLocalId
+    ) ?? new Character();
+
+  if (character.localId == 0)
+    character.localId =
+      Math.max(
+        ...charactersStore.characters.map((char) => char.localId),
+        character.localId
+      ) + 1;
+
+  character.name = state.name;
+  character.race = state.race;
+  character.background = state.background;
+  character.class = selectedClass;
+  character.subClass = new Subclass(state.subclassName, character.class.name);
+  character.level = state.level;
+  character.attributes = new CharacterAttributes(
+    state.strength,
+    state.dextrity,
+    state.constitution,
+    state.intelligence,
+    state.wisdom,
+    state.charisma
+  );
+  character.speed = Number(state.speed);
+  SaveExperts(character.inititive, state.inititive);
+  character.armorClassExtra = state.armourClassExtra;
+  character.HP.averageMaximumExtra = state.HPExtra;
+  character.HP.customMaximum = Number(state.customHP);
+  character.spellCasting.castingAbility = state.castingAbility;
+  character.spellCasting.attackExtra = state.spellAttackExtra;
+  character.spellCasting.DCExtra = state.spellSaveExtra;
+
+  SaveExperts(character.strengthSave, state.strengthSave);
+  SaveExperts(character.dextritySave, state.dextritySave);
+  SaveExperts(character.constitutionSave, state.constitutionSave);
+  SaveExperts(character.intelligenceSave, state.intelligenceSave);
+  SaveExperts(character.wisdomSave, state.wisdomSave);
+  SaveExperts(character.charismaSave, state.charismaSave);
+
+  SaveExperts(character.athletics, state.athletics);
+  SaveExperts(character.acrobatics, state.acrobatics);
+  SaveExperts(character.sleightOfHands, state.sleightOfHands);
+  SaveExperts(character.stealth, state.stealth);
+  SaveExperts(character.arcana, state.arcana);
+  SaveExperts(character.history, state.history);
+  SaveExperts(character.investigation, state.investigation);
+  SaveExperts(character.nature, state.nature);
+  SaveExperts(character.religion, state.religion);
+  SaveExperts(character.animalHandling, state.animalHandling);
+  SaveExperts(character.insight, state.insight);
+  SaveExperts(character.medicine, state.medicine);
+  SaveExperts(character.perception, state.perception);
+  SaveExperts(character.survival, state.survival);
+  SaveExperts(character.deception, state.deception);
+  SaveExperts(character.intimidation, state.intimidation);
+  SaveExperts(character.performance, state.performance);
+  SaveExperts(character.persuasion, state.persuasion);
+
+  const chars = charactersStore.characters.filter(
+    (char) => char.localId != character.localId
+  );
+  chars.push(character);
+  charactersStore.setCharacters(chars);
+}
+
+function LoadExperts(edit: ExpertEditState, char: CharacterExpert) {
+  edit.actions.setAdvantage(char.hasAdvantage);
+  edit.actions.setExpert(char.isExpert);
+  edit.actions.setProficient(char.isProficient);
+  edit.actions.setExtra(char.extraText);
+}
+
+function Load(
+  state: CharacterEditDialogState,
+  charactersStore: CharactersListState,
+  location: Location<any>
+) {
+  const character =
+    charactersStore.characters.find(
+      (c) => c.localId == (location.state?.characterLocalId ?? 0)
+    ) ?? new Character();
+
+  state.actions.setLocalId(character.localId);
+  state.actions.setName(character.name);
+  state.actions.setRace(character.race);
+  state.actions.setBackground(character.background);
+  state.actions.setClassId(character.class.id.toString());
+  state.actions.setSubclassName(character.subClass.name);
+  state.actions.setLevel(character.level);
+  state.actions.setStrength(character.attributes.strength);
+  state.actions.setDextrity(character.attributes.dextrity);
+  state.actions.setConstitution(character.attributes.constitution);
+  state.actions.setIntelligence(character.attributes.intelligence);
+  state.actions.setWisdom(character.attributes.wisdom);
+  state.actions.setCharisma(character.attributes.charisma);
+  state.actions.setSpeed(character.speed.toString());
+  LoadExperts(state.inititive, character.inititive);
+  state.actions.setArmourClassExtra(character.armorClassExtra);
+  state.actions.setHPExtra(character.HP.averageMaximumExtra);
+  state.actions.setCustomHp(character.HP.customMaximum?.toString() ?? "");
+  state.actions.setCastingAbility(character.spellCasting.castingAbility);
+  state.actions.setSpellAttackExtra(character.spellCasting.attackExtra);
+  state.actions.setSpellSaveExtra(character.spellCasting.DCExtra);
+  LoadExperts(state.strengthSave, character.strengthSave);
+  LoadExperts(state.dextritySave, character.dextritySave);
+  LoadExperts(state.constitutionSave, character.constitutionSave);
+  LoadExperts(state.intelligenceSave, character.intelligenceSave);
+  LoadExperts(state.wisdomSave, character.wisdomSave);
+  LoadExperts(state.charismaSave, character.charismaSave);
+
+  LoadExperts(state.athletics, character.athletics);
+  LoadExperts(state.acrobatics, character.acrobatics);
+  LoadExperts(state.sleightOfHands, character.sleightOfHands);
+  LoadExperts(state.stealth, character.stealth);
+  LoadExperts(state.arcana, character.arcana);
+  LoadExperts(state.history, character.history);
+  LoadExperts(state.investigation, character.investigation);
+  LoadExperts(state.nature, character.nature);
+  LoadExperts(state.religion, character.religion);
+  LoadExperts(state.animalHandling, character.animalHandling);
+  LoadExperts(state.insight, character.insight);
+  LoadExperts(state.medicine, character.medicine);
+  LoadExperts(state.perception, character.perception);
+  LoadExperts(state.survival, character.survival);
+  LoadExperts(state.deception, character.deception);
+  LoadExperts(state.intimidation, character.intimidation);
+  LoadExperts(state.performance, character.performance);
+  LoadExperts(state.persuasion, character.persuasion);
+}
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -50,10 +406,64 @@ export default function () {
   const location = useLocation();
   const navigate = useNavigate();
   const IsOpenRequest = () => location.pathname.includes("characterEdit");
-  const CloseRequest = () => {
+  const CloseRequest = useCallback(() => {
     if (IsOpenRequest()) navigate(-1);
-  };
-  const primaryString = usePrimaryColorString();
+  }, [location.pathname]);
+  const charactersStore = useCharacterListStore((state) => state);
+  const classes = useClassListStore((state) => state.classes);
+  const classesComboOptions = useMemo(
+    () =>
+      classes.map((entity) => ({
+        value: entity.id.toString(),
+        text: entity.name,
+      })),
+    [classes]
+  );
+  const selectedClass = useMemo(
+    () =>
+      classes.find((entity) => entity.id.toString() == state.classId) ??
+      classes[0],
+    [state.classId, classes]
+  );
+  const subClasses = useFeatureListStore((state) => state.subclasses);
+  const subClassesComboOptions = useMemo(() => {
+    return subClasses
+      .filter((entity) => entity.className == selectedClass?.name)
+      .map((entity) => ({ value: entity.name, text: entity.name }));
+  }, [selectedClass, subClasses]);
+  const proficiencyBonous = useMemo(
+    () =>
+      calculateProficiencyBonous(
+        selectedClass?.proficiencyBonous ?? "((Level-1)/4)+2",
+        state.level ?? 1
+      ),
+    [selectedClass, state.level]
+  );
+  const castingAbilityValue = useMemo(
+    () =>
+      state.castingAbility == "str"
+        ? state.strength
+        : state.castingAbility == "dex"
+        ? state.dextrity
+        : state.castingAbility == "con"
+        ? state.constitution
+        : state.castingAbility == "int"
+        ? state.intelligence
+        : state.castingAbility == "wis"
+        ? state.wisdom
+        : state.castingAbility == "cha"
+        ? state.charisma
+        : undefined,
+    [
+      state.castingAbility,
+      state.strength,
+      state.dextrity,
+      state.constitution,
+      state.intelligence,
+      state.wisdom,
+      state.charisma,
+    ]
+  );
   const primaryColor = usePrimaryColor();
   const bgColor = useBgColor();
   const bgColorStyle = useMemo(
@@ -68,15 +478,19 @@ export default function () {
     }),
     [primaryColor]
   );
-  const centerTextStyle = {
-    "& .MuiInputBase-input": {
-      textAlign: "center",
-    },
-  };
+  const saveFunction = useCallback(
+    () => Save(state, charactersStore, selectedClass),
+    [state.characterLocalId, selectedClass, state]
+  );
   useEffect(() => {
-    if (!state.isOpen && IsOpenRequest()) state.open();
-    else if (state.isOpen && !IsOpenRequest()) state.close();
+    if (!state.isOpen && IsOpenRequest()) state.dialogActions.open();
+    else if (state.isOpen && !IsOpenRequest()) state.dialogActions.close();
   }, [state.isOpen, location.pathname]);
+  useEffect(() => Load(state, charactersStore, location), [
+    state.characterLocalId,
+    state.isOpen,
+    location,
+  ]);
   return (
     <Dialog
       fullScreen
@@ -84,52 +498,27 @@ export default function () {
       onClose={CloseRequest}
       TransitionComponent={Transition}
     >
-      <AppBar className="relative" color={primaryString}>
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={CloseRequest}
-            aria-label="close"
-          >
-            <Close />
-          </IconButton>
-          <div className="grow"></div>
-          <IconButton
-            autoFocus
-            color="inherit"
-            onClick={CloseRequest}
-            aria-label="save"
-          >
-            <Check />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+      <DialogAppBar closeRequest={CloseRequest} Save={saveFunction} />
       <div
         className="w-full overflow-auto flex flex-row flex-wrap p-2 justify-center"
         style={bgColorStyle}
       >
-        <TextField
+        <EditTextField
           label="Name"
-          className="w-88 m-2"
-          color={primaryString}
-          required
-          value={state.editName}
-          onChange={(e) => state.setName(e.target.value)}
+          value={state.name}
+          onChange={state.actions.setName}
         />
 
-        <TextField
+        <EditTextField
           label="Race"
-          className="w-88 m-2"
-          color={primaryString}
-          required
+          value={state.race}
+          onChange={state.actions.setRace}
         />
 
-        <TextField
+        <EditTextField
           label="Background"
-          className="w-88 m-2"
-          color={primaryString}
-          required
+          value={state.background}
+          onChange={state.actions.setBackground}
         />
 
         <div className="w-88 m-2 text-center">TODO image</div>
@@ -138,286 +527,170 @@ export default function () {
           className="w-88 m-2"
           required
           lable="class"
-          options={[{ value: 1, text: "test" }]}
+          options={classesComboOptions}
+          value={selectedClass.id.toString()}
+          onChange={state.actions.setClassId}
         />
 
         <ComboBox
           className="w-88 m-2"
           lable="Subclass"
-          options={[{ value: 1, text: "test" }]}
+          options={subClassesComboOptions}
+          value={state.subclassName}
+          onChange={state.actions.setSubclassName}
         />
 
-        <DescreteSlider className="w-88 m-2" label="Level" />
+        <DescreteSlider
+          className="w-88 m-2"
+          label="Level"
+          value={state.level}
+          onChange={state.actions.setLevel}
+        />
 
         <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
         <DescreteSlider
           className="w-88 m-2"
           label="Strength"
-          defaultValue={10}
+          value={state.strength}
+          onChange={state.actions.setStrength}
         />
         <DescreteSlider
           className="w-88 m-2"
           label="Dextrity"
-          defaultValue={10}
+          value={state.dextrity}
+          onChange={state.actions.setDextrity}
         />
         <DescreteSlider
           className="w-88 m-2"
           label="Constitution"
-          defaultValue={10}
+          value={state.constitution}
+          onChange={state.actions.setConstitution}
         />
         <DescreteSlider
           className="w-88 m-2"
           label="Intelligence"
-          defaultValue={10}
+          value={state.intelligence}
+          onChange={state.actions.setIntelligence}
         />
-        <DescreteSlider className="w-88 m-2" label="Wisdom" defaultValue={10} />
+        <DescreteSlider
+          className="w-88 m-2"
+          label="Wisdom"
+          value={state.wisdom}
+          onChange={state.actions.setWisdom}
+        />
         <DescreteSlider
           className="w-88 m-2"
           label="Charisma"
-          defaultValue={10}
+          value={state.charisma}
+          onChange={state.actions.setCharisma}
         />
 
         <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
-        <TextField
+        <EditTextField
           label="Speed"
-          className="w-88 m-2"
-          color={primaryString}
-          required
           type="number"
+          value={state.speed}
+          onChange={state.actions.setSpeed}
         />
 
         <ExpertEdit
           className="w-88 m-2"
           name="inititive"
           mainAttributeName="DEX"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.dextrity}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.inititive}
         />
 
-        <ExtraField className="w-88 m-2" label="Armor Class" required />
-
-        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
-
-        <div className="flex flex-row w-88 m-2">
-          <Card
-            className="capitalize flex flex-col text-vertical-lr text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
-            elevation={3}
-          >
-            HP
-          </Card>
-          <div className="mr-2 flex flex-col grow-[4] basis-0">
-            <span className="capitalize text-center mb-2">average</span>
-            <div className="flex flex-row flex-wrap">
-              <div className="mr-1 w-14 mb-1">
-                <TextField
-                  className="text-center"
-                  label="H-Die"
-                  color={primaryString}
-                  disabled
-                  value={3}
-                  sx={centerTextStyle}
-                />
-              </div>
-              <div className="flex flex-col mr-1 mb-1">
-                <div className="grow"></div>
-                <span>+</span>
-                <div className="grow"></div>
-              </div>
-              <div className="mr-1 w-14 mb-1">
-                <TextField
-                  className="text-center"
-                  label="CON"
-                  color={primaryString}
-                  disabled
-                  value={3}
-                  sx={centerTextStyle}
-                />
-              </div>
-              <div className="flex flex-col mr-1 mb-1">
-                <div className="grow"></div>
-                <span>+</span>
-                <div className="grow"></div>
-              </div>
-              <ExtraField className="w-full mb-1" />
-            </div>
-            <div className="grow"></div>
-          </div>
-          <div className="w-0.5 mr-2 shrink-0" style={dividerColor}></div>
-          <div className="flex flex-col grow-[3] basis-0">
-            <span className="capitalize text-center mb-2">custom</span>
-            <div>
-              <TextField
-                label="Maximum HP"
-                color={primaryString}
-                type="number"
-              />
-            </div>
-            <div className="grow"></div>
-          </div>
-        </div>
-
-        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
-        <ComboBox
+        <ExtraField
           className="w-88 m-2"
-          lable="spell casting ability"
-          options={[
-            { value: 1, text: "strength" },
-            { value: 2, text: "dextrity" },
-            { value: 3, text: "constitution" },
-            { value: 4, text: "intelligence" },
-            { value: 5, text: "wisdom" },
-            { value: 6, text: "charisma" },
-          ]}
+          label="Armor Class"
+          required
+          value={state.armourClassExtra}
+          onChange={state.actions.setArmourClassExtra}
         />
-        <div className="flex flex-row w-88 m-2">
-          <Card
-            className="capitalize flex flex-col text-vertical-lr text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
-            elevation={3}
-          >
-            Spell attack
-          </Card>
-          <div className="flex flex-row flex-wrap grow basis-0">
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label="Prof"
-                color={primaryString}
-                disabled
-                value="d4"
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label="CON"
-                color={primaryString}
-                disabled
-                value={3}
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <ExtraField className="w-full mb-1" />
-          </div>
-        </div>
 
-        <div className="flex flex-row w-88 m-2">
-          <Card
-            className="capitalize flex text-vertical-lr flex-col text-center p-1 pr-2 pt-4 pb-4 mr-2 shrink-0"
-            elevation={3}
-          >
-            Spell Save DC
-          </Card>
-          <div className="flex flex-row flex-wrap grow basis-0">
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label=""
-                color={primaryString}
-                disabled
-                value={8}
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label="Prof"
-                color={primaryString}
-                disabled
-                value={2}
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <div className="mr-1 w-14 mb-1">
-              <TextField
-                className="text-center"
-                label="CON"
-                color={primaryString}
-                disabled
-                value={3}
-                sx={centerTextStyle}
-              />
-            </div>
-            <div className="flex flex-col mr-1 mb-1">
-              <div className="grow"></div>
-              <span>+</span>
-              <div className="grow"></div>
-            </div>
-            <ExtraField className="w-full mb-1" />
-          </div>
-        </div>
+        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
+
+        <HPEdit
+          constitution={state.constitution}
+          hitDie={selectedClass.hitDie}
+          customValue={state.customHP}
+          onCustomChange={state.actions.setCustomHp}
+          extraValue={state.HPExtra}
+          onExtraChange={state.actions.setHPExtra}
+        />
+
+        <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
+
+        <SpellCastingEdit
+          profiencyBonous={proficiencyBonous}
+          castingAbility={state.castingAbility}
+          castingAbilityValue={castingAbilityValue}
+          onCastingAbilityChange={state.actions.setCastingAbility}
+          spellAttackExtra={state.spellAttackExtra}
+          onSpellAttackExtraChange={state.actions.setSpellAttackExtra}
+          spellSaveDCExtra={state.spellSaveExtra}
+          onSpellSaveDCExtra={state.actions.setSpellSaveExtra}
+        />
+
         <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
 
         <ExpertEdit
           className="w-88 m-2"
           name="strength"
           mainAttributeName="STR"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.strength}
+          proficiencyBonous={proficiencyBonous}
           disableExpertOption
+          editState={state.strengthSave}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="dextrity"
           mainAttributeName="DEX"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.dextrity}
+          proficiencyBonous={proficiencyBonous}
           disableExpertOption
+          editState={state.dextritySave}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="constitution"
           mainAttributeName="CON"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.constitution}
+          proficiencyBonous={proficiencyBonous}
           disableExpertOption
+          editState={state.constitutionSave}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="intelligence"
           mainAttributeName="INT"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.intelligence}
+          proficiencyBonous={proficiencyBonous}
           disableExpertOption
+          editState={state.intelligenceSave}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="wisdom"
           mainAttributeName="WIS"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.wisdom}
+          proficiencyBonous={proficiencyBonous}
           disableExpertOption
+          editState={state.wisdomSave}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="charisma"
           mainAttributeName="CHA"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.charisma}
+          proficiencyBonous={proficiencyBonous}
           disableExpertOption
+          editState={state.charismaSave}
         />
 
         <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>
@@ -426,127 +699,145 @@ export default function () {
           className="w-88 m-2"
           name="athletics"
           mainAttributeName="STR"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.strength}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.athletics}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="acrobatics"
           mainAttributeName="DEX"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.dextrity}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.acrobatics}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="sleight of hand"
           mainAttributeName="DEX"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.dextrity}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.sleightOfHands}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="stealth"
           mainAttributeName="DEX"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.dextrity}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.stealth}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="arcana"
           mainAttributeName="INT"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.intelligence}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.arcana}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="history"
           mainAttributeName="INT"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.intelligence}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.history}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="investigation"
           mainAttributeName="INT"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.intelligence}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.investigation}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="nature"
           mainAttributeName="INT"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.intelligence}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.nature}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="religion"
           mainAttributeName="INT"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.intelligence}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.religion}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="animal handling"
           mainAttributeName="WIS"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.wisdom}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.animalHandling}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="insight"
           mainAttributeName="WIS"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.wisdom}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.insight}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="medicine"
           mainAttributeName="WIS"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.wisdom}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.medicine}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="perception"
           mainAttributeName="WIS"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.wisdom}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.perception}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="survival"
           mainAttributeName="WIS"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.wisdom}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.survival}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="deception"
           mainAttributeName="CHA"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.charisma}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.deception}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="intimidation"
           mainAttributeName="CHA"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.charisma}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.intimidation}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="performance"
           mainAttributeName="CHA"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.charisma}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.performance}
         />
         <ExpertEdit
           className="w-88 m-2"
           name="persuasion"
           mainAttributeName="CHA"
-          mainAttributeValue={2}
-          proficiencyBonous={2}
+          mainAttributeValue={state.charisma}
+          proficiencyBonous={proficiencyBonous}
+          editState={state.persuasion}
         />
       </div>
     </Dialog>

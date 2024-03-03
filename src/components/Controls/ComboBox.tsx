@@ -8,10 +8,12 @@ interface ComboBoxProps {
   className?: string;
   options: Option[];
   colorString?: any;
+  value?: string;
+  onChange?: (val: string) => void;
 }
 
 interface Option {
-  value: number;
+  value?: string;
   text: string;
 }
 
@@ -27,13 +29,15 @@ export const ComboBox = memo((p: ComboBoxProps) => {
         {p.lable + (p.required ? " *" : "")}
       </InputLabel>
       <Select
-        value={1}
         className="capitalize"
         labelId={`select-label-${p.lable}`}
         label={p.lable + (p.required ? " *" : "")}
         required={p.required}
         color={p.colorString ?? primaryString}
-        // onChange={handleChange}
+        value={p.value}
+        onChange={(e) => {
+          if (p.onChange) p.onChange(e.target.value);
+        }}
       >
         {p.options.map((option) => (
           <MenuItem

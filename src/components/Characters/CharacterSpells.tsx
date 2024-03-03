@@ -1,7 +1,7 @@
 import { Button, Card } from "@mui/material";
 import { Circle } from "../../assets/circle";
-import { useMemo } from "react";
-import { usePrimaryColorString } from "../../theme";
+import { memo, useMemo } from "react";
+import { usePrimaryColor, usePrimaryColorString } from "../../theme";
 
 interface CharSpellDetail {
   id: number;
@@ -15,79 +15,131 @@ interface CharSpellDetail {
 
 interface CharacterSpellProps {
   spells: CharSpellDetail[];
+  attributeModifire: number;
+  attackBonous: string;
+  saveDc: number;
 }
-export default function (props: CharacterSpellProps) {
+export const CharacterSpells = memo((props: CharacterSpellProps) => {
   const primaryColorString = usePrimaryColorString();
+  const primaryColor = usePrimaryColor();
+  const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
+    primaryColor,
+  ]);
   const spellLevels = useMemo(
     () => [...new Set(props.spells.map((spell) => spell.level))].sort(),
     [props.spells]
   );
 
-  return spellLevels.map((level) => (
-    <div
-      key={level}
-      className="md:w-96 w-full flex flex-row mb-10 mr-4 ml-4 last:mb-2 md:last:mb-10"
-    >
-      <Card
-        className="uppercase text-vertical-lr text-sm text-center p-2 pt-4 pb-4"
-        elevation={3}
-      >
-        {level == 0 ? "cantrips" : `level ${level}`}
-      </Card>
-      <div className="grow flex flex-col w-full pr-4">
-        {props.spells
-          .filter((spell) => spell.level == level)
-          .map((spell) => (
-            <div
-              key={spell.id}
-              className="w-full flex flex-row ml-2 pb-2 pt-2 border-b-2 rounded-md"
-            >
-              {spell.level > 0 ? (
-                <>
-                  <Circle
-                    className="w-4 mr-0.5 shrink-0"
-                    filled={spell.prepaired}
-                    text="P"
-                  />
-                  <Circle
-                    className="w-4 mr-0.5 shrink-0"
-                    filled={spell.concentration}
-                    text="C"
-                  />
-                  <Circle
-                    className="w-4 shrink-0"
-                    filled={spell.ritual}
-                    text="R"
-                  />
-                </>
-              ) : (
-                <></>
-              )}
-
-              <div className="capitalize ml-2 mr-2 grow flex flex-col">
-                <span className="grow"></span>
-                <span className="capitalize">{spell.name}</span>
-                <span className="grow"></span>
-              </div>
-              <div className="ml-1 mr-1 flex flex-col">
-                <span className="grow"></span>
-                <span className="capitalize text-xxs">{spell.time}</span>
-                <span className="grow"></span>
-              </div>
-              <div className="flex flex-col">
-                <div className="grow"></div>
-                <Button
-                  variant="outlined"
-                  color={primaryColorString}
-                  className="p-0 h-fit"
-                >
-                  Cast
-                </Button>
-                <div className="grow"></div>
-              </div>
-            </div>
-          ))}
+  return (
+    <>
+      <div className="w-full flex flex-row justify-center mb-5">
+        <div className="flex flex-col text-center w-20 mr-5">
+          <div className="grow">
+            <span className="text-2xl font-bold">
+              <span style={coloredStyle}>
+                {props.attributeModifire >= 0
+                  ? `+${props.attributeModifire}`
+                  : props.attributeModifire}
+              </span>
+            </span>
+          </div>
+          <div className="text-xxs uppercase">modifire</div>
+        </div>
+        <div className="flex flex-col text-center w-20 mr-5">
+          <div className="grow">
+            <span className="text-2xl font-bold">
+              <span style={coloredStyle}>{props.attackBonous}</span>
+            </span>
+          </div>
+          <div className="text-xxs uppercase">Spell attack</div>
+        </div>
+        <div className="flex flex-col text-center w-20">
+          <div className="grow">
+            <span className="text-2xl font-bold" style={coloredStyle}>
+              {props.saveDc}
+            </span>
+          </div>
+          <div className="text-xxs uppercase">save DC</div>
+        </div>
       </div>
-    </div>
-  ));
-}
+      <div className="w-full flex flex-row">
+        <div className="grow"></div>
+        <Button
+          variant="outlined"
+          color={primaryColorString}
+          className="p-2 mb-10"
+        >
+          Manage spells
+        </Button>
+        <div className="grow"></div>
+      </div>
+      {spellLevels.map((level) => (
+        <div
+          key={level}
+          className="md:w-96 w-full flex flex-row mb-10 mr-4 ml-4 last:mb-2 md:last:mb-10"
+        >
+          <Card
+            className="uppercase text-vertical-lr text-sm text-center p-2 pt-4 pb-4"
+            elevation={3}
+          >
+            {level == 0 ? "cantrips" : `level ${level}`}
+          </Card>
+          <div className="grow flex flex-col w-full pr-4">
+            {props.spells
+              .filter((spell) => spell.level == level)
+              .map((spell) => (
+                <div
+                  key={spell.id}
+                  className="w-full flex flex-row ml-2 pb-2 pt-2 border-b-2 rounded-md"
+                >
+                  {spell.level > 0 ? (
+                    <>
+                      <Circle
+                        className="w-4 mr-0.5 shrink-0"
+                        filled={spell.prepaired}
+                        text="P"
+                      />
+                      <Circle
+                        className="w-4 mr-0.5 shrink-0"
+                        filled={spell.concentration}
+                        text="C"
+                      />
+                      <Circle
+                        className="w-4 shrink-0"
+                        filled={spell.ritual}
+                        text="R"
+                      />
+                    </>
+                  ) : (
+                    <></>
+                  )}
+
+                  <div className="capitalize ml-2 mr-2 grow flex flex-col">
+                    <span className="grow"></span>
+                    <span className="capitalize">{spell.name}</span>
+                    <span className="grow"></span>
+                  </div>
+                  <div className="ml-1 mr-1 flex flex-col">
+                    <span className="grow"></span>
+                    <span className="capitalize text-xxs">{spell.time}</span>
+                    <span className="grow"></span>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="grow"></div>
+                    <Button
+                      variant="outlined"
+                      color={primaryColorString}
+                      className="p-0 h-fit"
+                    >
+                      Cast
+                    </Button>
+                    <div className="grow"></div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      ))}
+    </>
+  );
+});

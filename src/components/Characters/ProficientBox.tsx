@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material";
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import {
   useThemeStore,
   ThemeMode,
@@ -10,12 +10,12 @@ import { Circle } from "../../assets/circle";
 
 interface ProficientBoxProps {
   name: string;
-  value: number;
-  proficiencyBonous?: number;
   advantage?: boolean;
+  isProficient?: boolean;
+  total: string;
 }
 
-export default function (props: ProficientBoxProps) {
+export const ProficientBox = memo((props: ProficientBoxProps) => {
   const theme = useTheme();
   const themeStore = useThemeStore();
   const primaryColor = usePrimaryColor();
@@ -25,9 +25,9 @@ export default function (props: ProficientBoxProps) {
     () => ({
       backgroundImage: `url('/proficient-box-bg-${
         themeStore.mode == ThemeMode.light ? "grey" : "white"
-      }${props.proficiencyBonous ? `-${primaryColorString}.svg` : ".svg"}')`,
+      }${props.isProficient ? `-${primaryColorString}.svg` : ".svg"}')`,
     }),
-    [themeStore.mode, props.proficiencyBonous]
+    [themeStore.mode, props.isProficient]
   );
 
   const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
@@ -48,8 +48,7 @@ export default function (props: ProficientBoxProps) {
           className="shrink uppercase text-2xl font-bold"
           style={coloredStyle}
         >
-          {props.proficiencyBonous ? `D${props.proficiencyBonous * 2}` : ""}
-          {props.value > 0 ? `+${props.value}` : props.value}
+          {props.total}
         </span>
         <span className="grow-[3]"></span>
       </div>
@@ -71,4 +70,4 @@ export default function (props: ProficientBoxProps) {
       </div>
     </div>
   );
-}
+});

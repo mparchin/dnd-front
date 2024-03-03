@@ -1,4 +1,8 @@
 import { immerable } from "immer";
+import {
+  ExtraFieldCalculations,
+  calculateProficiencyBonous,
+} from "./extraCalculations";
 
 export class Spell {
   [immerable] = true;
@@ -104,74 +108,69 @@ export class Class {
   [immerable] = true;
   id: number = 0;
   name: string = "";
+  proficiencyBonous: string = "";
+  hitDie: number = 0;
+  manaPerLevel: string = "";
+  casterSubClassName: string = "";
+  time: number = 0;
 }
 
-class CharacterAttributes {
+export class CharacterAttributes {
   [immerable] = true;
-  strength: number = 10;
+  strength: number;
   strengthModifire: () => number = () => this.getModifire(this.strength);
-  dextrity: number = 10;
+  dextrity: number;
   dextrityModifire: () => number = () => this.getModifire(this.dextrity);
-  constitution: number = 10;
+  constitution: number;
   constitutionModifire: () => number = () =>
     this.getModifire(this.constitution);
-  intelligence: number = 10;
+  intelligence: number;
   intelligenceModifire: () => number = () =>
     this.getModifire(this.intelligence);
-  wisdom: number = 10;
+  wisdom: number;
   wisdomModifire: () => number = () => this.getModifire(this.wisdom);
-  charisma: number = 10;
+  charisma: number;
   charismaModifire: () => number = () => this.getModifire(this.charisma);
+
+  constructor(
+    strength?: number,
+    dextrity?: number,
+    constitution?: number,
+    intelligence?: number,
+    wisdom?: number,
+    charisma?: number
+  ) {
+    this.strength = strength ?? 10;
+    this.dextrity = dextrity ?? 10;
+    this.constitution = constitution ?? 10;
+    this.intelligence = intelligence ?? 10;
+    this.wisdom = wisdom ?? 10;
+    this.charisma = charisma ?? 10;
+  }
 
   private getModifire: (attribute: number) => number = (attribute) =>
     Math.floor((attribute - 10) / 2);
+
+  getAttribute(str: string) {
+    str = str.toLowerCase();
+    return str.startsWith("str")
+      ? this.strength
+      : str.startsWith("dex")
+      ? this.dextrity
+      : str.startsWith("con")
+      ? this.constitution
+      : str.startsWith("int")
+      ? this.intelligence
+      : str.startsWith("wis")
+      ? this.wisdom
+      : this.charisma;
+  }
+  getAttributeModifire(str: string) {
+    return this.getModifire(this.getAttribute(str));
+  }
 }
 
-export function ExtraFieldCalculations(extra: string, char: Character) {
-  extra = extra.replace(/\s/g, "");
-  extra = extra.toLowerCase();
-  extra = extra.replace(/proficiency/g, char.proficiencyBonous().toString());
-  extra = extra.replace(/prof/g, char.proficiencyBonous().toString());
-  extra = extra.replace(/expert/g, (char.proficiencyBonous() * 2).toString());
-  extra = extra.replace(/exp/g, (char.proficiencyBonous() * 2).toString());
-  extra = extra.replace(
-    /strength/g,
-    char.attributes.strengthModifire().toString()
-  );
-  extra = extra.replace(/str/g, char.attributes.strengthModifire().toString());
-  extra = extra.replace(
-    /dextrity/g,
-    char.attributes.dextrityModifire().toString()
-  );
-  extra = extra.replace(/dex/g, char.attributes.dextrityModifire().toString());
-  extra = extra.replace(
-    /constitution/g,
-    char.attributes.constitutionModifire().toString()
-  );
-  extra = extra.replace(
-    /con/g,
-    char.attributes.constitutionModifire().toString()
-  );
-  extra = extra.replace(
-    /intelligence/g,
-    char.attributes.intelligenceModifire().toString()
-  );
-  extra = extra.replace(
-    /int/g,
-    char.attributes.intelligenceModifire().toString()
-  );
-  extra = extra.replace(/wisdom/g, char.attributes.wisdomModifire().toString());
-  extra = extra.replace(/wis/g, char.attributes.wisdomModifire().toString());
-  extra = extra.replace(
-    /charisma/g,
-    char.attributes.charismaModifire().toString()
-  );
-  extra = extra.replace(/cha/g, char.attributes.charismaModifire().toString());
-  extra = extra.replace(/level/g, char.level.toString());
-  return Math.floor(eval(extra));
-}
-
-class CharacterExpert {
+export class CharacterExpert {
   [immerable] = true;
   hasAdvantage: boolean = false;
   isProficient: boolean = false;
@@ -179,7 +178,40 @@ class CharacterExpert {
   attributeName: string = "";
   extraText: string = "";
 
-  totalValue: () => string = () => "";
+  totalValue(char: Character) {
+    var extra = ExtraFieldCalculations(
+      this.attributeName && this.extraText
+        ? `${this.attributeName} + ${this.extraText}`
+        : this.attributeName
+        ? this.attributeName
+        : this.extraText,
+      char
+    );
+    return (
+      (this.isProficient
+        ? `D${char.proficiencyBonous() * 2}`
+        : this.isExpert
+        ? `2D${char.proficiencyBonous() * 2}`
+        : "") + (extra >= 0 ? `+${extra}` : extra)
+    );
+  }
+
+  totalPassiveValue(char: Character) {
+    var extra = ExtraFieldCalculations(
+      this.attributeName && this.extraText
+        ? `${this.attributeName} + ${this.extraText}`
+        : this.attributeName
+        ? this.attributeName
+        : this.extraText,
+      char
+    );
+    return (
+      extra +
+      (this.isProficient ? char.proficiencyBonous() : 0) +
+      (this.isExpert ? char.proficiencyBonous() * 2 : 0) +
+      10
+    );
+  }
 
   constructor(attribute: string) {
     this.attributeName = attribute;
@@ -212,23 +244,39 @@ class CharacterHitpoint {
 
 class CharacterSpellCasting {
   [immerable] = true;
-  maximumMana: (char: Character) => number = () => 0;
+  maximumMana: (char: Character) => number = (char: Character) => {
+    var manaPerLevel =
+      char.class.casterSubClassName &&
+      char.subClass.name != char.class.casterSubClassName
+        ? ""
+        : char.class.manaPerLevel;
+    if (!manaPerLevel) return 0;
+    manaPerLevel = manaPerLevel.replace("{", "").replace("}", "");
+    return Number(manaPerLevel.split(",")[char.level - 1].split(":")[1]);
+  };
   currentMana: number = 0;
   castingAbility: string = "";
   attackExtra: string = "";
-  attackModifire: (char: Character) => string = (char: Character) =>
-    `${char.proficiencyBonous() * 2}d` +
-    ExtraFieldCalculations(
-      this.castingAbility
+  attackModifire: (char: Character) => string = (char: Character) => {
+    var extra = ExtraFieldCalculations(
+      this.castingAbility && this.attackExtra
         ? `${this.castingAbility} + ${this.attackExtra}`
+        : this.castingAbility
+        ? this.castingAbility
         : this.attackExtra,
       char
     );
+    return (
+      `D${char.proficiencyBonous() * 2}` + (extra >= 0 ? `+${extra}` : extra)
+    );
+  };
   DCExtra: string = "";
   DC: (char: Character) => number = (char: Character) =>
     ExtraFieldCalculations(
-      this.castingAbility
+      this.castingAbility && this.DCExtra
         ? `${this.castingAbility} + ${this.DCExtra}`
+        : this.castingAbility
+        ? this.castingAbility
         : this.DCExtra,
       char
     ) +
@@ -263,7 +311,7 @@ export class Character {
 
   athletics: CharacterExpert = new CharacterExpert("str");
   acrobatics: CharacterExpert = new CharacterExpert("dex");
-  slightOfHands: CharacterExpert = new CharacterExpert("dex");
+  sleightOfHands: CharacterExpert = new CharacterExpert("dex");
   stealth: CharacterExpert = new CharacterExpert("dex");
   arcana: CharacterExpert = new CharacterExpert("int");
   history: CharacterExpert = new CharacterExpert("int");
@@ -282,6 +330,7 @@ export class Character {
 
   time: number = 0;
 
-  proficiencyBonous: () => number = () => 2;
-  hitDie: () => number = () => 6;
+  proficiencyBonous: () => number = () =>
+    calculateProficiencyBonous(this.class.proficiencyBonous, this.level);
+  hitDie: () => number = () => this.class.hitDie;
 }

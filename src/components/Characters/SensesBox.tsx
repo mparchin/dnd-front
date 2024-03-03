@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { useThemeStore, ThemeMode, usePrimaryColor } from "../../theme";
 
 interface SensesBoxProps {
@@ -7,7 +7,7 @@ interface SensesBoxProps {
   unit?: string;
 }
 
-export default function (props: SensesBoxProps) {
+export const SensesBox = memo((props: SensesBoxProps) => {
   const themeStore = useThemeStore();
   const primaryColor = usePrimaryColor();
   const bgImage = useMemo(
@@ -39,4 +39,4 @@ export default function (props: SensesBoxProps) {
       </div>
     </div>
   );
-}
+});
