@@ -36,6 +36,7 @@ const router = createHashRouter([
       { path: "spells", element: <></> },
       { path: "menu", element: <></> },
       { path: "characterEdit", element: <></> },
+      { path: "login", element: <></> },
     ],
   },
 ]);
