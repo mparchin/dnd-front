@@ -4,6 +4,31 @@ import {
   calculateProficiencyBonous,
 } from "./extraCalculations";
 
+export class RegisterInfo {
+  name: string = "";
+  email: string = "";
+  password: string = "";
+}
+
+export class JWTToken {
+  token: string = "";
+  expiration: number = 0;
+  refreshToken: string = "";
+  refreshExpiration: number = 0;
+}
+
+export class LoginInfo {
+  email: string = "";
+  password: string = "";
+}
+
+export class UserProfile {
+  guid: string = "";
+  name: string = "";
+  email: string = "";
+  role?: string = "";
+}
+
 export class Spell {
   [immerable] = true;
   id: number = 0;

@@ -27,8 +27,11 @@ import CharatersPage from "./components/CharactersPage";
 import CharacterEdit from "./components/CharacterEdit";
 import GetAndSaveClasses from "./API/classes";
 import CharactersList from "./components/CharactersList";
+import { Login } from "./components/Login";
+import { useEnsureLoggedIn } from "./api";
 
 export default function App() {
+  useEnsureLoggedIn();
   const theme = useTheme();
   const themeStore = useThemeStore((state) => state);
   const location = useLocation();
@@ -57,7 +60,9 @@ export default function App() {
         style={bgColorStyle}
       >
         <div className="flex-grow-0 flex flex-shrink basis-auto flex-col">
-          {location.pathname == "/" || location.pathname == "/menu" ? (
+          {location.pathname == "/" ||
+          location.pathname == "/menu" ||
+          location.pathname == "/login" ? (
             <></>
           ) : (
             <SearchAppBar />
@@ -80,6 +85,8 @@ export default function App() {
             <FeatsPage />
           ) : location.pathname == "/" ? (
             <Animation />
+          ) : location.pathname == "/login" ? (
+            <Login />
           ) : location.pathname == "/menu" ? (
             <MenuPage />
           ) : location.pathname == "/rules" ? (
