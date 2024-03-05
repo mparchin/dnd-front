@@ -13,7 +13,7 @@ import { CharacterFeatures } from "./Characters/CharacterFeatures";
 import { StickyCard } from "./Characters/StickyCard";
 import { useLocation } from "react-router-dom";
 import { useCharacterListStore } from "../API/characters";
-import { Character } from "../models/spell";
+import { Character } from "../models/Character/Character";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -82,11 +82,11 @@ function setActiveTab(primaryColor: string) {
 export default function CharatersPage() {
   const location = useLocation();
   const characterList = useCharacterListStore((state) => state.characters);
-  const localId = location.state?.characterLocalId ?? 0;
   const character = useMemo(
     () =>
-      characterList.find((char) => char.localId == localId) ?? new Character(),
-    [localId, characterList]
+      characterList.find((char) => char.id == (location.state?.charId ?? 0)) ??
+      new Character(),
+    [location.state?.charId, characterList, location]
   );
   const primaryColor = usePrimaryColor();
   const bgColor = useBgColor();
@@ -111,9 +111,9 @@ export default function CharatersPage() {
       <div className="sticky top-0 z-50" style={bgColorStyle}>
         <StickyCard
           armourClass={character.AC()}
-          currentHp={character.HP.current}
-          maximumHp={character.HP.currentMaximum(character)}
-          currentMana={character.spellCasting.currentMana}
+          currentHp={character.hp.current(character)}
+          maximumHp={character.hp.currentMaximum(character)}
+          currentMana={character.spellCasting.currentMana(character)}
           maximumMana={character.spellCasting.maximumMana(character)}
           profBonous={character.proficiencyBonous()}
           speed={character.speed}
@@ -649,7 +649,7 @@ export default function CharatersPage() {
           <CharacterFeatures
             class={character.class.name}
             level={character.level}
-            subclass={character.subClass.name}
+            subclass={character.subClassName}
           />
         </div>
         <div className="h-0.5 w-screen m-5" style={dividerColor}></div>

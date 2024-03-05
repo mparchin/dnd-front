@@ -1,4 +1,4 @@
-import { Character } from "./spell";
+import { Character } from "./Character/Character";
 
 export function calculateProficiencyBonous(extra: string, level: number) {
   extra = extra.replace(/\s/g, "");

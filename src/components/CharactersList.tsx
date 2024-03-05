@@ -43,7 +43,7 @@ export default function () {
                   className="p-2 flex flex-row w-full"
                   onClick={() =>
                     navigate("/characterView", {
-                      state: { characterLocalId: character.localId },
+                      state: { charId: character.id },
                     })
                   }
                 >
@@ -76,9 +76,7 @@ export default function () {
       </div>
       <Fab
         className="fixed bottom-8 right-8"
-        onClick={() =>
-          navigate("/characterEdit", { state: { characterLocalId: 0 } })
-        }
+        onClick={() => navigate("/characterEdit", { state: { charId: 0 } })}
         style={dividerStyle}
       >
         <Add style={iconStyle} />

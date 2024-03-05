@@ -15,6 +15,7 @@ import axios, { AxiosError } from "axios";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { persist } from "zustand/middleware";
+import { Character } from "./models/Character/Character";
 
 export interface TokenState {
   token?: JWTToken;
@@ -147,3 +148,8 @@ export function useEnsureLoggedIn() {
   }, []);
   return tokenStore.isValid;
 }
+
+export const newCharacter = (char: Character) =>
+  axios
+    .post<Character>(`${apiAddress}/characters`, char)
+    .then((res) => res.data);

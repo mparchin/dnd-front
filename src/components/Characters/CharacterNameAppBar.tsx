@@ -1,18 +1,17 @@
 import { memo, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useCharacterListStore } from "../../API/characters";
-import { Character } from "../../models/spell";
+import { Character } from "../../models/Character/Character";
 
 export const CharacterNameAppBar = memo(() => {
   const location = useLocation();
   const characterList = useCharacterListStore((state) => state.characters);
-  const localId = location.state?.characterLocalId ?? 0;
+  const localId = location.state?.charid ?? 0;
   const character = useMemo(
-    () =>
-      characterList.find((char) => char.localId == localId) ?? new Character(),
+    () => characterList.find((char) => char.id == localId) ?? new Character(),
     [localId, characterList]
   );
-  if (character.localId)
+  if (character.id)
     return (
       <div className="w-full h-full flex flex-col">
         <div className="grow text-center capitalize">{character.name}</div>
