@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { Character } from "../models/spell";
 import { persist } from "zustand/middleware";
+import { Character } from "../models/Character/Character";
 
 export interface CharactersListState {
   characters: Character[];

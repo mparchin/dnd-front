@@ -18,13 +18,11 @@ import { calculateProficiencyBonous } from "../models/extraCalculations";
 import { immer } from "zustand/middleware/immer";
 import { immerable } from "immer";
 import { CharactersListState, useCharacterListStore } from "../API/characters";
-import {
-  Character,
-  CharacterAttributes,
-  CharacterExpert,
-  Class,
-  Subclass,
-} from "../models/spell";
+import { Class } from "../models/spell";
+import { CharacterExpert } from "../models/Character/CharacterExpert";
+import { CharacterAttributes } from "../models/Character/CharacterAttributes";
+import { Character } from "../models/Character/Character";
+import { newCharacter } from "../api";
 
 class ExpertEditClass implements ExpertEditState {
   [immerable] = true;
@@ -83,7 +81,7 @@ class ExpertEditClass implements ExpertEditState {
 }
 
 export interface CharacterEditDialogState {
-  characterLocalId: number;
+  id: number;
   isOpen: boolean;
   dialogActions: {
     open: () => void;
@@ -137,7 +135,7 @@ export interface CharacterEditDialogState {
   persuasion: ExpertEditState;
 
   actions: {
-    setLocalId: (val: number) => void;
+    setId: (val: number) => void;
     setName: (str: string) => void;
     setRace: (str: string) => void;
     setBackground: (str: string) => void;
@@ -163,7 +161,7 @@ export interface CharacterEditDialogState {
 export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
   immer((set) => ({
     [immerable]: true,
-    characterLocalId: 0,
+    id: 0,
     isOpen: false,
     dialogActions: {
       open: () => set({ isOpen: true }),
@@ -223,7 +221,7 @@ export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
     persuasion: new ExpertEditClass(set, (state) => state.persuasion),
 
     actions: {
-      setLocalId: (val: number) => set({ characterLocalId: val }),
+      setId: (val: number) => set({ id: val }),
       setName: (str: string) => set({ name: str }),
       setRace: (str: string) => set({ race: str }),
       setBackground: (str: string) => set({ background: str }),
@@ -260,22 +258,13 @@ function Save(
   selectedClass: Class
 ) {
   const character =
-    charactersStore.characters.find(
-      (c) => c.localId == state.characterLocalId
-    ) ?? new Character();
-
-  if (character.localId == 0)
-    character.localId =
-      Math.max(
-        ...charactersStore.characters.map((char) => char.localId),
-        character.localId
-      ) + 1;
+    charactersStore.characters.find((c) => c.id == state.id) ?? new Character();
 
   character.name = state.name;
   character.race = state.race;
   character.background = state.background;
   character.class = selectedClass;
-  character.subClass = new Subclass(state.subclassName, character.class.name);
+  character.subClassName = state.subclassName ?? "";
   character.level = state.level;
   character.attributes = new CharacterAttributes(
     state.strength,
@@ -288,11 +277,11 @@ function Save(
   character.speed = Number(state.speed);
   SaveExperts(character.inititive, state.inititive);
   character.armorClassExtra = state.armourClassExtra;
-  character.HP.averageMaximumExtra = state.HPExtra;
-  character.HP.customMaximum = Number(state.customHP);
+  character.hp.averageMaximumExtra = state.HPExtra;
+  character.hp.customMaximum = Number(state.customHP);
   character.spellCasting.castingAbility = state.castingAbility;
   character.spellCasting.attackExtra = state.spellAttackExtra;
-  character.spellCasting.DCExtra = state.spellSaveExtra;
+  character.spellCasting.dcExtra = state.spellSaveExtra;
 
   SaveExperts(character.strengthSave, state.strengthSave);
   SaveExperts(character.dextritySave, state.dextritySave);
@@ -320,11 +309,17 @@ function Save(
   SaveExperts(character.performance, state.performance);
   SaveExperts(character.persuasion, state.persuasion);
 
-  const chars = charactersStore.characters.filter(
-    (char) => char.localId != character.localId
-  );
-  chars.push(character);
-  charactersStore.setCharacters(chars);
+  //TODO Save
+
+  //create
+  if (character.id == 0)
+    newCharacter(character).then((savedChar) => {
+      const chars = charactersStore.characters.filter(
+        (char) => char.id != savedChar.id
+      );
+      chars.push(savedChar);
+      charactersStore.setCharacters(chars);
+    });
 }
 
 function LoadExperts(edit: ExpertEditState, char: CharacterExpert) {
@@ -341,15 +336,15 @@ function Load(
 ) {
   const character =
     charactersStore.characters.find(
-      (c) => c.localId == (location.state?.characterLocalId ?? 0)
+      (c) => c.id == (location.state?.charId ?? 0)
     ) ?? new Character();
 
-  state.actions.setLocalId(character.localId);
+  state.actions.setId(character.id);
   state.actions.setName(character.name);
   state.actions.setRace(character.race);
   state.actions.setBackground(character.background);
   state.actions.setClassId(character.class.id.toString());
-  state.actions.setSubclassName(character.subClass.name);
+  state.actions.setSubclassName(character.subClassName);
   state.actions.setLevel(character.level);
   state.actions.setStrength(character.attributes.strength);
   state.actions.setDextrity(character.attributes.dextrity);
@@ -360,11 +355,11 @@ function Load(
   state.actions.setSpeed(character.speed.toString());
   LoadExperts(state.inititive, character.inititive);
   state.actions.setArmourClassExtra(character.armorClassExtra);
-  state.actions.setHPExtra(character.HP.averageMaximumExtra);
-  state.actions.setCustomHp(character.HP.customMaximum?.toString() ?? "");
+  state.actions.setHPExtra(character.hp.averageMaximumExtra);
+  state.actions.setCustomHp(character.hp.customMaximum?.toString() ?? "");
   state.actions.setCastingAbility(character.spellCasting.castingAbility);
   state.actions.setSpellAttackExtra(character.spellCasting.attackExtra);
-  state.actions.setSpellSaveExtra(character.spellCasting.DCExtra);
+  state.actions.setSpellSaveExtra(character.spellCasting.dcExtra);
   LoadExperts(state.strengthSave, character.strengthSave);
   LoadExperts(state.dextritySave, character.dextritySave);
   LoadExperts(state.constitutionSave, character.constitutionSave);
@@ -480,14 +475,14 @@ export default function () {
   );
   const saveFunction = useCallback(
     () => Save(state, charactersStore, selectedClass),
-    [state.characterLocalId, selectedClass, state]
+    [state.id, selectedClass, state]
   );
   useEffect(() => {
     if (!state.isOpen && IsOpenRequest()) state.dialogActions.open();
     else if (state.isOpen && !IsOpenRequest()) state.dialogActions.close();
   }, [state.isOpen, location.pathname]);
   useEffect(() => Load(state, charactersStore, location), [
-    state.characterLocalId,
+    state.id,
     state.isOpen,
     location,
   ]);
