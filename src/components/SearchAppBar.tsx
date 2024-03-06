@@ -16,8 +16,9 @@ import { useFilterStore } from "./FilterDialog";
 import { memo } from "react";
 import { useFeatFilterStore } from "./FeatsFilterDialog";
 import { useClassFilterStore } from "./ClassesFilterDialog";
-import { Delete, Home } from "@mui/icons-material";
+import { Clear, Delete, Home } from "@mui/icons-material";
 import { CharacterNameAppBar } from "./Characters/CharacterNameAppBar";
+import { useCharacterListPageStore } from "./CharactersList";
 
 const HomeIconButton = memo(function () {
   const navigate = useNavigate();
@@ -137,6 +138,7 @@ const SearchBar = memo((p: SearchBarProps) => {
 const FilterButton = memo(() => {
   const location = useLocation();
   const navigate = useNavigate();
+  const deleteOptionsState = useCharacterListPageStore((state) => state);
   if (
     location.pathname.includes("conditions") ||
     location.pathname == "/rules" ||
@@ -162,8 +164,13 @@ const FilterButton = memo(() => {
         edge="start"
         color="inherit"
         className="block ml-1"
+        onClick={() =>
+          deleteOptionsState.setShowDeleteOptions(
+            !deleteOptionsState.showDeleteOptions
+          )
+        }
       >
-        <Delete />
+        {deleteOptionsState.showDeleteOptions ? <Clear /> : <Delete />}
       </IconButton>
     );
   else
