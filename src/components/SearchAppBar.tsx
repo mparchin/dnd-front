@@ -16,8 +16,9 @@ import { useFilterStore } from "./FilterDialog";
 import { memo } from "react";
 import { useFeatFilterStore } from "./FeatsFilterDialog";
 import { useClassFilterStore } from "./ClassesFilterDialog";
-import { Home } from "@mui/icons-material";
-import CharacterNameAppBar from "./Characters/CharacterNameAppBar";
+import { Clear, Delete, Home } from "@mui/icons-material";
+import { CharacterNameAppBar } from "./Characters/CharacterNameAppBar";
+import { useCharacterListPageStore } from "./CharactersList";
 
 const HomeIconButton = memo(function () {
   const navigate = useNavigate();
@@ -36,7 +37,6 @@ const HomeIconButton = memo(function () {
 });
 
 interface SearchBarProps {
-  pathname: string;
   conditionSearchString?: string;
   searchString?: string;
   featSearchString?: string;
@@ -49,6 +49,7 @@ interface SearchBarProps {
 }
 
 const SearchBar = memo((p: SearchBarProps) => {
+  const location = useLocation();
   const sx = {
     "& .MuiFilledInput-input": {
       padding: "10px 12px 12px 12px",
@@ -69,17 +70,17 @@ const SearchBar = memo((p: SearchBarProps) => {
         className="align-top mb-5 mr-0 pr-0"
         sx={searchSx}
       >
-        {(p.pathname == "/spells" && p.searchString) ||
-        (p.pathname.includes("conditions") && p.conditionSearchString) ||
-        (p.pathname.includes("feats") && p.featSearchString) ||
-        (p.pathname.includes("classes") && p.classSearchString) ? (
+        {(location.pathname == "/spells" && p.searchString) ||
+        (location.pathname.includes("conditions") && p.conditionSearchString) ||
+        (location.pathname.includes("feats") && p.featSearchString) ||
+        (location.pathname.includes("classes") && p.classSearchString) ? (
           <IconButton
             onClick={
-              p.pathname.includes("conditions")
+              location.pathname.includes("conditions")
                 ? () => p.setConditionSearchString(undefined)
-                : p.pathname.includes("feats")
+                : location.pathname.includes("feats")
                 ? () => p.setFeatSearchString(undefined)
-                : p.pathname.includes("classes")
+                : location.pathname.includes("classes")
                 ? () => p.setClassSearchString(undefined)
                 : () => p.setSearchString(undefined)
             }
@@ -95,8 +96,11 @@ const SearchBar = memo((p: SearchBarProps) => {
     ),
   };
 
-  if (p.pathname.includes("settings") || p.pathname == "/rules") return <></>;
-  else if (p.pathname == "/characters") return <CharacterNameAppBar />;
+  if (location.pathname.includes("settings") || location.pathname == "/rules")
+    return <></>;
+  else if (location.pathname == "/characterView")
+    return <CharacterNameAppBar />;
+  else if (location.pathname == "/characters") return <CharacterNameAppBar />;
   else
     return (
       <TextField
@@ -106,22 +110,22 @@ const SearchBar = memo((p: SearchBarProps) => {
         size="small"
         maxRows={1}
         value={
-          p.pathname.includes("conditions") && p.conditionSearchString
+          location.pathname.includes("conditions") && p.conditionSearchString
             ? p.conditionSearchString
-            : p.pathname == "/spells" && p.searchString
+            : location.pathname == "/spells" && p.searchString
             ? p.searchString
-            : p.pathname.includes("feats") && p.featSearchString
+            : location.pathname.includes("feats") && p.featSearchString
             ? p.featSearchString
-            : p.pathname.includes("classes") && p.classSearchString
+            : location.pathname.includes("classes") && p.classSearchString
             ? p.classSearchString
             : ""
         }
         onChange={
-          p.pathname.includes("conditions")
+          location.pathname.includes("conditions")
             ? (e) => p.setConditionSearchString(e.target.value)
-            : p.pathname.includes("feats")
+            : location.pathname.includes("feats")
             ? (e) => p.setFeatSearchString(e.target.value)
-            : p.pathname.includes("classes")
+            : location.pathname.includes("classes")
             ? (e) => p.setClassSearchString(e.target.value)
             : (e) => p.setSearchString(e.target.value)
         }
@@ -131,28 +135,42 @@ const SearchBar = memo((p: SearchBarProps) => {
     );
 });
 
-interface FilterButtonProps {
-  pathname: string;
-}
-
-const FilterButton = memo((props: FilterButtonProps) => {
+const FilterButton = memo(() => {
+  const location = useLocation();
   const navigate = useNavigate();
+  const deleteOptionsState = useCharacterListPageStore((state) => state);
   if (
-    props.pathname.includes("conditions") ||
-    props.pathname == "/rules" ||
-    props.pathname.includes("settings")
+    location.pathname.includes("conditions") ||
+    location.pathname == "/rules" ||
+    location.pathname.includes("settings")
   )
     return <></>;
-  else if (props.pathname == "/characters")
+  else if (location.pathname == "/characterView")
     return (
       <IconButton
         size="large"
         edge="start"
         color="inherit"
         className="block ml-1"
-        onClick={() => navigate("characterEdit")}
+        onClick={() => navigate("characterEdit", { state: location.state })}
       >
         <EditIcon />
+      </IconButton>
+    );
+  else if (location.pathname == "/characters")
+    return (
+      <IconButton
+        size="large"
+        edge="start"
+        color="inherit"
+        className="block ml-1"
+        onClick={() =>
+          deleteOptionsState.setShowDeleteOptions(
+            !deleteOptionsState.showDeleteOptions
+          )
+        }
+      >
+        {deleteOptionsState.showDeleteOptions ? <Clear /> : <Delete />}
       </IconButton>
     );
   else
@@ -164,9 +182,9 @@ const FilterButton = memo((props: FilterButtonProps) => {
         aria-label="open drawer"
         className="block ml-1"
         onClick={
-          props.pathname == "/spells"
+          location.pathname == "/spells"
             ? () => navigate("filter")
-            : props.pathname.includes("feats")
+            : location.pathname.includes("feats")
             ? () => navigate("featsFilter")
             : () => navigate("classesFilter")
         }
@@ -182,7 +200,6 @@ export default function () {
   const classFilter = useClassFilterStore((state) => state);
   const primaryColor = usePrimaryColor();
   const primaryString = usePrimaryColorString();
-  const location = useLocation();
 
   return (
     <>
@@ -191,7 +208,6 @@ export default function () {
           <Toolbar className="">
             <HomeIconButton />
             <SearchBar
-              pathname={location.pathname}
               primaryColor={primaryColor}
               setClassSearchString={classFilter.searchActions.set}
               setConditionSearchString={filter.setConditionSearchString}
@@ -203,7 +219,7 @@ export default function () {
               searchString={filter.searchString}
             />
 
-            <FilterButton pathname={location.pathname} />
+            <FilterButton />
           </Toolbar>
         </AppBar>
       </Box>

@@ -5,7 +5,8 @@ import { memo } from "react";
 interface DescreteSliderProps {
   label: string;
   className: string;
-  defaultValue?: number;
+  value?: number;
+  onChange?: (val: number) => void;
 }
 
 export const DescreteSlider = memo((p: DescreteSliderProps) => {
@@ -23,13 +24,16 @@ export const DescreteSlider = memo((p: DescreteSliderProps) => {
           <div className="grow"></div>
           <Slider
             color={primaryString}
-            defaultValue={p.defaultValue ?? 1}
+            value={p.value ?? 1}
             getAriaValueText={(value) => `${value}`}
             valueLabelDisplay="on"
             step={1}
             marks
             min={1}
             max={20}
+            onChange={(_e, v) => {
+              if (p.onChange) p.onChange(Number(v));
+            }}
           />
           <div className="grow"></div>
         </div>

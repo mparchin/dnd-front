@@ -25,8 +25,15 @@ import GetAndSaveRules from "./API/rules";
 import RulesPage from "./components/RulesPage";
 import CharatersPage from "./components/CharactersPage";
 import CharacterEdit from "./components/CharacterEdit";
+import GetAndSaveClasses from "./API/classes";
+import CharactersList from "./components/CharactersList";
+import { Login } from "./components/Login";
+import { useEnsureLoggedIn } from "./api";
+import { NetworkPrompt } from "./components/NetworkPrompt";
+import GetAndSaveCharacters from "./API/characters";
 
 export default function App() {
+  useEnsureLoggedIn();
   const theme = useTheme();
   const themeStore = useThemeStore((state) => state);
   const location = useLocation();
@@ -50,12 +57,15 @@ export default function App() {
         />
       </Helmet>
       <ReloadPrompt />
+      <NetworkPrompt />
       <div
         className="flex-col flex w-screen h-screen max-h-screen overflow-hidden"
         style={bgColorStyle}
       >
         <div className="flex-grow-0 flex flex-shrink basis-auto flex-col">
-          {location.pathname == "/" || location.pathname == "/menu" ? (
+          {location.pathname == "/" ||
+          location.pathname == "/menu" ||
+          location.pathname == "/login" ? (
             <></>
           ) : (
             <SearchAppBar />
@@ -78,11 +88,16 @@ export default function App() {
             <FeatsPage />
           ) : location.pathname == "/" ? (
             <Animation />
+          ) : location.pathname == "/login" ? (
+            <Login />
           ) : location.pathname == "/menu" ? (
             <MenuPage />
           ) : location.pathname == "/rules" ? (
             <RulesPage />
-          ) : location.pathname.includes("haracter") ? (
+          ) : location.pathname.includes("characters") ? (
+            // <CharatersPage />
+            <CharactersList />
+          ) : location.pathname.includes("character") ? (
             <CharatersPage />
           ) : (
             <ComingSoon />
@@ -113,6 +128,8 @@ export default function App() {
       <GetAndSaveFeatures />
       <GetAndSaveFeats />
       <GetAndSaveRules />
+      <GetAndSaveClasses />
+      <GetAndSaveCharacters />
     </>
   );
 }

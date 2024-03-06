@@ -32,9 +32,11 @@ const router = createHashRouter([
       { path: "races", element: <></> },
       { path: "backgrounds", element: <></> },
       { path: "characters", element: <></> },
+      { path: "characterView", element: <></> },
       { path: "spells", element: <></> },
       { path: "menu", element: <></> },
       { path: "characterEdit", element: <></> },
+      { path: "login", element: <></> },
     ],
   },
 ]);
