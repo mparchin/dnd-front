@@ -54,7 +54,7 @@ export const useTokenStore = create(
 
 const apiAddress = import.meta.env.VITE_API_ADDRESS
   ? import.meta.env.VITE_API_ADDRESS
-  : // : "http://localhost:5056";
+  : //"http://localhost:5056";
     "https://backend.eldoriantales.com";
 
 const authorityAddress = "https://authority.eldoriantales.com";
@@ -149,7 +149,19 @@ export function useEnsureLoggedIn() {
   return tokenStore.isValid;
 }
 
-export const newCharacter = (char: Character) =>
+export const newCharacter = (char: Character, token: JWTToken) =>
   axios
-    .post<Character>(`${apiAddress}/characters`, char)
+    .post<Character>(`${apiAddress}/characters`, char, header(token))
+    .then((res) => res.data);
+
+export const editCharacter = (char: Character, token: JWTToken) =>
+  axios
+    .put<Character>(`${apiAddress}/characters`, char, header(token))
+    .then((res) => res.data);
+export const deleteCharacter = (id: number, token: JWTToken) =>
+  axios.delete(`${apiAddress}/characters/${id}`, header(token));
+
+export const getCharacters = (url: string, token: JWTToken) =>
+  axios
+    .get<Character[]>(`${apiAddress}/${url}`, header(token))
     .then((res) => res.data);

@@ -14,6 +14,20 @@ import { StickyCard } from "./Characters/StickyCard";
 import { useLocation } from "react-router-dom";
 import { useCharacterListStore } from "../API/characters";
 import { Character } from "../models/Character/Character";
+import {
+  CalculateAC,
+  CalculateAttribute,
+  CalculateCurrentHP,
+  CalculateCurrentMana,
+  CalculateCurrentMaximumHP,
+  CalculateExpertTotalPassiveValue,
+  CalculateExpertTotalValue,
+  CalculateMaximumMana,
+  CalculateModifire,
+  CalculateProficiencyBonous,
+  CalculateSpellAttack,
+  CalculateSpellSaveDC,
+} from "../models/extraCalculations";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -110,14 +124,17 @@ export default function CharatersPage() {
     >
       <div className="sticky top-0 z-50" style={bgColorStyle}>
         <StickyCard
-          armourClass={character.AC()}
-          currentHp={character.hp.current(character)}
-          maximumHp={character.hp.currentMaximum(character)}
-          currentMana={character.spellCasting.currentMana(character)}
-          maximumMana={character.spellCasting.maximumMana(character)}
-          profBonous={character.proficiencyBonous()}
+          armourClass={CalculateAC(character)}
+          currentHp={CalculateCurrentHP(character)}
+          maximumHp={CalculateCurrentMaximumHP(character)}
+          currentMana={CalculateCurrentMana(character)}
+          maximumMana={CalculateMaximumMana(character)}
+          profBonous={CalculateProficiencyBonous(
+            character.class.proficiencyBonous,
+            character.level
+          )}
           speed={character.speed}
-          inititive={character.inititive.totalValue(character)}
+          inititive={CalculateExpertTotalValue(character, character.inititive)}
           inititiveAdvantage={character.inititive.hasAdvantage}
         />
         <div className="flex flex-row overflow-auto">
@@ -221,37 +238,43 @@ export default function CharatersPage() {
         >
           <ProficientBox
             name="strength"
-            total={character.strengthSave.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.strengthSave)}
             advantage={character.strengthSave.hasAdvantage}
             isProficient={character.strengthSave.isProficient}
           />
           <ProficientBox
             name="dexterity"
-            total={character.dextritySave.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.dextritySave)}
             advantage={character.dextritySave.hasAdvantage}
             isProficient={character.dextritySave.isProficient}
           />
           <ProficientBox
             name="constitution"
-            total={character.constitutionSave.totalValue(character)}
+            total={CalculateExpertTotalValue(
+              character,
+              character.constitutionSave
+            )}
             advantage={character.constitutionSave.hasAdvantage}
             isProficient={character.constitutionSave.isProficient}
           />
           <ProficientBox
             name="intelligence"
-            total={character.intelligenceSave.totalValue(character)}
+            total={CalculateExpertTotalValue(
+              character,
+              character.intelligenceSave
+            )}
             advantage={character.intelligenceSave.hasAdvantage}
             isProficient={character.intelligenceSave.isProficient}
           />
           <ProficientBox
             name="wisdom"
-            total={character.wisdomSave.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.wisdomSave)}
             advantage={character.wisdomSave.hasAdvantage}
             isProficient={character.wisdomSave.isProficient}
           />
           <ProficientBox
             name="charisma"
-            total={character.charismaSave.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.charismaSave)}
             advantage={character.charismaSave.hasAdvantage}
             isProficient={character.charismaSave.isProficient}
           />
@@ -264,7 +287,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="str"
             name="athletics"
-            total={character.athletics.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.athletics)}
             advantage={character.athletics.hasAdvantage}
             expert={character.athletics.isExpert}
             proficient={character.athletics.isProficient}
@@ -273,7 +296,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="dex"
             name="acrobatics"
-            total={character.acrobatics.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.acrobatics)}
             advantage={character.acrobatics.hasAdvantage}
             expert={character.acrobatics.isExpert}
             proficient={character.acrobatics.isProficient}
@@ -281,7 +304,10 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="dex"
             name="sleight of hand"
-            total={character.sleightOfHands.totalValue(character)}
+            total={CalculateExpertTotalValue(
+              character,
+              character.sleightOfHands
+            )}
             advantage={character.sleightOfHands.hasAdvantage}
             expert={character.sleightOfHands.isExpert}
             proficient={character.sleightOfHands.isProficient}
@@ -289,7 +315,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="dex"
             name="stealth"
-            total={character.stealth.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.stealth)}
             advantage={character.stealth.hasAdvantage}
             expert={character.stealth.isExpert}
             proficient={character.stealth.isProficient}
@@ -298,7 +324,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="int"
             name="arcana"
-            total={character.arcana.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.arcana)}
             advantage={character.arcana.hasAdvantage}
             expert={character.arcana.isExpert}
             proficient={character.arcana.isProficient}
@@ -306,7 +332,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="int"
             name="history"
-            total={character.history.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.history)}
             advantage={character.history.hasAdvantage}
             expert={character.history.isExpert}
             proficient={character.history.isProficient}
@@ -314,7 +340,10 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="int"
             name="investigation"
-            total={character.investigation.totalValue(character)}
+            total={CalculateExpertTotalValue(
+              character,
+              character.investigation
+            )}
             advantage={character.investigation.hasAdvantage}
             expert={character.investigation.isExpert}
             proficient={character.investigation.isProficient}
@@ -322,7 +351,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="int"
             name="nature"
-            total={character.nature.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.nature)}
             advantage={character.nature.hasAdvantage}
             expert={character.nature.isExpert}
             proficient={character.nature.isProficient}
@@ -330,7 +359,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="int"
             name="religion"
-            total={character.religion.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.religion)}
             advantage={character.religion.hasAdvantage}
             expert={character.religion.isExpert}
             proficient={character.religion.isProficient}
@@ -339,7 +368,10 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="wis"
             name="animal handling"
-            total={character.animalHandling.totalValue(character)}
+            total={CalculateExpertTotalValue(
+              character,
+              character.animalHandling
+            )}
             advantage={character.animalHandling.hasAdvantage}
             expert={character.animalHandling.isExpert}
             proficient={character.animalHandling.isProficient}
@@ -347,7 +379,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="wis"
             name="insight"
-            total={character.insight.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.insight)}
             advantage={character.insight.hasAdvantage}
             expert={character.insight.isExpert}
             proficient={character.insight.isProficient}
@@ -355,7 +387,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="wis"
             name="medicine"
-            total={character.medicine.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.medicine)}
             advantage={character.medicine.hasAdvantage}
             expert={character.medicine.isExpert}
             proficient={character.medicine.isProficient}
@@ -363,7 +395,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="wis"
             name="perception"
-            total={character.perception.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.perception)}
             advantage={character.perception.hasAdvantage}
             expert={character.perception.isExpert}
             proficient={character.perception.isProficient}
@@ -371,7 +403,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="wis"
             name="survival"
-            total={character.survival.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.survival)}
             advantage={character.survival.hasAdvantage}
             expert={character.survival.isExpert}
             proficient={character.survival.isProficient}
@@ -380,7 +412,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="cha"
             name="deception"
-            total={character.deception.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.deception)}
             advantage={character.deception.hasAdvantage}
             expert={character.deception.isExpert}
             proficient={character.deception.isProficient}
@@ -388,7 +420,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="cha"
             name="intimidation"
-            total={character.intimidation.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.intimidation)}
             advantage={character.intimidation.hasAdvantage}
             expert={character.intimidation.isExpert}
             proficient={character.intimidation.isProficient}
@@ -396,7 +428,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="cha"
             name="performance"
-            total={character.performance.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.performance)}
             advantage={character.performance.hasAdvantage}
             expert={character.performance.isExpert}
             proficient={character.performance.isProficient}
@@ -404,7 +436,7 @@ export default function CharatersPage() {
           <ExpertBox
             attribute="cha"
             name="persuasion"
-            total={character.persuasion.totalValue(character)}
+            total={CalculateExpertTotalValue(character, character.persuasion)}
             advantage={character.persuasion.hasAdvantage}
             expert={character.persuasion.isExpert}
             proficient={character.persuasion.isProficient}
@@ -417,15 +449,24 @@ export default function CharatersPage() {
         >
           <SensesBox
             name="Passive Wisdom (Insight)"
-            value={character.insight.totalPassiveValue(character)}
+            value={CalculateExpertTotalPassiveValue(
+              character,
+              character.insight
+            )}
           />
           <SensesBox
             name="Passive Wisdom (Perception)"
-            value={character.perception.totalPassiveValue(character)}
+            value={CalculateExpertTotalPassiveValue(
+              character,
+              character.perception
+            )}
           />
           <SensesBox
             name="Passive Intelligence (Investigation)"
-            value={character.investigation.totalPassiveValue(character)}
+            value={CalculateExpertTotalPassiveValue(
+              character,
+              character.investigation
+            )}
           />
         </div>
         <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
@@ -483,11 +524,14 @@ export default function CharatersPage() {
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
         >
           <CharacterSpells
-            attributeModifire={character.attributes.getAttributeModifire(
-              character.spellCasting.castingAbility
+            attributeModifire={CalculateModifire(
+              CalculateAttribute(
+                character.spellCasting.castingAbility,
+                character.attributes
+              )
             )}
-            attackBonous={character.spellCasting.attackModifire(character)}
-            saveDc={character.spellCasting.DC(character)}
+            attackBonous={CalculateSpellAttack(character)}
+            saveDc={CalculateSpellSaveDC(character)}
             spells={[
               {
                 id: 0,

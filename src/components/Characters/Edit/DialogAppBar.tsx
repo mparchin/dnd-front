@@ -1,11 +1,12 @@
 import { memo } from "react";
 import { usePrimaryColorString } from "../../../theme";
 import { Close, Check } from "@mui/icons-material";
-import { AppBar, Toolbar, IconButton } from "@mui/material";
+import { AppBar, Toolbar, IconButton, CircularProgress } from "@mui/material";
 
 interface Props {
   closeRequest: () => void;
   Save: () => void;
+  showProgress: boolean;
 }
 
 export const DialogAppBar = memo((p: Props) => {
@@ -30,8 +31,13 @@ export const DialogAppBar = memo((p: Props) => {
             p.closeRequest();
           }}
           aria-label="save"
+          disabled={p.showProgress}
         >
-          <Check />
+          {p.showProgress ? (
+            <CircularProgress className="text-white" />
+          ) : (
+            <Check />
+          )}
         </IconButton>
       </Toolbar>
     </AppBar>

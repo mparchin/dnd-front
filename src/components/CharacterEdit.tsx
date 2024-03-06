@@ -14,15 +14,16 @@ import { HPEdit } from "./Characters/Edit/HPEdit";
 import { SpellCastingEdit } from "./Characters/Edit/SpellCastingEdit";
 import { useClassListStore } from "../API/classes";
 import { useFeatureListStore } from "../API/feature";
-import { calculateProficiencyBonous } from "../models/extraCalculations";
 import { immer } from "zustand/middleware/immer";
 import { immerable } from "immer";
 import { CharactersListState, useCharacterListStore } from "../API/characters";
-import { Class } from "../models/spell";
+import { Class, JWTToken } from "../models/spell";
 import { CharacterExpert } from "../models/Character/CharacterExpert";
 import { CharacterAttributes } from "../models/Character/CharacterAttributes";
 import { Character } from "../models/Character/Character";
-import { newCharacter } from "../api";
+import { editCharacter, newCharacter, useTokenStore } from "../api";
+import { CalculateProficiencyBonous } from "../models/extraCalculations";
+import { NetworkState, useNetworkStore } from "./NetworkPrompt";
 
 class ExpertEditClass implements ExpertEditState {
   [immerable] = true;
@@ -83,9 +84,11 @@ class ExpertEditClass implements ExpertEditState {
 export interface CharacterEditDialogState {
   id: number;
   isOpen: boolean;
+  showProgress: boolean;
   dialogActions: {
     open: () => void;
     close: () => void;
+    setShowProgress: (flag: boolean) => void;
   };
   name: string;
   race: string;
@@ -162,10 +165,12 @@ export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
   immer((set) => ({
     [immerable]: true,
     id: 0,
+    showProgress: false,
     isOpen: false,
     dialogActions: {
       open: () => set({ isOpen: true }),
       close: () => set({ isOpen: false }),
+      setShowProgress: (flag) => set({ showProgress: flag }),
     },
     name: "",
     race: "",
@@ -255,8 +260,12 @@ function SaveExperts(char: CharacterExpert, edit: ExpertEditState) {
 function Save(
   state: CharacterEditDialogState,
   charactersStore: CharactersListState,
-  selectedClass: Class
+  selectedClass: Class,
+  networkState: NetworkState,
+  token: JWTToken
 ) {
+  state.dialogActions.setShowProgress(true);
+  if (!token) return;
   const character =
     charactersStore.characters.find((c) => c.id == state.id) ?? new Character();
 
@@ -309,17 +318,28 @@ function Save(
   SaveExperts(character.performance, state.performance);
   SaveExperts(character.persuasion, state.persuasion);
 
-  //TODO Save
-
-  //create
   if (character.id == 0)
-    newCharacter(character).then((savedChar) => {
-      const chars = charactersStore.characters.filter(
-        (char) => char.id != savedChar.id
-      );
-      chars.push(savedChar);
-      charactersStore.setCharacters(chars);
-    });
+    newCharacter(character, token)
+      .then((savedChar) => {
+        const chars = charactersStore.characters.filter(
+          (char) => char.id != savedChar.id
+        );
+        chars.push(savedChar);
+        charactersStore.setCharacters(chars);
+      })
+      .catch(() => networkState.setConnectionError(true))
+      .finally(() => state.dialogActions.setShowProgress(false));
+  else
+    editCharacter(character, token)
+      .then((savedChar) => {
+        const chars = charactersStore.characters.filter(
+          (char) => char.id != savedChar.id
+        );
+        chars.push(savedChar);
+        charactersStore.setCharacters(chars);
+      })
+      .catch(() => networkState.setConnectionError(true))
+      .finally(() => state.dialogActions.setShowProgress(false));
 }
 
 function LoadExperts(edit: ExpertEditState, char: CharacterExpert) {
@@ -400,6 +420,8 @@ export default function () {
   const state = useCharacterEditDialogStore((state) => state);
   const location = useLocation();
   const navigate = useNavigate();
+  const networkState = useNetworkStore((state) => state);
+  const token = useTokenStore((state) => state.token) ?? new JWTToken();
   const IsOpenRequest = () => location.pathname.includes("characterEdit");
   const CloseRequest = useCallback(() => {
     if (IsOpenRequest()) navigate(-1);
@@ -417,7 +439,8 @@ export default function () {
   const selectedClass = useMemo(
     () =>
       classes.find((entity) => entity.id.toString() == state.classId) ??
-      classes[0],
+      classes[0] ??
+      new Class(),
     [state.classId, classes]
   );
   const subClasses = useFeatureListStore((state) => state.subclasses);
@@ -428,7 +451,7 @@ export default function () {
   }, [selectedClass, subClasses]);
   const proficiencyBonous = useMemo(
     () =>
-      calculateProficiencyBonous(
+      CalculateProficiencyBonous(
         selectedClass?.proficiencyBonous ?? "((Level-1)/4)+2",
         state.level ?? 1
       ),
@@ -474,7 +497,7 @@ export default function () {
     [primaryColor]
   );
   const saveFunction = useCallback(
-    () => Save(state, charactersStore, selectedClass),
+    () => Save(state, charactersStore, selectedClass, networkState, token),
     [state.id, selectedClass, state]
   );
   useEffect(() => {
@@ -493,7 +516,11 @@ export default function () {
       onClose={CloseRequest}
       TransitionComponent={Transition}
     >
-      <DialogAppBar closeRequest={CloseRequest} Save={saveFunction} />
+      <DialogAppBar
+        closeRequest={CloseRequest}
+        Save={saveFunction}
+        showProgress={state.showProgress}
+      />
       <div
         className="w-full overflow-auto flex flex-row flex-wrap p-2 justify-center"
         style={bgColorStyle}
@@ -523,7 +550,7 @@ export default function () {
           required
           lable="class"
           options={classesComboOptions}
-          value={selectedClass.id.toString()}
+          value={selectedClass?.id?.toString()}
           onChange={state.actions.setClassId}
         />
 

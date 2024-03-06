@@ -1,8 +1,4 @@
 import { immerable } from "immer";
-import {
-  ExtraFieldCalculations,
-  calculateProficiencyBonous,
-} from "../extraCalculations";
 import { Class } from "../spell";
 import { CharacterAttributes } from "./CharacterAttributes";
 import { CharacterExpert } from "./CharacterExpert";
@@ -54,19 +50,3 @@ export class Character {
 
   time: number = 0;
 }
-
-export interface Character {
-  AC: () => number;
-  proficiencyBonous: () => number;
-  hitDie: () => number;
-}
-
-Character.prototype.AC = function () {
-  return ExtraFieldCalculations(this.armorClassExtra, this);
-};
-Character.prototype.proficiencyBonous = function () {
-  return calculateProficiencyBonous(this.class.proficiencyBonous, this.level);
-};
-Character.prototype.hitDie = function () {
-  return this.class.hitDie;
-};

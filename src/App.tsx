@@ -29,6 +29,8 @@ import GetAndSaveClasses from "./API/classes";
 import CharactersList from "./components/CharactersList";
 import { Login } from "./components/Login";
 import { useEnsureLoggedIn } from "./api";
+import { NetworkPrompt } from "./components/NetworkPrompt";
+import GetAndSaveCharacters from "./API/characters";
 
 export default function App() {
   useEnsureLoggedIn();
@@ -55,6 +57,7 @@ export default function App() {
         />
       </Helmet>
       <ReloadPrompt />
+      <NetworkPrompt />
       <div
         className="flex-col flex w-screen h-screen max-h-screen overflow-hidden"
         style={bgColorStyle}
@@ -126,6 +129,7 @@ export default function App() {
       <GetAndSaveFeats />
       <GetAndSaveRules />
       <GetAndSaveClasses />
+      <GetAndSaveCharacters />
     </>
   );
 }
