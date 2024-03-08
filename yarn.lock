@@ -4269,6 +4269,11 @@ react-is@^18.2.0:
   resolved "https://npm.iranrepo.ir/repository/npm-all/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
+react-mobile-picker@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-mobile-picker/-/react-mobile-picker-1.0.0.tgz#3cd85820865131406fd8f25da48e2533d88d1315"
+  integrity sha512-6xaEBdy4YzgCULRqKcYCa/T34OFRrxXQz8TYrTeRPjq8UEsuH023OpcajnxWbU4X9+kk0nbarorvMFsiaBmXHg==
+
 react-refresh@^0.14.0:
   version "0.14.0"
   resolved "https://npm.iranrepo.ir/repository/npm-all/react-refresh/-/react-refresh-0.14.0.tgz#4e02825378a5f227079554d4284889354e5f553e"
