@@ -12,7 +12,12 @@ export default {
         xxs: ['10px', '12px'],
       },
       width:{
-        '88':'22rem'
+        '88':'22rem',
+        '30':'7.5rem'
+      },
+      height:{
+        '88':'22rem',
+        '30':'7.5rem'
       }
     },
   },

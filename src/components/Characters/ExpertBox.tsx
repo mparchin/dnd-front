@@ -39,19 +39,19 @@ export const ExpertBox = memo((props: ExpertBoxProps) => {
   ]);
 
   return (
-    <div className="flex flex-row bg-no-repeat h-12 m-1" style={bgImage}>
+    <div className="flex w-88 flex-row bg-no-repeat h-12 m-1" style={bgImage}>
       <div className="w-4"></div>
-      <div className="w-12 h-full text-center flex flex-col pr-1">
-        <span className="grow-[2]"></span>
+      <div className="w-12 h-full text-center flex flex-col">
+        <span className="grow"></span>
         <span className="shrink uppercase text-sm">{props.attribute}</span>
-        <span className="grow-[3]"></span>
+        <span className="grow"></span>
       </div>
-      <div className="w-32 h-full text-center flex flex-col">
-        <span className="grow-[2]"></span>
+      <div className="w-32 h-full text-center flex flex-col ml-2">
+        <span className="grow"></span>
         <span className="shrink capitalize">{props.name}</span>
-        <span className="grow-[3]"></span>
+        <span className="grow"></span>
       </div>
-      <div className="w-24 pl-7 h-full text-center flex flex-col">
+      <div className="w-24 h-full text-center flex flex-col ml-5">
         <span className="grow-[2]"></span>
         <span
           className="shrink uppercase text-2xl font-bold"
@@ -61,16 +61,11 @@ export const ExpertBox = memo((props: ExpertBoxProps) => {
         </span>
         <span className="grow-[3]"></span>
       </div>
-      <div className="h-full w-8 flex flex-col">
+      <div className="h-full w-6 flex flex-col">
         <div className="grow-[3]"></div>
 
         {props.advantage ? (
-          <Circle
-            text="A"
-            className="w-5 ml-2"
-            filled
-            color={theme.palette.success.main}
-          />
+          <Circle text="A" filled color={theme.palette.success.main} />
         ) : (
           <></>
         )}

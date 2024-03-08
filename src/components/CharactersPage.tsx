@@ -124,6 +124,7 @@ export default function CharatersPage() {
     >
       <div className="sticky top-0 z-50" style={bgColorStyle}>
         <StickyCard
+          id={character.id}
           armourClass={CalculateAC(character)}
           currentHp={CalculateCurrentHP(character)}
           maximumHp={CalculateCurrentMaximumHP(character)}
@@ -136,6 +137,8 @@ export default function CharatersPage() {
           speed={character.speed}
           inititive={CalculateExpertTotalValue(character, character.inititive)}
           inititiveAdvantage={character.inititive.hasAdvantage}
+          maximumHpModifire={character.hp.maximumModifire}
+          tempHp={character.hp.temp}
         />
         <div className="flex flex-row overflow-auto">
           <ScrollerCards
@@ -292,7 +295,7 @@ export default function CharatersPage() {
             expert={character.athletics.isExpert}
             proficient={character.athletics.isProficient}
           />
-          <div className="h-4 w-full"></div>
+          <div className="h-14 w-full"></div>
           <ExpertBox
             attribute="dex"
             name="acrobatics"
@@ -320,7 +323,7 @@ export default function CharatersPage() {
             expert={character.stealth.isExpert}
             proficient={character.stealth.isProficient}
           />
-          <div className="h-4 w-full"></div>
+          <div className="h-14 w-full"></div>
           <ExpertBox
             attribute="int"
             name="arcana"
@@ -364,7 +367,7 @@ export default function CharatersPage() {
             expert={character.religion.isExpert}
             proficient={character.religion.isProficient}
           />
-          <div className="h-4 w-full"></div>
+          <div className="h-14 w-full"></div>
           <ExpertBox
             attribute="wis"
             name="animal handling"
@@ -408,7 +411,7 @@ export default function CharatersPage() {
             expert={character.survival.isExpert}
             proficient={character.survival.isProficient}
           />
-          <div className="h-4 w-full"></div>
+          <div className="h-14 w-full"></div>
           <ExpertBox
             attribute="cha"
             name="deception"

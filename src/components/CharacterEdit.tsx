@@ -576,36 +576,42 @@ export default function () {
           label="Strength"
           value={state.strength}
           onChange={state.actions.setStrength}
+          max={30}
         />
         <DescreteSlider
           className="w-88 m-2"
           label="Dextrity"
           value={state.dextrity}
           onChange={state.actions.setDextrity}
+          max={30}
         />
         <DescreteSlider
           className="w-88 m-2"
           label="Constitution"
           value={state.constitution}
           onChange={state.actions.setConstitution}
+          max={30}
         />
         <DescreteSlider
           className="w-88 m-2"
           label="Intelligence"
           value={state.intelligence}
           onChange={state.actions.setIntelligence}
+          max={30}
         />
         <DescreteSlider
           className="w-88 m-2"
           label="Wisdom"
           value={state.wisdom}
           onChange={state.actions.setWisdom}
+          max={30}
         />
         <DescreteSlider
           className="w-88 m-2"
           label="Charisma"
           value={state.charisma}
           onChange={state.actions.setCharisma}
+          max={30}
         />
 
         <div className="h-0.5 w-screen mt-4 mb-4" style={dividerColor}></div>

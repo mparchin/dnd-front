@@ -193,7 +193,11 @@ export function CalculateBloodiedThreshold(char: Character) {
   return Math.floor(CalculateCurrentMaximumHP(char) * 0.3);
 }
 export function CalculateCurrentHP(char: Character) {
-  return CalculateCurrentMaximumHP(char) - char.hp.damageTakenAfterTemp;
+  return (
+    CalculateCurrentMaximumHP(char) -
+    char.hp.damageTakenAfterTemp +
+    char.hp.temp
+  );
 }
 
 export function CalculateMaximumMana(char: Character) {
