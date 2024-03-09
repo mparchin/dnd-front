@@ -16,14 +16,17 @@ import { useClassListStore } from "../API/classes";
 import { useFeatureListStore } from "../API/feature";
 import { immer } from "zustand/middleware/immer";
 import { immerable } from "immer";
-import { CharactersListState, useCharacterListStore } from "../API/characters";
-import { Class, JWTToken } from "../models/spell";
+import {
+  CharacterAPI,
+  CharactersListState,
+  useCharacterAPI,
+  useCharacterListStore,
+} from "../API/characters";
+import { Class } from "../models/spell";
 import { CharacterExpert } from "../models/Character/CharacterExpert";
 import { CharacterAttributes } from "../models/Character/CharacterAttributes";
 import { Character } from "../models/Character/Character";
-import { editCharacter, newCharacter, useTokenStore } from "../api";
 import { CalculateProficiencyBonous } from "../models/extraCalculations";
-import { NetworkState, useNetworkStore } from "./NetworkPrompt";
 
 class ExpertEditClass implements ExpertEditState {
   [immerable] = true;
@@ -261,11 +264,9 @@ function Save(
   state: CharacterEditDialogState,
   charactersStore: CharactersListState,
   selectedClass: Class,
-  networkState: NetworkState,
-  token: JWTToken
+  api: CharacterAPI
 ) {
   state.dialogActions.setShowProgress(true);
-  if (!token) return;
   const character =
     charactersStore.characters.find((c) => c.id == state.id) ?? new Character();
 
@@ -319,27 +320,8 @@ function Save(
   SaveExperts(character.persuasion, state.persuasion);
 
   if (character.id == 0)
-    newCharacter(character, token)
-      .then((savedChar) => {
-        const chars = charactersStore.characters.filter(
-          (char) => char.id != savedChar.id
-        );
-        chars.push(savedChar);
-        charactersStore.setCharacters(chars);
-      })
-      .catch(() => networkState.setConnectionError(true))
-      .finally(() => state.dialogActions.setShowProgress(false));
-  else
-    editCharacter(character, token)
-      .then((savedChar) => {
-        const chars = charactersStore.characters.filter(
-          (char) => char.id != savedChar.id
-        );
-        chars.push(savedChar);
-        charactersStore.setCharacters(chars);
-      })
-      .catch(() => networkState.setConnectionError(true))
-      .finally(() => state.dialogActions.setShowProgress(false));
+    api.create(character, state.dialogActions.setShowProgress);
+  else api.update(character, state.dialogActions.setShowProgress);
 }
 
 function LoadExperts(edit: ExpertEditState, char: CharacterExpert) {
@@ -418,10 +400,9 @@ const Transition = React.forwardRef(function Transition(
 
 export default function () {
   const state = useCharacterEditDialogStore((state) => state);
+  const characterAPI = useCharacterAPI();
   const location = useLocation();
   const navigate = useNavigate();
-  const networkState = useNetworkStore((state) => state);
-  const token = useTokenStore((state) => state.token) ?? new JWTToken();
   const IsOpenRequest = () => location.pathname.includes("characterEdit");
   const CloseRequest = useCallback(() => {
     if (IsOpenRequest()) navigate(-1);
@@ -497,7 +478,7 @@ export default function () {
     [primaryColor]
   );
   const saveFunction = useCallback(
-    () => Save(state, charactersStore, selectedClass, networkState, token),
+    () => Save(state, charactersStore, selectedClass, characterAPI),
     [state.id, selectedClass, state]
   );
   useEffect(() => {

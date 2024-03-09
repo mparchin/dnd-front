@@ -12,19 +12,13 @@ import { CharacterAttacks } from "./Characters/CharacterAttacks";
 import { CharacterFeatures } from "./Characters/CharacterFeatures";
 import { StickyCard } from "./Characters/StickyCard";
 import { useLocation } from "react-router-dom";
-import { useCharacterListStore } from "../API/characters";
+import { useCharacterAPI, useCharacterListStore } from "../API/characters";
 import { Character } from "../models/Character/Character";
 import {
-  CalculateAC,
   CalculateAttribute,
-  CalculateCurrentHP,
-  CalculateCurrentMana,
-  CalculateCurrentMaximumHP,
   CalculateExpertTotalPassiveValue,
   CalculateExpertTotalValue,
-  CalculateMaximumMana,
   CalculateModifire,
-  CalculateProficiencyBonous,
   CalculateSpellAttack,
   CalculateSpellSaveDC,
 } from "../models/extraCalculations";
@@ -102,6 +96,7 @@ export default function CharatersPage() {
       new Character(),
     [location.state?.charId, characterList, location]
   );
+  const characterAPI = useCharacterAPI();
   const primaryColor = usePrimaryColor();
   const bgColor = useBgColor();
   const bgColorStyle = useMemo(
@@ -116,6 +111,7 @@ export default function CharatersPage() {
     }),
     [primaryColor]
   );
+  if (character.id != location.state.charId) characterAPI.getAll();
   return (
     <div
       id="scrollingContainer"
@@ -123,23 +119,7 @@ export default function CharatersPage() {
       onScroll={() => setActiveTab(primaryColor.main)}
     >
       <div className="sticky top-0 z-50" style={bgColorStyle}>
-        <StickyCard
-          id={character.id}
-          armourClass={CalculateAC(character)}
-          currentHp={CalculateCurrentHP(character)}
-          maximumHp={CalculateCurrentMaximumHP(character)}
-          currentMana={CalculateCurrentMana(character)}
-          maximumMana={CalculateMaximumMana(character)}
-          profBonous={CalculateProficiencyBonous(
-            character.class.proficiencyBonous,
-            character.level
-          )}
-          speed={character.speed}
-          inititive={CalculateExpertTotalValue(character, character.inititive)}
-          inititiveAdvantage={character.inititive.hasAdvantage}
-          maximumHpModifire={character.hp.maximumModifire}
-          tempHp={character.hp.temp}
-        />
+        <StickyCard character={character} />
         <div className="flex flex-row overflow-auto">
           <ScrollerCards
             onClick={scrollToDiv}

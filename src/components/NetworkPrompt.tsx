@@ -22,7 +22,6 @@ export const NetworkPrompt = memo(() => {
   ]);
 
   if (!networkState.connectionError) return <></>;
-  return <></>;
   return (
     <Snackbar
       open={networkState.connectionError}
