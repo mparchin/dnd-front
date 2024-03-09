@@ -1,73 +1,61 @@
-import { Card, IconButton, Avatar, Button, useTheme } from "@mui/material";
+import {
+  Card,
+  IconButton,
+  Avatar,
+  Button,
+  useTheme,
+  CircularProgress,
+} from "@mui/material";
 import { memo, useMemo } from "react";
 import { Bonfire } from "../../assets/bonfire";
 import { usePrimaryColor } from "../../theme";
 import { Circle } from "../../assets/circle";
 import { HPDialog, useHPDialogStore } from "./Edit/HPDialog";
-import {
-  CharactersListState,
-  useCharacterListStore,
-} from "../../API/characters";
+import { useCharacterAPI } from "../../API/characters";
 import { Character } from "../../models/Character/Character";
-import { editCharacter, useTokenStore } from "../../api";
-import { JWTToken } from "../../models/spell";
-import { useNetworkStore } from "../NetworkPrompt";
+import {
+  CalculateAC,
+  CalculateBloodiedThreshold,
+  CalculateCurrentHP,
+  CalculateCurrentMana,
+  CalculateCurrentMaximumHP,
+  CalculateExpertTotalValue,
+  CalculateMaximumMana,
+  CalculateProficiencyBonous,
+} from "../../models/extraCalculations";
+import { ManaDialog, useManaDialogStore } from "./Edit/ManaDialog";
 
 interface Props {
-  id: number;
-  currentHp: number;
-  maximumHp: number;
-  currentMana: number;
-  maximumMana: number;
-  profBonous: number;
-  speed: number;
-  inititive: string;
-  inititiveAdvantage: boolean;
-  armourClass: number;
-  maximumHpModifire: number;
-  tempHp: number;
-}
-
-function SaveChar(
-  reportNetwork: () => void,
-  charactersStore: CharactersListState,
-  char: Character,
-  token: JWTToken
-) {
-  editCharacter(char, token)
-    .then((savedChar) => {
-      const chars = charactersStore.characters.filter(
-        (char) => char.id != savedChar.id
-      );
-      chars.push(savedChar);
-      charactersStore.setCharacters(chars);
-    })
-    .catch(reportNetwork);
-  // .finally(() => state.dialogActions.setShowProgress(false));
+  character: Character;
 }
 
 export const StickyCard = memo((p: Props) => {
-  const characterState = useCharacterListStore((state) => state);
-  const token = useTokenStore((state) => state.token) ?? new JWTToken();
-  const reportNetwork = useNetworkStore((state) => state.report);
-  const character = useMemo(
-    () => characterState.characters.find((char) => char.id == p.id),
-    [p.id, characterState.characters]
-  );
-  const HPDialogStateOpen = useHPDialogStore(
-    (state) => state.dialogActions.setIsOpen
-  );
+  const { update } = useCharacterAPI();
+  const hpDialogState = useHPDialogStore((state) => state);
+  const manaDialogState = useManaDialogStore((state) => state);
   const theme = useTheme();
   const primaryColor = usePrimaryColor();
   const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
     primaryColor,
   ]);
+  const currentHP = CalculateCurrentHP(p.character);
+  const currentMaximumHP = CalculateCurrentMaximumHP(p.character);
+  const bloodiedThreshHold = CalculateBloodiedThreshold(p.character);
   const HpColor = useMemo(
-    () => ({ backgroundColor: theme.palette.success.main }),
-    [theme.palette.success]
+    () => ({
+      backgroundColor:
+        currentHP > bloodiedThreshHold
+          ? theme.palette.success.main
+          : theme.palette.error.main,
+      color: theme.palette.common.white,
+    }),
+    [theme.palette.success, theme.palette.error, currentHP, currentMaximumHP]
   );
   const ManaColor = useMemo(
-    () => ({ backgroundColor: theme.palette.primary.main }),
+    () => ({
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+    }),
     [theme.palette.primary]
   );
   return (
@@ -99,22 +87,36 @@ export const StickyCard = memo((p: Props) => {
                 className="flex flex-col"
                 variant="contained"
                 style={HpColor}
-                onClick={() => HPDialogStateOpen(true)}
+                onClick={() => hpDialogState.dialogActions.setIsOpen(true)}
               >
-                <div className="grow basis-0 text-xl">
-                  {p.currentHp}/{p.maximumHp}
-                </div>
-                <div className="uppercase text-xxs basis-0">hit points</div>
+                {hpDialogState.isLoading ? (
+                  <CircularProgress style={HpColor} />
+                ) : (
+                  <>
+                    <div className="grow basis-0 text-xl">
+                      {currentHP}/{currentMaximumHP}
+                    </div>
+                    <div className="uppercase text-xxs basis-0">hit points</div>
+                  </>
+                )}
               </Button>
               <Button
                 className="flex flex-col"
                 variant="contained"
                 style={ManaColor}
+                onClick={() => manaDialogState.dialogActions.setIsOpen(true)}
               >
-                <div className="grow basis-0 text-xl">
-                  {p.currentMana}/{p.maximumMana}
-                </div>
-                <div className="uppercase text-xxs basis-0">mana</div>
+                {manaDialogState.isLoading ? (
+                  <CircularProgress style={ManaColor} />
+                ) : (
+                  <>
+                    <div className="grow basis-0 text-xl">
+                      {CalculateCurrentMana(p.character)}/
+                      {CalculateMaximumMana(p.character)}
+                    </div>
+                    <div className="uppercase text-xxs basis-0">mana</div>
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -123,8 +125,21 @@ export const StickyCard = memo((p: Props) => {
             <div className="grow basis-0 flex flex-col text-center">
               <div className="grow">
                 <span className="text-2xl font-bold">
-                  <span style={coloredStyle}>+{p.profBonous}</span>/
-                  <span style={coloredStyle}>D{p.profBonous * 2}</span>
+                  <span style={coloredStyle}>
+                    +
+                    {CalculateProficiencyBonous(
+                      p.character.class.proficiencyBonous,
+                      p.character.level
+                    )}
+                  </span>
+                  /
+                  <span style={coloredStyle}>
+                    D
+                    {CalculateProficiencyBonous(
+                      p.character.class.proficiencyBonous,
+                      p.character.level
+                    ) * 2}
+                  </span>
                 </span>
               </div>
               <div className="text-xxs uppercase">proficiency</div>
@@ -132,7 +147,7 @@ export const StickyCard = memo((p: Props) => {
             <div className="grow basis-0 flex flex-col text-center">
               <div className="grow">
                 <span className="text-2xl font-bold" style={coloredStyle}>
-                  {p.speed}
+                  {p.character.speed}
                 </span>
                 <span className="text-xxs pl-1 align-middle">FT.</span>
               </div>
@@ -143,10 +158,13 @@ export const StickyCard = memo((p: Props) => {
                 <div className="flex flex-row">
                   <div className="grow"></div>
                   <span className="text-2xl font-bold" style={coloredStyle}>
-                    {p.inititive}
+                    {CalculateExpertTotalValue(
+                      p.character,
+                      p.character.inititive
+                    )}
                   </span>
                   <div className="grow">
-                    {p.inititiveAdvantage ? (
+                    {p.character.inititive.hasAdvantage ? (
                       <Circle
                         text="A"
                         className="w-5 ml-1 mt-1"
@@ -164,7 +182,7 @@ export const StickyCard = memo((p: Props) => {
             <div className="grow basis-0 flex flex-col text-center">
               <div className="grow">
                 <span className="text-2xl font-bold">
-                  <span style={coloredStyle}>{p.armourClass}</span>
+                  <span style={coloredStyle}>{CalculateAC(p.character)}</span>
                 </span>
               </div>
               <div className="text-xxs uppercase">armour class</div>
@@ -174,30 +192,44 @@ export const StickyCard = memo((p: Props) => {
       </Card>
       <HPDialog
         maximumModifire={
-          p.maximumHpModifire == 0 ? "" : p.maximumHpModifire.toString()
+          p.character.hp.maximumModifire == 0
+            ? ""
+            : p.character.hp.maximumModifire.toString()
         }
-        tempHP={p.tempHp == 0 ? "" : p.tempHp.toString()}
+        tempHP={p.character.hp.temp == 0 ? "" : p.character.hp.temp.toString()}
         onSave={(temp, maximum) => {
-          if (!character) return;
-          character.hp.temp = temp ? Number(temp) : 0;
-          character.hp.maximumModifire = maximum ? Number(maximum) : 0;
-          SaveChar(reportNetwork, characterState, character, token);
+          p.character.hp.temp = temp ? Number(temp) : 0;
+          p.character.hp.maximumModifire = maximum ? Number(maximum) : 0;
+          update(p.character, hpDialogState.dialogActions.setIsLoading);
         }}
         onDamage={(val) => {
-          if (!character) return;
-          character.hp.temp -= val;
-          if (character.hp.temp < 0) {
-            character.hp.damageTakenAfterTemp += character.hp.temp * -1;
-            character.hp.temp = 0;
+          p.character.hp.temp -= val;
+          if (p.character.hp.temp < 0) {
+            p.character.hp.damageTakenAfterTemp += p.character.hp.temp * -1;
+            p.character.hp.temp = 0;
           }
-          SaveChar(reportNetwork, characterState, character, token);
+          update(p.character, hpDialogState.dialogActions.setIsLoading);
         }}
         onHeal={(val) => {
-          if (!character) return;
-          character.hp.damageTakenAfterTemp -= val;
-          if (character.hp.damageTakenAfterTemp < 0)
-            character.hp.damageTakenAfterTemp = 0;
-          SaveChar(reportNetwork, characterState, character, token);
+          p.character.hp.damageTakenAfterTemp -= val;
+          if (p.character.hp.damageTakenAfterTemp < 0)
+            p.character.hp.damageTakenAfterTemp = 0;
+          update(p.character, hpDialogState.dialogActions.setIsLoading);
+        }}
+      />
+      <ManaDialog
+        onChange={(val) => {
+          p.character.spellCasting.usedMana += val;
+          if (
+            p.character.spellCasting.usedMana >
+            CalculateMaximumMana(p.character)
+          )
+            p.character.spellCasting.usedMana = CalculateMaximumMana(
+              p.character
+            );
+          if (p.character.spellCasting.usedMana < 0)
+            p.character.spellCasting.usedMana = 0;
+          update(p.character, manaDialogState.dialogActions.setIsLoading);
         }}
       />
     </>

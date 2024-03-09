@@ -1,11 +1,10 @@
-import { memo, useCallback, useEffect, useMemo } from "react";
 import { create } from "zustand";
+import { memo, useCallback, useMemo } from "react";
+import { Button, TextField, useTheme } from "@mui/material";
 import { BottomDialog } from "../../Controls/BottomDialog";
 import Picker from "react-mobile-picker";
-import { Button, TextField, useTheme } from "@mui/material";
-import { usePrimaryColorString } from "../../../theme";
 
-export interface HPDialogState {
+export interface ManaDialogState {
   isOpen: boolean;
   isLoading: boolean;
   dialogActions: {
@@ -14,13 +13,9 @@ export interface HPDialogState {
   };
   value: { [key: string]: string };
   setValue: (val: { [key: string]: string }) => void;
-  tempValue: string;
-  setTempValue: (str: string) => void;
-  maxModifireValue: string;
-  setMaxModifireValue: (str: string) => void;
 }
 
-export const useHPDialogStore = create<HPDialogState>()((set) => ({
+export const useManaDialogStore = create<ManaDialogState>()((set) => ({
   isOpen: false,
   isLoading: false,
   dialogActions: {
@@ -29,45 +24,23 @@ export const useHPDialogStore = create<HPDialogState>()((set) => ({
   },
   value: { val: "0" },
   setValue: (val) => set({ value: val }),
-  tempValue: "",
-  setTempValue: (str) => set({ tempValue: str }),
-  maxModifireValue: "",
-  setMaxModifireValue: (str) => set({ maxModifireValue: str }),
 }));
 
 const selections = {
-  val: [...Array(151).keys()],
+  val: [...Array(11).keys()],
 };
 
 interface HPDialogProps {
-  onHeal: (val: number) => void;
-  onDamage: (val: number) => void;
-  onSave: (tempHp: string, maximumHp: string) => void;
-  tempHP: string;
-  maximumModifire: string;
+  onChange: (change: number) => void;
 }
 
-export const HPDialog = memo((p: HPDialogProps) => {
+export const ManaDialog = memo((p: HPDialogProps) => {
   const theme = useTheme();
-  const state = useHPDialogStore((state) => state);
-  const primaryColorString = usePrimaryColorString();
+  const state = useManaDialogStore((state) => state);
   const closeDialog = useCallback(() => {
     state.dialogActions.setIsOpen(false);
-    if (
-      p.maximumModifire != state.maxModifireValue ||
-      p.tempHP != state.tempValue
-    )
-      p.onSave(state.tempValue, state.maxModifireValue);
     state.setValue({ val: "0" });
-    state.setMaxModifireValue("");
-    state.setTempValue("");
-  }, [
-    state.isOpen,
-    state.maxModifireValue,
-    state.tempValue,
-    p.maximumModifire,
-    p.tempHP,
-  ]);
+  }, [state.isOpen]);
   const centerTextStyle = {
     "& .MuiInputBase-input": {
       textAlign: "center",
@@ -81,10 +54,7 @@ export const HPDialog = memo((p: HPDialogProps) => {
     () => ({ backgroundColor: theme.palette.error.main }),
     [theme.palette.primary]
   );
-  useEffect(() => {
-    state.setMaxModifireValue(p.maximumModifire);
-    state.setTempValue(p.tempHP);
-  }, [state.isOpen]);
+
   return (
     <BottomDialog isOpen={state.isOpen} onClose={closeDialog}>
       <div className="flex flex-col p-4">
@@ -97,11 +67,12 @@ export const HPDialog = memo((p: HPDialogProps) => {
                 style={HealColor}
                 variant="contained"
                 onClick={() => {
-                  p.onHeal(Number(state.value.val));
+                  if (state.value.val != "0")
+                    p.onChange(Number(state.value.val) * -1);
                   closeDialog();
                 }}
               >
-                Heal
+                Gain
               </Button>
             </div>
             <div className="grow h-full basis-0 mt-3">
@@ -121,11 +92,12 @@ export const HPDialog = memo((p: HPDialogProps) => {
                 className="h-full"
                 variant="contained"
                 onClick={() => {
-                  p.onDamage(Number(state.value.val));
+                  if (state.value.val != "0")
+                    p.onChange(Number(state.value.val));
                   closeDialog();
                 }}
               >
-                Damage
+                Spend
               </Button>
             </div>
           </div>
@@ -148,22 +120,6 @@ export const HPDialog = memo((p: HPDialogProps) => {
             </Picker>
           </div>
         </div>
-        <TextField
-          className="mt-4"
-          value={state.tempValue}
-          type="number"
-          label="Temp HP"
-          color={primaryColorString}
-          onChange={(e) => state.setTempValue(e.target.value)}
-        />
-        <TextField
-          className="mt-4"
-          value={state.maxModifireValue}
-          type="number"
-          label="Maximum HP Modifire"
-          color={primaryColorString}
-          onChange={(e) => state.setMaxModifireValue(e.target.value)}
-        />
       </div>
     </BottomDialog>
   );
