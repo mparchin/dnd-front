@@ -3,7 +3,7 @@ import SpellList from "./components/SpellList";
 import SpellDetailDialog from "./components/SpellDetailDialog";
 import FilterDialog from "./components/FilterDialog";
 import ReloadPrompt from "./reloadPrompt";
-import { useTheme } from "@mui/material";
+import { Backdrop, CircularProgress, useTheme } from "@mui/material";
 import { ThemeMode, useBgColor, usePrimaryColor, useThemeStore } from "./theme";
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
@@ -30,14 +30,33 @@ import CharactersList from "./components/CharactersList";
 import { Login } from "./components/Login";
 import { useEnsureLoggedIn } from "./api";
 import { NetworkPrompt } from "./components/NetworkPrompt";
+import { create } from "zustand";
+
+interface AppLoadingState {
+  isloading: boolean;
+  setLoading: (flag: boolean) => void;
+}
+
+export const useAppLoadingState = create<AppLoadingState>()((set) => ({
+  isloading: false,
+  setLoading: (flag) => set({ isloading: flag }),
+}));
 
 export default function App() {
   useEnsureLoggedIn();
+  const state = useAppLoadingState((state) => state);
   const theme = useTheme();
   const themeStore = useThemeStore((state) => state);
   const location = useLocation();
   const primaryColor = usePrimaryColor();
   const bgColor = useBgColor();
+  const progressSX = useMemo(
+    () => ({
+      color: primaryColor.main,
+      zIndex: (theme: any) => theme.zIndex.drawer + 1,
+    }),
+    [primaryColor]
+  );
   const bgColorStyle = useMemo(() => {
     return {
       backgroundColor: bgColor,
@@ -122,6 +141,9 @@ export default function App() {
         <></>
       )}
 
+      <Backdrop sx={progressSX} open={state.isloading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <GetAndSaveSpells />
       <GetAndSaveConditions />
       <GetAndSaveFeatures />

@@ -4,6 +4,7 @@ import { CharacterAttributes } from "./CharacterAttributes";
 import { CharacterExpert } from "./CharacterExpert";
 import { CharacterHitpoint } from "./CharacterHitpoint";
 import { CharacterSpellCasting } from "./CharacterSpellCasting";
+import { CharacterExtra } from "./CharacterExtra";
 
 export class Character {
   [immerable] = true;
@@ -47,6 +48,11 @@ export class Character {
   intimidation: CharacterExpert = new CharacterExpert("cha");
   performance: CharacterExpert = new CharacterExpert("cha");
   persuasion: CharacterExpert = new CharacterExpert("cha");
+
+  usedHitDie: number = 0;
+  usedHealingSurge: number = 0;
+
+  extras: CharacterExtra[] = [];
 
   time: number = 0;
 }
