@@ -5,7 +5,6 @@ import { ScrollerCards } from "./Characters/ScrollerCards";
 import { ProficientBox } from "./Characters/ProficientBox";
 import { ExpertBox } from "./Characters/ExpertBox";
 import { SensesBox } from "./Characters/SensesBox";
-import { ExtrasBox } from "./Characters/ExtrasBox";
 import { CharacterSpells } from "./Characters/CharacterSpells";
 import { CharacterInventory } from "./Characters/CharacterInventory";
 import { CharacterAttacks } from "./Characters/CharacterAttacks";
@@ -22,6 +21,9 @@ import {
   CalculateSpellAttack,
   CalculateSpellSaveDC,
 } from "../models/extraCalculations";
+import { create } from "zustand";
+import { CharacterExtras } from "./Characters/CharacterExtras";
+import { CharacterExtra } from "../models/Character/CharacterExtra";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -87,7 +89,18 @@ function setActiveTab(primaryColor: string) {
   else if (index == 11) setCardBackgroundColor("notesCard", primaryColor);
 }
 
+interface CharacterPageState {
+  extrasInEditMode: boolean;
+  setExtrasInEditMode: (flag: boolean) => void;
+}
+
+const useCharacterPageStore = create<CharacterPageState>()((set) => ({
+  extrasInEditMode: false,
+  setExtrasInEditMode: (flag) => set({ extrasInEditMode: flag }),
+}));
+
 export default function CharatersPage() {
+  const pageState = useCharacterPageStore((state) => state);
   const location = useLocation();
   const characterList = useCharacterListStore((state) => state.characters);
   const character = useMemo(
@@ -111,6 +124,27 @@ export default function CharatersPage() {
     }),
     [primaryColor]
   );
+  const characterExtras = useMemo(() => {
+    var arr = character.extras.slice();
+    arr.push(
+      new CharacterExtra(
+        -2,
+        `Hit dice D${character.class.hitDie}`,
+        "level",
+        character.usedHitDie,
+        false,
+        true
+      ),
+      new CharacterExtra(
+        -1,
+        "healing surge",
+        "1",
+        character.usedHealingSurge,
+        true
+      )
+    );
+    return arr;
+  }, [character]);
   if (character.id != location.state.charId) characterAPI.getAll();
   return (
     <div
@@ -457,9 +491,14 @@ export default function CharatersPage() {
           id="extras"
           className="flex flex-row flex-wrap p-2 justify-around w-full"
         >
-          <ExtrasBox name="Hit dice d12" total={3} used={1} />
-          <ExtrasBox name="rage" total={3} used={1} />
-          <ExtrasBox name="healing surge" total={1} used={1} />
+          <CharacterExtras
+            character={character}
+            extras={characterExtras}
+            isManageMode={pageState.extrasInEditMode}
+            onManageClicked={() =>
+              pageState.setExtrasInEditMode(!pageState.extrasInEditMode)
+            }
+          />
         </div>
         <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div

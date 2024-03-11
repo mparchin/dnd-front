@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { persist } from "zustand/middleware";
 import { Character } from "./models/Character/Character";
+import { CharacterExtra } from "./models/Character/CharacterExtra";
 
 export interface TokenState {
   token?: JWTToken;
@@ -32,7 +33,7 @@ export interface TokenState {
   setLastCheckedTime: (val: number) => void;
 }
 
-export const useTokenStore = create(
+export const useTokenStore = create<TokenState>()(
   persist<TokenState>(
     (set) => ({
       token: undefined,
@@ -165,3 +166,39 @@ export const getCharacters = (url: string, token: JWTToken) =>
   axios
     .get<Character[]>(`${apiAddress}/${url}`, header(token))
     .then((res) => res.data);
+
+export const createCharacterExtra = (
+  charId: number,
+  extra: CharacterExtra,
+  token: JWTToken
+) =>
+  axios
+    .post<CharacterExtra>(
+      `${apiAddress}/characters/${charId}/extras`,
+      extra,
+      header(token)
+    )
+    .then((res) => res.data);
+
+export const updateCharacterExtra = (
+  charId: number,
+  extra: CharacterExtra,
+  token: JWTToken
+) =>
+  axios
+    .put<CharacterExtra>(
+      `${apiAddress}/characters/${charId}/extras`,
+      extra,
+      header(token)
+    )
+    .then((res) => res.data);
+
+export const deleteCharacterExtra = (
+  charId: number,
+  extraId: number,
+  token: JWTToken
+) =>
+  axios.delete(
+    `${apiAddress}/characters/${charId}/extras/${extraId}`,
+    header(token)
+  );
