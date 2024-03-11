@@ -129,3 +129,8 @@ export function useBgColor() {
     ? theme.palette.grey[900]
     : theme.palette.background.default;
 }
+
+export function useBgColorStyle() {
+  const bgColor = useBgColor();
+  return { backgroundColor: bgColor };
+}

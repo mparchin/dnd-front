@@ -1,6 +1,6 @@
 import { useBgColor, usePrimaryColor, usePrimaryColorString } from "../theme";
-import { useCallback, useMemo } from "react";
-import { useCharacterListStore } from "../API/characters";
+import { useEffect, useMemo } from "react";
+import { useCharacterAPI, useCharacterListStore } from "../API/characters";
 import { Virtuoso } from "react-virtuoso";
 import { Dndsvg } from "../assets/dndsvg";
 import {
@@ -13,9 +13,6 @@ import {
 import { Add, ArrowForwardIos, Delete } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
-import { deleteCharacter, useTokenStore } from "../api";
-import { JWTToken } from "../models/spell";
-import { useNetworkStore } from "./NetworkPrompt";
 
 export interface CharacterListPageState {
   showDeleteOptions: boolean;
@@ -36,11 +33,10 @@ export const useCharacterListPageStore = create<CharacterListPageState>()(
 export default function () {
   const primaryColor = usePrimaryColor();
   const primarycolorString = usePrimaryColorString();
-  const token = useTokenStore((state) => state.token);
   const theme = useTheme();
-  const networkState = useNetworkStore((state) => state);
-  const charactersStore = useCharacterListStore((state) => state);
+  const characterListState = useCharacterListStore((state) => state);
   const pageState = useCharacterListPageStore((state) => state);
+  const characterAPI = useCharacterAPI();
   const navigate = useNavigate();
   const bgColor = useBgColor();
   const bgColorStyle = useMemo(
@@ -59,31 +55,17 @@ export default function () {
   const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
     primaryColor,
   ]);
-  const deleteCallback = useCallback(
-    (id: number) => {
-      pageState.setShowProgress(id);
-      deleteCharacter(id, token ?? new JWTToken())
-        .then(() => {
-          const chars = charactersStore.characters.filter(
-            (char) => char.id != id
-          );
-          charactersStore.setCharacters(
-            chars.length > 0 ? chars : [],
-            undefined
-          );
-        })
-        .catch(() => networkState.setConnectionError(true))
-        .finally(() => pageState.setShowProgress(0));
-    },
-    [token]
-  );
+
+  useEffect(() => {
+    characterAPI.getAll();
+  }, []);
 
   return (
     <>
       <div className="w-full h-full" style={bgColorStyle}>
         <Virtuoso
           className="overflow-auto box-border w-full h-full"
-          data={charactersStore.characters}
+          data={characterListState.characters}
           itemContent={(index, character) => {
             return (
               <>
@@ -116,7 +98,9 @@ export default function () {
                     onClick={(e) => {
                       if (pageState.showDeleteOptions) {
                         e.stopPropagation();
-                        deleteCallback(character.id);
+                        characterAPI.delete(character.id, (flag) =>
+                          pageState.setShowProgress(flag ? character.id : 0)
+                        );
                       }
                     }}
                   >
@@ -134,7 +118,7 @@ export default function () {
 
                 <div className="w-full h-0.5" style={dividerStyle}></div>
 
-                {index == charactersStore.characters.length - 1 ? (
+                {index == characterListState.characters.length - 1 ? (
                   <Dndsvg color={primaryColor.main} background={bgColor} />
                 ) : (
                   <></>

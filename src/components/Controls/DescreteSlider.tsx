@@ -7,6 +7,7 @@ interface DescreteSliderProps {
   className: string;
   value?: number;
   onChange?: (val: number) => void;
+  max?: number;
 }
 
 export const DescreteSlider = memo((p: DescreteSliderProps) => {
@@ -30,7 +31,7 @@ export const DescreteSlider = memo((p: DescreteSliderProps) => {
             step={1}
             marks
             min={1}
-            max={20}
+            max={p.max ?? 20}
             onChange={(_e, v) => {
               if (p.onChange) p.onChange(Number(v));
             }}

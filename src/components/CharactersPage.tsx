@@ -5,29 +5,25 @@ import { ScrollerCards } from "./Characters/ScrollerCards";
 import { ProficientBox } from "./Characters/ProficientBox";
 import { ExpertBox } from "./Characters/ExpertBox";
 import { SensesBox } from "./Characters/SensesBox";
-import { ExtrasBox } from "./Characters/ExtrasBox";
 import { CharacterSpells } from "./Characters/CharacterSpells";
 import { CharacterInventory } from "./Characters/CharacterInventory";
 import { CharacterAttacks } from "./Characters/CharacterAttacks";
 import { CharacterFeatures } from "./Characters/CharacterFeatures";
 import { StickyCard } from "./Characters/StickyCard";
 import { useLocation } from "react-router-dom";
-import { useCharacterListStore } from "../API/characters";
+import { useCharacterAPI, useCharacterListStore } from "../API/characters";
 import { Character } from "../models/Character/Character";
 import {
-  CalculateAC,
   CalculateAttribute,
-  CalculateCurrentHP,
-  CalculateCurrentMana,
-  CalculateCurrentMaximumHP,
   CalculateExpertTotalPassiveValue,
   CalculateExpertTotalValue,
-  CalculateMaximumMana,
   CalculateModifire,
-  CalculateProficiencyBonous,
   CalculateSpellAttack,
   CalculateSpellSaveDC,
 } from "../models/extraCalculations";
+import { create } from "zustand";
+import { CharacterExtras } from "./Characters/CharacterExtras";
+import { CharacterExtra } from "../models/Character/CharacterExtra";
 
 function scrollToDiv(elementId: string) {
   var topArrays = getTopArrays();
@@ -93,7 +89,18 @@ function setActiveTab(primaryColor: string) {
   else if (index == 11) setCardBackgroundColor("notesCard", primaryColor);
 }
 
+interface CharacterPageState {
+  extrasInEditMode: boolean;
+  setExtrasInEditMode: (flag: boolean) => void;
+}
+
+const useCharacterPageStore = create<CharacterPageState>()((set) => ({
+  extrasInEditMode: false,
+  setExtrasInEditMode: (flag) => set({ extrasInEditMode: flag }),
+}));
+
 export default function CharatersPage() {
+  const pageState = useCharacterPageStore((state) => state);
   const location = useLocation();
   const characterList = useCharacterListStore((state) => state.characters);
   const character = useMemo(
@@ -102,6 +109,7 @@ export default function CharatersPage() {
       new Character(),
     [location.state?.charId, characterList, location]
   );
+  const characterAPI = useCharacterAPI();
   const primaryColor = usePrimaryColor();
   const bgColor = useBgColor();
   const bgColorStyle = useMemo(
@@ -116,6 +124,28 @@ export default function CharatersPage() {
     }),
     [primaryColor]
   );
+  const characterExtras = useMemo(() => {
+    var arr = character.extras.slice();
+    arr.push(
+      new CharacterExtra(
+        -2,
+        `Hit dice D${character.class.hitDie}`,
+        "level",
+        character.usedHitDie,
+        false,
+        true
+      ),
+      new CharacterExtra(
+        -1,
+        "healing surge",
+        "1",
+        character.usedHealingSurge,
+        true
+      )
+    );
+    return arr;
+  }, [character]);
+  if (character.id != location.state.charId) characterAPI.getAll();
   return (
     <div
       id="scrollingContainer"
@@ -123,20 +153,7 @@ export default function CharatersPage() {
       onScroll={() => setActiveTab(primaryColor.main)}
     >
       <div className="sticky top-0 z-50" style={bgColorStyle}>
-        <StickyCard
-          armourClass={CalculateAC(character)}
-          currentHp={CalculateCurrentHP(character)}
-          maximumHp={CalculateCurrentMaximumHP(character)}
-          currentMana={CalculateCurrentMana(character)}
-          maximumMana={CalculateMaximumMana(character)}
-          profBonous={CalculateProficiencyBonous(
-            character.class.proficiencyBonous,
-            character.level
-          )}
-          speed={character.speed}
-          inititive={CalculateExpertTotalValue(character, character.inititive)}
-          inititiveAdvantage={character.inititive.hasAdvantage}
-        />
+        <StickyCard character={character} />
         <div className="flex flex-row overflow-auto">
           <ScrollerCards
             onClick={scrollToDiv}
@@ -292,7 +309,7 @@ export default function CharatersPage() {
             expert={character.athletics.isExpert}
             proficient={character.athletics.isProficient}
           />
-          <div className="h-4 w-full"></div>
+          <div className="h-14 w-full"></div>
           <ExpertBox
             attribute="dex"
             name="acrobatics"
@@ -320,7 +337,7 @@ export default function CharatersPage() {
             expert={character.stealth.isExpert}
             proficient={character.stealth.isProficient}
           />
-          <div className="h-4 w-full"></div>
+          <div className="h-14 w-full"></div>
           <ExpertBox
             attribute="int"
             name="arcana"
@@ -364,7 +381,7 @@ export default function CharatersPage() {
             expert={character.religion.isExpert}
             proficient={character.religion.isProficient}
           />
-          <div className="h-4 w-full"></div>
+          <div className="h-14 w-full"></div>
           <ExpertBox
             attribute="wis"
             name="animal handling"
@@ -408,7 +425,7 @@ export default function CharatersPage() {
             expert={character.survival.isExpert}
             proficient={character.survival.isProficient}
           />
-          <div className="h-4 w-full"></div>
+          <div className="h-14 w-full"></div>
           <ExpertBox
             attribute="cha"
             name="deception"
@@ -474,9 +491,14 @@ export default function CharatersPage() {
           id="extras"
           className="flex flex-row flex-wrap p-2 justify-around w-full"
         >
-          <ExtrasBox name="Hit dice d12" total={3} used={1} />
-          <ExtrasBox name="rage" total={3} used={1} />
-          <ExtrasBox name="healing surge" total={1} used={1} />
+          <CharacterExtras
+            character={character}
+            extras={characterExtras}
+            isManageMode={pageState.extrasInEditMode}
+            onManageClicked={() =>
+              pageState.setExtrasInEditMode(!pageState.extrasInEditMode)
+            }
+          />
         </div>
         <div className="h-0.5 w-screen m-5" style={dividerColor}></div>
         <div

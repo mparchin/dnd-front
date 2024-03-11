@@ -6,11 +6,13 @@ import { create } from "zustand";
 export interface NetworkState {
   connectionError: boolean;
   setConnectionError: (flag: boolean) => void;
+  report: () => void;
 }
 
 export const useNetworkStore = create<NetworkState>()((set) => ({
   connectionError: false,
   setConnectionError: (flag) => set({ connectionError: flag }),
+  report: () => set({ connectionError: true }),
 }));
 
 export const NetworkPrompt = memo(() => {

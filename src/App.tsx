@@ -30,7 +30,6 @@ import CharactersList from "./components/CharactersList";
 import { Login } from "./components/Login";
 import { useEnsureLoggedIn } from "./api";
 import { NetworkPrompt } from "./components/NetworkPrompt";
-import GetAndSaveCharacters from "./API/characters";
 
 export default function App() {
   useEnsureLoggedIn();
@@ -129,7 +128,6 @@ export default function App() {
       <GetAndSaveFeats />
       <GetAndSaveRules />
       <GetAndSaveClasses />
-      <GetAndSaveCharacters />
     </>
   );
 }
