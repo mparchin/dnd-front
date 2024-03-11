@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import { Add } from "@mui/icons-material";
 import { ExtraDialog, useExtraDialogState } from "./Edit/ExtraDialog";
 import { useCharacterAPI } from "../../API/characters";
+import { useAppLoadingState } from "../../App";
 
 interface CharacterExtrasProps {
   extras: CharacterExtra[];
@@ -20,6 +21,7 @@ export const CharacterExtras = (p: CharacterExtrasProps) => {
   const characterAPI = useCharacterAPI();
   const primaryColorString = usePrimaryColorString();
   const primaryColor = usePrimaryColor();
+  const setAppLoadingState = useAppLoadingState((state) => state.setLoading);
   const { openCreate, openEdit, openUse } = useExtraDialogState(
     (state) => state
   );
@@ -60,7 +62,11 @@ export const CharacterExtras = (p: CharacterExtrasProps) => {
               if (!p.isManageMode) openUse(extra);
             }}
             onDeleteClick={() =>
-              characterAPI.deleteExtra(p.character.id, extra.id)
+              characterAPI.deleteExtra(
+                p.character.id,
+                extra.id,
+                setAppLoadingState
+              )
             }
           />
         ))}
@@ -81,16 +87,21 @@ export const CharacterExtras = (p: CharacterExtrasProps) => {
       )}
       <ExtraDialog
         character={p.character}
-        onCreate={(extra) => characterAPI.createExtra(p.character.id, extra)}
-        onEdit={(extra) => characterAPI.updateExtra(p.character.id, extra)}
+        onCreate={(extra) =>
+          characterAPI.createExtra(p.character.id, extra, setAppLoadingState)
+        }
+        onEdit={(extra) =>
+          characterAPI.updateExtra(p.character.id, extra, setAppLoadingState)
+        }
         onUse={(extra) => {
           if (extra.id == -2) {
             p.character.usedHitDie = extra.used;
-            characterAPI.update(p.character);
+            characterAPI.update(p.character, setAppLoadingState);
           } else if (extra.id == -1) {
             p.character.usedHealingSurge = extra.used;
-            characterAPI.update(p.character);
-          } else characterAPI.updateExtra(p.character.id, extra);
+            characterAPI.update(p.character, setAppLoadingState);
+          } else
+            characterAPI.updateExtra(p.character.id, extra, setAppLoadingState);
         }}
       />
     </>

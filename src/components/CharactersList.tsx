@@ -13,6 +13,7 @@ import {
 import { Add, ArrowForwardIos, Delete } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
+import { useAppLoadingState } from "../App";
 
 export interface CharacterListPageState {
   showDeleteOptions: boolean;
@@ -31,6 +32,7 @@ export const useCharacterListPageStore = create<CharacterListPageState>()(
 );
 
 export default function () {
+  const setAppLoadingState = useAppLoadingState((state) => state.setLoading);
   const primaryColor = usePrimaryColor();
   const primarycolorString = usePrimaryColorString();
   const theme = useTheme();
@@ -57,7 +59,7 @@ export default function () {
   ]);
 
   useEffect(() => {
-    characterAPI.getAll();
+    characterAPI.getAll(setAppLoadingState);
   }, []);
 
   return (
