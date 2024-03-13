@@ -27,6 +27,7 @@ import { CharacterExpert } from "../models/Character/CharacterExpert";
 import { CharacterAttributes } from "../models/Character/CharacterAttributes";
 import { Character } from "../models/Character/Character";
 import { CalculateProficiencyBonous } from "../models/extraCalculations";
+import { Dndsvg } from "../assets/dndsvg";
 
 class ExpertEditClass implements ExpertEditState {
   [immerable] = true;
@@ -848,6 +849,7 @@ export default function () {
           proficiencyBonous={proficiencyBonous}
           editState={state.persuasion}
         />
+        <Dndsvg color={primaryColor.main} background={bgColor} />
       </div>
     </Dialog>
   );
