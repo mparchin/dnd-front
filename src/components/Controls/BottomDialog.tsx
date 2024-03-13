@@ -1,7 +1,8 @@
 import { Dialog, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React, { ReactNode, memo } from "react";
-import { useBgColorStyle } from "../../theme";
+import { useBgColor, useBgColorStyle, usePrimaryColor } from "../../theme";
+import { Dndsvg } from "../../assets/dndsvg";
 
 interface BottomDialogProps {
   isOpen: boolean;
@@ -20,6 +21,8 @@ const Transition = React.forwardRef(function Transition(
 
 export const BottomDialog = memo((p: BottomDialogProps) => {
   const bgStyle = useBgColorStyle();
+  const bgColor = useBgColor();
+  const primaryColor = usePrimaryColor();
   return (
     <Dialog
       className="w-screen sticky"
@@ -37,6 +40,7 @@ export const BottomDialog = memo((p: BottomDialogProps) => {
     >
       <div style={bgStyle} className="w-full">
         {p.children}
+        <Dndsvg color={primaryColor.main} background={bgColor} />
       </div>
     </Dialog>
   );
