@@ -1,5 +1,5 @@
 import { Error, WavingHand } from "@mui/icons-material";
-import { memo, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { create } from "zustand";
 import { usePrimaryColor, usePrimaryColorString } from "../theme";
 import {
@@ -9,9 +9,9 @@ import {
   TextField,
   useTheme,
 } from "@mui/material";
-import { TokenState, login, register, useTokenStore } from "../api";
+import { login, register, useAuthority } from "../api";
 import { AxiosError } from "axios";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface LoginPageState {
   showRegisterForm: boolean;
@@ -89,49 +89,9 @@ const validatePassword = (password: string) => password.length >= 6;
 const validateConfirmPassword = (password: string, confirm: string) =>
   password === confirm;
 
-const signin = (
-  state: LoginPageState,
-  tokenState: TokenState,
-  navigate: NavigateFunction
-) => {
-  state.actions.setShowProgress(true);
-  login({
-    email: state.email,
-    password: state.password,
-  })
-    .then(tokenState.setToken)
-    .catch((res: AxiosError) => {
-      if (res.response?.status == 401) state.actions.setShowLoginFailed(true);
-      else state.actions.setShowNetworkProblem(true);
-    })
-    .then(() => navigate("/"))
-    .finally(() => state.actions.setShowProgress(false));
-};
-
-const signup = (
-  state: LoginPageState,
-  tokenState: TokenState,
-  navigate: NavigateFunction
-) => {
-  state.actions.setShowProgress(true);
-  register({
-    email: state.email,
-    password: state.password,
-    name: state.name,
-  })
-    .then(tokenState.setToken)
-    .catch((res: AxiosError) => {
-      if (res.response?.status == 400)
-        state.actions.setShowEmailUniqityError(true);
-      else state.actions.setShowNetworkProblem(true);
-    })
-    .then(() => navigate("/"))
-    .finally(() => state.actions.setShowProgress(false));
-};
-
 export const Login = memo(() => {
   const state = useLoginPageStore((state) => state);
-  const tokenState = useTokenStore((state) => state);
+  const authority = useAuthority();
   const primaryColorString = usePrimaryColorString();
   const primaryColor = usePrimaryColor();
   const theme = useTheme();
@@ -150,6 +110,38 @@ export const Login = memo(() => {
     }),
     [primaryColor.main]
   );
+
+  const signUp = useCallback(() => {
+    state.actions.setShowProgress(true);
+    register({
+      email: state.email,
+      password: state.password,
+      name: state.name,
+    })
+      .then(authority.state.setToken)
+      .catch((res: AxiosError) => {
+        if (res.response?.status == 400)
+          state.actions.setShowEmailUniqityError(true);
+        else state.actions.setShowNetworkProblem(true);
+      })
+      .then(() => navigate("/"))
+      .finally(() => state.actions.setShowProgress(false));
+  }, []);
+
+  const signIn = useCallback(() => {
+    state.actions.setShowProgress(true);
+    login({
+      email: state.email,
+      password: state.password,
+    })
+      .then(authority.state.setToken)
+      .catch((res: AxiosError) => {
+        if (res.response?.status == 401) state.actions.setShowLoginFailed(true);
+        else state.actions.setShowNetworkProblem(true);
+      })
+      .then(() => navigate("/"))
+      .finally(() => state.actions.setShowProgress(false));
+  }, []);
 
   return (
     <div className="sm:w-3/5 w-full m-auto h-full flex flex-col">
@@ -286,8 +278,8 @@ export const Login = memo(() => {
                 (state.showRegisterForm && !confirmValidation)
               )
                 return;
-              if (state.showRegisterForm) signup(state, tokenState, navigate);
-              else signin(state, tokenState, navigate);
+              if (state.showRegisterForm) signUp();
+              else signIn();
             }}
             disabled={state.email == "" || state.password == ""}
           >

@@ -28,9 +28,9 @@ import CharacterEdit from "./components/CharacterEdit";
 import GetAndSaveClasses from "./API/classes";
 import CharactersList from "./components/CharactersList";
 import { Login } from "./components/Login";
-import { useEnsureLoggedIn } from "./api";
 import { NetworkPrompt } from "./components/NetworkPrompt";
 import { create } from "zustand";
+import { useAuthority } from "./api";
 
 interface AppLoadingState {
   isloading: boolean;
@@ -43,7 +43,7 @@ export const useAppLoadingState = create<AppLoadingState>()((set) => ({
 }));
 
 export default function App() {
-  useEnsureLoggedIn();
+  const authority = useAuthority();
   const state = useAppLoadingState((state) => state);
   const theme = useTheme();
   const themeStore = useThemeStore((state) => state);
@@ -62,6 +62,8 @@ export default function App() {
       backgroundColor: bgColor,
     };
   }, [bgColor]);
+
+  if (!authority.isLoggedIn) authority.login();
   return (
     <>
       <Helmet>

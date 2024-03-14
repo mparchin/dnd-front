@@ -56,7 +56,7 @@ export const ManaDialog = memo((p: HPDialogProps) => {
   );
 
   return (
-    <BottomDialog isOpen={state.isOpen} onClose={closeDialog}>
+    <BottomDialog isOpen={state.isOpen} onClose={closeDialog} disableAppbar>
       <div className="flex flex-col p-4">
         <div className="flex flex-row">
           <div className="flex flex-col grow basis-0">

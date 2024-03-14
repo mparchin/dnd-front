@@ -8,11 +8,9 @@ import {
   getCharacters,
   newCharacter,
   updateCharacterExtra,
-  useEnsureLoggedIn,
-  useTokenStore,
+  useAuthority,
 } from "../api";
 import { JWTToken } from "../models/spell";
-import { useNetworkStore } from "../components/NetworkPrompt";
 import { useCallback } from "react";
 import { CharacterExtra } from "../models/Character/CharacterExtra";
 
@@ -65,9 +63,8 @@ export const useCharacterAPI: () => CharacterAPI = () => {
     setLastGetAllTime,
     lastGetAllTime,
   } = useCharacterListStore((state) => state);
-  useEnsureLoggedIn();
-  const token = useTokenStore((state) => state.token) ?? new JWTToken();
-  const { report } = useNetworkStore((state) => state);
+  const authority = useAuthority();
+  const token = authority.state.token ?? new JWTToken();
 
   const createCallback = useCallback(
     (character: Character, showProgress?: (flag: boolean) => void) => {
@@ -78,7 +75,7 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(savedChar);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
@@ -95,7 +92,7 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(savedChar);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
@@ -111,7 +108,7 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           const chars = characters.filter((char) => char.id != id);
           setCharacters(chars.length > 0 ? chars : []);
         })
-        .catch(() => report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
@@ -128,7 +125,7 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           setCharacters(chars.length > 0 ? chars : []);
           setLastGetAllTime(new Date().getTime());
         })
-        .catch(() => report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
@@ -152,7 +149,7 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(char);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
@@ -177,7 +174,7 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(char);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
@@ -201,7 +198,7 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(char);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });

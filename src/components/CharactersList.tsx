@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { Add, ArrowForwardIos, Delete } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import { useAppLoadingState } from "../App";
 
@@ -41,6 +41,7 @@ export default function () {
   const characterAPI = useCharacterAPI();
   const navigate = useNavigate();
   const bgColor = useBgColor();
+  const location = useLocation();
   const bgColorStyle = useMemo(
     () => ({
       backgroundColor: bgColor,
@@ -60,7 +61,7 @@ export default function () {
 
   useEffect(() => {
     characterAPI.getAll(setAppLoadingState);
-  }, []);
+  }, [location.pathname]);
 
   return (
     <>
