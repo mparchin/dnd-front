@@ -63,7 +63,7 @@ export default function App() {
     };
   }, [bgColor]);
 
-  if (!authority.isLoggedIn) authority.login();
+  if (!authority.isLoggedIn && location.pathname != "/login") authority.login();
   return (
     <>
       <Helmet>
