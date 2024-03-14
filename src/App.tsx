@@ -5,7 +5,7 @@ import FilterDialog from "./components/FilterDialog";
 import ReloadPrompt from "./reloadPrompt";
 import { Backdrop, CircularProgress, useTheme } from "@mui/material";
 import { ThemeMode, useBgColor, usePrimaryColor, useThemeStore } from "./theme";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { ComingSoon } from "./components/CommingSoon";
 import SettingsPage from "./components/SettingsPage";
