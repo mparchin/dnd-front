@@ -126,7 +126,7 @@ export const Login = memo(() => {
       })
       .then(() => navigate("/"))
       .finally(() => state.actions.setShowProgress(false));
-  }, []);
+  }, [state]);
 
   const signIn = useCallback(() => {
     state.actions.setShowProgress(true);
@@ -141,7 +141,7 @@ export const Login = memo(() => {
       })
       .then(() => navigate("/"))
       .finally(() => state.actions.setShowProgress(false));
-  }, []);
+  }, [state]);
 
   return (
     <div className="sm:w-3/5 w-full m-auto h-full flex flex-col">

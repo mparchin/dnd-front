@@ -5,7 +5,7 @@ import FilterDialog from "./components/FilterDialog";
 import ReloadPrompt from "./reloadPrompt";
 import { Backdrop, CircularProgress, useTheme } from "@mui/material";
 import { ThemeMode, useBgColor, usePrimaryColor, useThemeStore } from "./theme";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { ComingSoon } from "./components/CommingSoon";
 import SettingsPage from "./components/SettingsPage";
@@ -63,7 +63,7 @@ export default function App() {
     };
   }, [bgColor]);
 
-  if (!authority.isLoggedIn) authority.login();
+  if (!authority.isLoggedIn && location.pathname != "/login") authority.login();
   return (
     <>
       <Helmet>
