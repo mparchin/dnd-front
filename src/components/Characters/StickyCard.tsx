@@ -217,6 +217,7 @@ export const StickyCard = memo((p: Props) => {
           update(p.character, hpDialogState.dialogActions.setIsLoading);
         }}
       />
+
       <ManaDialog
         onChange={(val) => {
           p.character.spellCasting.usedMana += val;

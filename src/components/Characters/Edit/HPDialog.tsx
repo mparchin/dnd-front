@@ -53,21 +53,19 @@ export const HPDialog = memo((p: HPDialogProps) => {
   const primaryColorString = usePrimaryColorString();
   const closeDialog = useCallback(() => {
     state.dialogActions.setIsOpen(false);
+    state.setValue({ val: "0" });
+    state.setMaxModifireValue("");
+    state.setTempValue("");
+  }, []);
+
+  const saveData = useCallback(() => {
     if (
       p.maximumModifire != state.maxModifireValue ||
       p.tempHP != state.tempValue
     )
       p.onSave(state.tempValue, state.maxModifireValue);
-    state.setValue({ val: "0" });
-    state.setMaxModifireValue("");
-    state.setTempValue("");
-  }, [
-    state.isOpen,
-    state.maxModifireValue,
-    state.tempValue,
-    p.maximumModifire,
-    p.tempHP,
-  ]);
+  }, [state.maxModifireValue, state.tempValue, p.maximumModifire, p.tempHP]);
+
   const centerTextStyle = {
     "& .MuiInputBase-input": {
       textAlign: "center",
@@ -86,7 +84,7 @@ export const HPDialog = memo((p: HPDialogProps) => {
     state.setTempValue(p.tempHP);
   }, [state.isOpen]);
   return (
-    <BottomDialog isOpen={state.isOpen} onClose={closeDialog}>
+    <BottomDialog isOpen={state.isOpen} onSave={saveData} onClose={closeDialog}>
       <div className="flex flex-col p-4">
         <div className="flex flex-row">
           <div className="flex flex-col grow basis-0">

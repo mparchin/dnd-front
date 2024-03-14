@@ -6,10 +6,10 @@ import { Character } from "../../models/Character/Character";
 export const CharacterNameAppBar = memo(() => {
   const location = useLocation();
   const characterList = useCharacterListStore((state) => state.characters);
-  const localId = location.state?.charid ?? 0;
+  const localId = location.state?.charId ?? 0;
   const character = useMemo(
     () => characterList.find((char) => char.id == localId) ?? new Character(),
-    [localId, characterList]
+    [location, location.state]
   );
   if (character.id)
     return (
