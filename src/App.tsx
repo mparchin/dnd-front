@@ -1,6 +1,6 @@
 import SearchAppBar from "./components/SearchAppBar";
 import SpellList from "./components/SpellList";
-import SpellDetailDialog from "./components/SpellDetailDialog";
+import { SpellDetailDialog } from "./components/SpellDetailDialog";
 import FilterDialog from "./components/FilterDialog";
 import ReloadPrompt from "./reloadPrompt";
 import { Backdrop, CircularProgress, useTheme } from "@mui/material";
@@ -94,7 +94,7 @@ export default function App() {
         <div className="flex-grow flex flex-shrink basis-auto overflow-auto">
           {location.pathname == "/spells" ||
           location.pathname == "/filter" ||
-          location.pathname.includes("details") ? (
+          location.pathname == "/details" ? (
             <SpellList />
           ) : location.pathname == "/settings" ? (
             <SettingsPage />
@@ -115,9 +115,9 @@ export default function App() {
           ) : location.pathname == "/rules" ? (
             <RulesPage />
           ) : location.pathname.includes("characters") ? (
-            // <CharatersPage />
             <CharactersList />
-          ) : location.pathname.includes("character") ? (
+          ) : location.pathname.includes("character") ||
+            location.pathname == "/charSpellDetails" ? (
             <CharatersPage />
           ) : (
             <ComingSoon />
@@ -126,7 +126,7 @@ export default function App() {
       </div>
       {location.pathname == "/spells" ||
       location.pathname == "/filter" ||
-      location.pathname.includes("details") ? (
+      location.pathname == "/details" ? (
         <>
           <SpellDetailDialog />
           <FilterDialog />
@@ -137,8 +137,12 @@ export default function App() {
       ) : location.pathname == "/feats" ||
         location.pathname == "/featsFilter" ? (
         <FeatsFilterDialog />
-      ) : location.pathname.includes("haracter") ? (
-        <CharacterEdit />
+      ) : location.pathname.includes("haracter") ||
+        location.pathname == "/charSpellDetails" ? (
+        <>
+          <SpellDetailDialog />
+          <CharacterEdit />
+        </>
       ) : (
         <></>
       )}

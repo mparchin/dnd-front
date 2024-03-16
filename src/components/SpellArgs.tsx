@@ -1,9 +1,11 @@
+import { memo } from "react";
+
 interface ISpellArgs {
   name: string;
   value: string | undefined;
 }
 
-export default function SpellArgs({ name, value }: ISpellArgs) {
+export const SpellArgs = memo(({ name, value }: ISpellArgs) => {
   if (value != undefined && value)
     return (
       <div className="flex">
@@ -14,4 +16,4 @@ export default function SpellArgs({ name, value }: ISpellArgs) {
       </div>
     );
   return <></>;
-}
+});

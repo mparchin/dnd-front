@@ -58,6 +58,12 @@ export const StickyCard = memo((p: Props) => {
     }),
     [theme.palette.primary]
   );
+  const whiteColor = useMemo(
+    () => ({
+      color: theme.palette.common.white,
+    }),
+    [theme.palette.common.white]
+  );
   return (
     <>
       <Card className="w-full p-2" elevation={3}>
@@ -90,7 +96,7 @@ export const StickyCard = memo((p: Props) => {
                 onClick={() => hpDialogState.dialogActions.setIsOpen(true)}
               >
                 {hpDialogState.isLoading ? (
-                  <CircularProgress style={HpColor} />
+                  <CircularProgress style={whiteColor} />
                 ) : (
                   <>
                     <div className="grow basis-0 text-xl">
@@ -107,7 +113,7 @@ export const StickyCard = memo((p: Props) => {
                 onClick={() => manaDialogState.dialogActions.setIsOpen(true)}
               >
                 {manaDialogState.isLoading ? (
-                  <CircularProgress style={ManaColor} />
+                  <CircularProgress style={whiteColor} />
                 ) : (
                   <>
                     <div className="grow basis-0 text-xl">
@@ -219,6 +225,10 @@ export const StickyCard = memo((p: Props) => {
       />
 
       <ManaDialog
+        level6={!p.character.spellCasting.used6thLevel}
+        level7={!p.character.spellCasting.used7thLevel}
+        level8={!p.character.spellCasting.used8thLevel}
+        level9={!p.character.spellCasting.used9thLevel}
         onChange={(val) => {
           p.character.spellCasting.usedMana += val;
           if (
@@ -230,6 +240,13 @@ export const StickyCard = memo((p: Props) => {
             );
           if (p.character.spellCasting.usedMana < 0)
             p.character.spellCasting.usedMana = 0;
+          update(p.character, manaDialogState.dialogActions.setIsLoading);
+        }}
+        onSave={(state) => {
+          p.character.spellCasting.used6thLevel = !state.level6;
+          p.character.spellCasting.used7thLevel = !state.level7;
+          p.character.spellCasting.used8thLevel = !state.level8;
+          p.character.spellCasting.used9thLevel = !state.level9;
           update(p.character, manaDialogState.dialogActions.setIsLoading);
         }}
       />
