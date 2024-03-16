@@ -14,12 +14,8 @@ import { useLocation } from "react-router-dom";
 import { useCharacterAPI, useCharacterListStore } from "../API/characters";
 import { Character } from "../models/Character/Character";
 import {
-  CalculateAttribute,
   CalculateExpertTotalPassiveValue,
   CalculateExpertTotalValue,
-  CalculateModifire,
-  CalculateSpellAttack,
-  CalculateSpellSaveDC,
 } from "../models/extraCalculations";
 import { create } from "zustand";
 import { CharacterExtras } from "./Characters/CharacterExtras";
@@ -92,11 +88,15 @@ function setActiveTab(primaryColor: string) {
 interface CharacterPageState {
   extrasInEditMode: boolean;
   setExtrasInEditMode: (flag: boolean) => void;
+  spellsInEditMode: boolean;
+  setSpellsInEditMode: (flag: boolean) => void;
 }
 
 const useCharacterPageStore = create<CharacterPageState>()((set) => ({
   extrasInEditMode: false,
   setExtrasInEditMode: (flag) => set({ extrasInEditMode: flag }),
+  spellsInEditMode: false,
+  setSpellsInEditMode: (flag) => set({ spellsInEditMode: flag }),
 }));
 
 export default function CharatersPage() {
@@ -546,82 +546,11 @@ export default function CharatersPage() {
           className="flex flex-row flex-wrap p-2 pt-0 justify-around w-full"
         >
           <CharacterSpells
-            attributeModifire={CalculateModifire(
-              CalculateAttribute(
-                character.spellCasting.castingAbility,
-                character.attributes
-              )
-            )}
-            attackBonous={CalculateSpellAttack(character)}
-            saveDc={CalculateSpellSaveDC(character)}
-            spells={[
-              {
-                id: 0,
-                level: 0,
-                name: "primal savagery",
-                time: "action",
-                prepaired: true,
-              },
-              {
-                id: 1,
-                level: 0,
-                name: "primal savagery",
-                time: "action",
-                prepaired: true,
-              },
-              {
-                id: 2,
-                level: 0,
-                name: "primal savagery",
-                time: "action",
-                prepaired: true,
-              },
-              {
-                id: 3,
-                level: 0,
-                name: "primal savagery",
-                time: "action",
-                prepaired: true,
-              },
-              {
-                id: 4,
-                level: 0,
-                name: "primal savagery",
-                time: "action",
-                prepaired: true,
-              },
-              {
-                id: 5,
-                level: 1,
-                name: "primal savagery",
-                time: "action",
-                prepaired: true,
-                concentration: true,
-              },
-              {
-                id: 6,
-                level: 1,
-                name: "primal savagery",
-                time: "action",
-                prepaired: true,
-                concentration: true,
-              },
-              {
-                id: 7,
-                level: 2,
-                name: "primal savagery",
-                time: "action",
-                prepaired: true,
-                concentration: true,
-                ritual: true,
-              },
-              {
-                id: 8,
-                level: 2,
-                name: "primal savagery",
-                time: "action",
-              },
-            ]}
+            character={character}
+            isManageMode={pageState.spellsInEditMode}
+            onManageClick={() =>
+              pageState.setSpellsInEditMode(!pageState.spellsInEditMode)
+            }
           />
         </div>
 

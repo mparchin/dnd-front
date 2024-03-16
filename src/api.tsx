@@ -19,6 +19,7 @@ import { Character } from "./models/Character/Character";
 import { CharacterExtra } from "./models/Character/CharacterExtra";
 import { useNetworkStore } from "./components/NetworkPrompt";
 import { useAppLoadingState } from "./App";
+import { CharacterSpell } from "./models/Character/CharacterSpell";
 
 export interface TokenState {
   token?: JWTToken;
@@ -127,7 +128,10 @@ export function useAuthority(): AuthorityFunc {
             }
             report();
           })
-          .finally(() => setLoading(false));
+          .finally(() => {
+            setLoading(false);
+            report();
+          });
         return;
       }
       report();
@@ -193,5 +197,41 @@ export const deleteCharacterExtra = (
 ) =>
   axios.delete(
     `${apiAddress}/characters/${charId}/extras/${extraId}`,
+    header(token)
+  );
+
+export const createCharacterSpell = (
+  charId: number,
+  spell: CharacterSpell,
+  token: JWTToken
+) =>
+  axios
+    .post<CharacterSpell>(
+      `${apiAddress}/characters/${charId}/spells`,
+      spell,
+      header(token)
+    )
+    .then((res) => res.data);
+
+export const updateCharacterSpell = (
+  charId: number,
+  spell: CharacterSpell,
+  token: JWTToken
+) =>
+  axios
+    .put<CharacterSpell>(
+      `${apiAddress}/characters/${charId}/spells`,
+      spell,
+      header(token)
+    )
+    .then((res) => res.data);
+
+export const deleteCharacterSpell = (
+  charId: number,
+  spellId: number,
+  token: JWTToken
+) =>
+  axios.delete(
+    `${apiAddress}/characters/${charId}/spells/${spellId}`,
     header(token)
   );

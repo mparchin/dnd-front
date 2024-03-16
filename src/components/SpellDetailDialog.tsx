@@ -1,21 +1,24 @@
 import { Spell } from "../models/spell";
 import {
   Card,
+  CircularProgress,
+  Fab,
   IconButton,
   SwipeableDrawer,
   Typography,
   useTheme,
 } from "@mui/material";
 import {
+  Add,
   ArrowBackIosNew,
   AutoStories,
   Pets,
   TempleHindu,
 } from "@mui/icons-material";
-import SpellArgs from "./SpellArgs";
+import { SpellArgs } from "./SpellArgs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { create } from "zustand";
-import { useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { Dndsvg } from "../assets/dndsvg";
 import {
   useBgColor,
@@ -23,22 +26,34 @@ import {
   usePrimaryColorString,
   useThemeStore,
 } from "../theme";
+import { useCharacterAPI, useCharacterListStore } from "../API/characters";
+import { BottomDialog } from "./Controls/BottomDialog";
+import { CharacterListItem } from "./CharactersList";
+import { CharacterSpell } from "../models/Character/CharacterSpell";
 
 interface SpellDetailState {
   spell?: Spell;
   isOpen: boolean;
+  isLoading: boolean;
+  bottomIsOpen: boolean;
   open: (spell?: Spell) => void;
   close: (spell?: Spell) => void;
+  setIsLoading: (flag: boolean) => void;
+  setBottomIsOpen: (flag: boolean) => void;
 }
 
 const useSpellDetailStore = create<SpellDetailState>()((set) => ({
   spell: undefined,
   isOpen: false,
+  isLoading: false,
+  bottomIsOpen: false,
   open: (spell) => set({ spell: spell, isOpen: true }),
   close: (spell) => set({ spell: spell, isOpen: false }),
+  setIsLoading: (flag) => set({ isLoading: flag }),
+  setBottomIsOpen: (flag) => set({ bottomIsOpen: flag }),
 }));
 
-export default function SpellDetailDialog() {
+export const SpellDetailDialog = memo(() => {
   const theme = useTheme();
   const themeStore = useThemeStore();
   const primaryColor = usePrimaryColor();
@@ -46,16 +61,24 @@ export default function SpellDetailDialog() {
   const bgColor = useBgColor();
   const location = useLocation();
   const navigate = useNavigate();
-  const IsOpenRequest = () => location.pathname.includes("details");
+  const IsOpenRequest = () =>
+    location.pathname == "/details" || location.pathname == "/charSpellDetails";
   const CloseRequest = () => {
-    if (IsOpenRequest()) navigate(-1);
+    if (IsOpenRequest() && location.pathname == "/details") navigate(-1);
+    else if (IsOpenRequest() && location.pathname == "/charSpellDetails")
+      navigate("/characterView", {
+        state: { charId: location.state.charId },
+        replace: true,
+      });
   };
-  const { isOpen, spell, open, close } = useSpellDetailStore((state) => state);
+  const state = useSpellDetailStore((state) => state);
   useEffect(() => {
-    if (!isOpen && IsOpenRequest()) open(location.state.spell);
-    else if (isOpen && !IsOpenRequest()) close(spell);
-  }, [isOpen, IsOpenRequest, spell]);
+    if (!state.isOpen && IsOpenRequest()) state.open(location.state.spell);
+    else if (state.isOpen && !IsOpenRequest()) state.close(state.spell);
+  }, [state.isOpen, IsOpenRequest, state.spell]);
 
+  const characterAPI = useCharacterAPI();
+  const characters = useCharacterListStore((state) => state.characters);
   const drawerSx = useMemo(
     () => ({
       "& .MuiDrawer-paper": {
@@ -64,6 +87,14 @@ export default function SpellDetailDialog() {
       },
     }),
     [bgColor]
+  );
+
+  const dividerStyle = useMemo(() => ({ backgroundColor: primaryColor.main }), [
+    primaryColor,
+  ]);
+  const iconStyle = useMemo(
+    () => ({ color: theme.palette.background.default }),
+    [theme.palette.mode]
   );
 
   const cardSx = useMemo(
@@ -81,30 +112,30 @@ export default function SpellDetailDialog() {
   const descriptionInnerHtml = useMemo(
     () => ({
       __html:
-        spell?.description
+        state.spell?.description
           .replace(/color:hsl\(0, 0%, 0%\);/g, "")
           .replace(/color:hsl\(0,0%,0%\);/g, "") ?? "",
     }),
-    [spell?.description]
+    [state.spell?.description]
   );
 
   const higherDescriptionInnerHtml = useMemo(
     () => ({
-      __html: (spell?.higherLevelDescription ?? "")
+      __html: (state.spell?.higherLevelDescription ?? "")
         .replace(/color:hsl\(0, 0%, 0%\);/g, "")
         .replace(/color:hsl\(0,0%,0%\);/g, ""),
     }),
-    [spell?.higherLevelDescription]
+    [state.spell?.higherLevelDescription]
   );
 
   return (
     <SwipeableDrawer
       anchor={"right"}
-      open={isOpen}
+      open={state.isOpen}
       transitionDuration={200}
       disableDiscovery={true}
       onClose={() => CloseRequest()}
-      onOpen={() => open(spell)}
+      onOpen={() => state.open(state.spell)}
       elevation={0}
       sx={drawerSx}
     >
@@ -116,10 +147,12 @@ export default function SpellDetailDialog() {
             </IconButton>
           </div>
           <div className="grow-[3] basis-0 pt-4 text-center">
-            <Typography color={primaryColorString}>{spell?.name}</Typography>
+            <Typography color={primaryColorString}>
+              {state.spell?.name}
+            </Typography>
           </div>
           <div className="flex-grow basis-0 pt-4 pr-1 text-right">
-            {spell?.spellListName
+            {state.spell?.spellListName
               .split(",")
               .sort()
               .map((listName) => (
@@ -137,69 +170,74 @@ export default function SpellDetailDialog() {
         </div>
         <div className="w-full overflow-x-hidden overflow-y-auto flex-grow pl-3 pr-3">
           <Typography variant="h4" color={primaryColor.main}>
-            {spell?.name}
+            {state.spell?.name}
           </Typography>
           <div className="pl-2 pt-2 pr-2">
             <SpellArgs
               name="List"
-              value={spell?.spellListName.replace(/,/g, ", ")}
+              value={state.spell?.spellListName.replace(/,/g, ", ")}
             />
-            <SpellArgs name="Book" value={spell?.book} />
+            <SpellArgs name="Book" value={state.spell?.book} />
             <SpellArgs
               name="Level"
-              value={`${spell?.level == 0 ? "Cantrip" : spell?.level}`}
+              value={`${
+                state.spell?.level == 0 ? "Cantrip" : state.spell?.level
+              }`}
             />
-            <SpellArgs name="School" value={spell?.schoolName} />
+            <SpellArgs name="School" value={state.spell?.schoolName} />
             <SpellArgs
               name="Ritual"
-              value={spell?.isRitual ? "Yes" : undefined}
+              value={state.spell?.isRitual ? "Yes" : undefined}
             />
             <SpellArgs
               name="Casting time"
               value={
-                spell?.action === "Longer"
-                  ? spell?.longerAction
-                  : spell?.action == "BonusAction"
+                state.spell?.action === "Longer"
+                  ? state.spell?.longerAction
+                  : state.spell?.action == "BonusAction"
                   ? "Bonus Action"
-                  : spell?.action
+                  : state.spell?.action
               }
             />
             <SpellArgs
               name="Concentration"
-              value={spell?.isConcentration ? "Yes" : undefined}
+              value={state.spell?.isConcentration ? "Yes" : undefined}
             />
-            <SpellArgs name="Range" value={spell?.range} />
+            <SpellArgs name="Range" value={state.spell?.range} />
             <SpellArgs
               name="Components"
               value={
-                spell?.hasVerbalComponent &&
-                spell?.hasSomaticComponent &&
-                spell?.hasMaterialComponent
-                  ? `V, S, M (${spell?.materials})`
-                  : spell?.hasVerbalComponent && spell?.hasSomaticComponent
+                state.spell?.hasVerbalComponent &&
+                state.spell?.hasSomaticComponent &&
+                state.spell?.hasMaterialComponent
+                  ? `V, S, M (${state.spell?.materials})`
+                  : state.spell?.hasVerbalComponent &&
+                    state.spell?.hasSomaticComponent
                   ? "V, S"
-                  : spell?.hasVerbalComponent && spell?.hasMaterialComponent
-                  ? `V, M (${spell?.materials})`
-                  : spell?.hasSomaticComponent && spell?.hasMaterialComponent
-                  ? `S, M (${spell?.materials})`
-                  : spell?.hasVerbalComponent
+                  : state.spell?.hasVerbalComponent &&
+                    state.spell?.hasMaterialComponent
+                  ? `V, M (${state.spell?.materials})`
+                  : state.spell?.hasSomaticComponent &&
+                    state.spell?.hasMaterialComponent
+                  ? `S, M (${state.spell?.materials})`
+                  : state.spell?.hasVerbalComponent
                   ? "V"
-                  : spell?.hasSomaticComponent
+                  : state.spell?.hasSomaticComponent
                   ? "S"
-                  : spell?.hasMaterialComponent
-                  ? `M (${spell?.materials})`
+                  : state.spell?.hasMaterialComponent
+                  ? `M (${state.spell?.materials})`
                   : ""
               }
             />
-            <SpellArgs name="Duration" value={spell?.duration} />
+            <SpellArgs name="Duration" value={state.spell?.duration} />
             <SpellArgs
               name="Restricted to"
-              value={spell?.restrictedClasses?.join(", ")}
+              value={state.spell?.restrictedClasses?.join(", ")}
             />
             <div className="flex flex-row overflow-hidden flex-wrap">
-              {spell?.spellTags?.map((t) => (
+              {state.spell?.spellTags?.map((t) => (
                 <Card
-                  key={`card-${spell.id}-${t}`}
+                  key={`card-${state.spell?.id}-${t}`}
                   variant="elevation"
                   elevation={4}
                   sx={cardSx}
@@ -216,7 +254,7 @@ export default function SpellDetailDialog() {
                 }`}
                 dangerouslySetInnerHTML={descriptionInnerHtml}
               ></div>
-              {spell?.higherLevelDescription ? (
+              {state.spell?.higherLevelDescription ? (
                 <div className="pt-4">
                   <strong style={{ color: primaryColor.main }}>
                     At Higher Levels:{" "}
@@ -230,12 +268,12 @@ export default function SpellDetailDialog() {
               )}
             </div>
           </div>
-          {(spell?.relatedConditions?.length ?? 0) > 0 ? (
+          {(state.spell?.relatedConditions?.length ?? 0) > 0 ? (
             <div className="pt-3">
               <Typography variant="h6" color={primaryColor.main}>
                 Conditions
               </Typography>
-              {spell?.relatedConditions?.map((condition) => {
+              {state.spell?.relatedConditions?.map((condition) => {
                 const html = {
                   __html: condition.description
                     .replace(/color:hsl\(0, 0%, 0%\);/g, "")
@@ -260,6 +298,62 @@ export default function SpellDetailDialog() {
           <Dndsvg background={bgColor} color={primaryColor.main} />
         </div>
       </div>
+      <Fab
+        className="fixed bottom-8 right-8"
+        onClick={() => {
+          if (characters.length == 0)
+            characterAPI
+              .getAll(state.setIsLoading)
+              .then(() => state.setBottomIsOpen(true));
+          else state.setBottomIsOpen(true);
+        }}
+        style={dividerStyle}
+      >
+        {state.isLoading ? (
+          <CircularProgress style={iconStyle} />
+        ) : (
+          <Add style={iconStyle} />
+        )}
+      </Fab>
+      <BottomDialog
+        isOpen={state.bottomIsOpen}
+        disableAppbar
+        disableLogo
+        onClose={() => state.setBottomIsOpen(false)}
+      >
+        {characters.length != 0 ? (
+          characters.map((char) => {
+            return (
+              <CharacterListItem
+                key={char.id}
+                character={char}
+                hideIcons
+                onClick={(id) => {
+                  if (
+                    state.spell &&
+                    characters
+                      .find((c) => c.id == id)
+                      ?.spells?.find((s) => s.spellId == state.spell?.id) ==
+                      undefined
+                  )
+                    characterAPI.createSpell(
+                      id,
+                      new CharacterSpell(0, state.spell.id),
+                      state.setIsLoading
+                    );
+                  state.setBottomIsOpen(false);
+                }}
+              />
+            );
+          })
+        ) : (
+          <div className="h-28 flex flex-col p-2">
+            <div className="grow"></div>
+            Please first make a character in characters page
+            <div className="grow"></div>
+          </div>
+        )}
+      </BottomDialog>
     </SwipeableDrawer>
   );
-}
+});
