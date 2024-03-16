@@ -177,14 +177,14 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
               (level == 8 && props.character.spellCasting.used8thLevel) ||
               (level == 9 && props.character.spellCasting.used9thLevel) ? (
                 <Circle
-                  className="w-4 mb-0.5 mt-0.5 shrink-0"
+                  className="w-4 ml-0.5 mb-2 mt-0.5 shrink-0"
                   filled={true}
                   text="U"
                 />
               ) : (
                 <></>
               )}
-              <div className="uppercase text-vertical-lr text-sm text-center">
+              <div className="uppercase text-vertical-lr text-sm text-center pr-1.5">
                 {level == 0 ? "cantrips" : `level ${level}`}
               </div>
             </div>
@@ -287,6 +287,8 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
                         <span className="capitalize text-xxs">
                           {spell.spell.action == "Longer"
                             ? spell.spell.longerAction
+                            : spell.spell.action == "BonusAction"
+                            ? "Bonus Action"
                             : spell.spell.action}
                         </span>
                         <span className="grow"></span>
