@@ -198,10 +198,10 @@ export const ManaDialog = memo((p: HPDialogProps) => {
           </FormGroup>
         </div>
         <div className="text-xs m-1 ml-4">
-          You can only cast higher level spells once per turn
+          You can only cast higher level spells once per long rest
         </div>
         <div className="text-xs m-1 ml-4 mb-10">
-          Above switches are on if the appropriate spell slot is available to
+          Above switches are on, if the appropriate spell slot is available to
           you
         </div>
       </div>

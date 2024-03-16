@@ -170,8 +170,10 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
           key={level}
           className="w-96 flex flex-row mb-10 mr-4 ml-4 last:mb-2 md:last:mb-10"
         >
-          <Card className="p-2 pt-4 pb-4" elevation={3}>
+          <Card className="p-2 w-10 flex flex-row" elevation={3}>
+            <div className="grow"></div>
             <div className="flex flex-col">
+              <div className="grow"></div>
               {(level == 6 && props.character.spellCasting.used6thLevel) ||
               (level == 7 && props.character.spellCasting.used7thLevel) ||
               (level == 8 && props.character.spellCasting.used8thLevel) ||
@@ -184,10 +186,12 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
               ) : (
                 <></>
               )}
-              <div className="uppercase text-vertical-lr text-sm text-center pr-1.5">
+              <div className="uppercase text-vertical-lr text-sm text-center">
                 {level == 0 ? "cantrips" : `level ${level}`}
               </div>
+              <div className="grow"></div>
             </div>
+            <div className="grow"></div>
           </Card>
           <div className="grow flex flex-col w-full pr-4">
             {spells
@@ -400,7 +404,7 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
                 return (
                   <Button
                     key={level}
-                    className="w-88 mb-2 p-4"
+                    className="w-88 m-2 p-4"
                     variant="outlined"
                     color={primaryColorString}
                     onClick={() => {
