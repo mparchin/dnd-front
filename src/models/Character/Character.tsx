@@ -11,6 +11,7 @@ export class Character {
   [immerable] = true;
   id: number = 0;
   name: string = "";
+  playerName: string = "";
   race: string = "";
   background: string = "";
   image?: string;

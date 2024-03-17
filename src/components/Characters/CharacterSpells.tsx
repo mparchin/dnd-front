@@ -1,4 +1,4 @@
-import { Button, Card, CircularProgress } from "@mui/material";
+import { Button, Card, CircularProgress, useTheme } from "@mui/material";
 import { Circle } from "../../assets/circle";
 import { memo, useMemo } from "react";
 import { usePrimaryColor, usePrimaryColorString } from "../../theme";
@@ -55,6 +55,7 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
   const spellList = useSpellListStore((state) => state.spells);
   const primaryColorString = usePrimaryColorString();
   const primaryColor = usePrimaryColor();
+  const theme = useTheme();
   const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
     primaryColor,
   ]);
@@ -104,7 +105,8 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
           <div className="grow">
             <span className="text-2xl font-bold">
               <span style={coloredStyle}>
-                {spells.filter((s) => s.charSpell.isPrepared).length}
+                {spells.filter((s) => s.charSpell.isPrepared).length -
+                  spells.filter((s) => s.charSpell.isAlwaysPrepared).length}
               </span>
             </span>
           </div>
@@ -157,7 +159,11 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
 
       {props.isManageMode ? (
         <div
-          className={props.isManageMode ? "m-2 text-xs mb-10" : "m-2 text-xs"}
+          className={
+            props.isManageMode
+              ? "m-2 text-xs mb-10 w-full text-center"
+              : "m-2 text-xs"
+          }
         >
           You can add more spells from spell page
         </div>
@@ -168,7 +174,7 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
       {spellLevels.map((level) => (
         <div
           key={level}
-          className="w-96 flex flex-row mb-10 mr-4 ml-4 last:mb-2 md:last:mb-10"
+          className="w-full max-w-sm flex flex-row mb-10 mr-4 ml-4 last:mb-2 md:last:mb-10"
         >
           <Card className="p-2 w-10 flex flex-row" elevation={3}>
             <div className="grow"></div>
@@ -182,6 +188,7 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
                   className="w-4 ml-0.5 mb-2 mt-0.5 shrink-0"
                   filled={true}
                   text="U"
+                  color={theme.palette.error.main}
                 />
               ) : (
                 <></>
@@ -199,7 +206,7 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
               .map((spell) => (
                 <div
                   key={spell.spell.id}
-                  className="w-72 flex flex-row ml-2 pb-2 pt-2 border-b-2 rounded-md"
+                  className="w-full flex flex-row ml-2 pb-2 pt-2 border-b-2 rounded-md"
                   onClick={() =>
                     navigate("charSpellDetails", {
                       state: { charId: props.character.id, spell: spell.spell },
@@ -209,32 +216,39 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
                 >
                   {!props.isManageMode && spell.spell.level > 0 ? (
                     <div className="flex flex-col">
+                      <div className="grow"></div>
                       <Circle
                         className="w-4 mb-0.5 mt-0.5 shrink-0"
                         filled={spell.charSpell.isPrepared}
                         text="P"
                       />
+                      <div className="grow"></div>
                       <Circle
                         className="w-4 mb-0.5 mt-0.5 shrink-0"
                         filled={spell.spell.isConcentration}
                         text="C"
                       />
+                      <div className="grow"></div>
                       <Circle
                         className="w-4 mb-0.5 mt-0.5 shrink-0"
                         filled={spell.spell.isRitual}
                         text="R"
                       />
+                      <div className="grow"></div>
                     </div>
                   ) : props.isManageMode && spell.spell.level > 0 ? (
                     <div className="flex flex-col basis-0">
-                      <div className="grow"></div>
                       <Button
                         variant="outlined"
-                        className=""
+                        className="grow mb-2"
                         color={primaryColorString}
                         style={
-                          spell.charSpell.isPrepared ? buttonStyle : undefined
+                          spell.charSpell.isPrepared &&
+                          !spell.charSpell.isAlwaysPrepared
+                            ? buttonStyle
+                            : undefined
                         }
+                        disabled={spell.charSpell.isAlwaysPrepared}
                         onClick={(e) => {
                           e.stopPropagation();
                           var entity = structuredClone(spell.charSpell);
@@ -263,17 +277,55 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
                           "P"
                         )}
                       </Button>
-                      <div className="grow"></div>
+                      <Button
+                        variant="outlined"
+                        className="grow"
+                        color={primaryColorString}
+                        style={
+                          spell.charSpell.isAlwaysPrepared
+                            ? buttonStyle
+                            : undefined
+                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          var entity = structuredClone(spell.charSpell);
+                          entity.isAlwaysPrepared = !spell.charSpell
+                            .isAlwaysPrepared;
+                          entity.isPrepared = true;
+                          characterAPI.updateSpell(
+                            props.character.id,
+                            entity,
+                            (flag) =>
+                              state.setPrepareLoadingId(
+                                flag ? spell.spell.id : 0
+                              )
+                          );
+                        }}
+                      >
+                        {state.prepareLoadingId == spell.spell.id ? (
+                          <CircularProgress
+                            size="1.5rem"
+                            color={primaryColorString}
+                            style={
+                              spell.charSpell.isPrepared
+                                ? buttonStyle
+                                : undefined
+                            }
+                          />
+                        ) : (
+                          "A"
+                        )}
+                      </Button>
                     </div>
                   ) : (
                     <></>
                   )}
 
                   <div className="ml-2 mr-2 basis-0 grow flex flex-row flex-wrap">
-                    <div className="capitalize grow flex flex-col">
+                    <div className="capitalize grow flex flex-col w-full m-1 ml-0 mt-0">
                       <span className="grow"></span>
                       <span
-                        className={`capitalize ${
+                        className={`capitalize text-lg ${
                           spell.spell.name.match(/\b[^ \t\n\.]{15,}\b/i)
                             ? "break-all"
                             : "break-words"
@@ -283,26 +335,80 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
                       </span>
                       <span className="grow"></span>
                     </div>
-                    {props.isManageMode ? (
-                      <></>
-                    ) : (
-                      <div className="flex flex-col">
-                        <span className="grow"></span>
-                        <span className="capitalize text-xxs">
-                          {spell.spell.action == "Longer"
-                            ? spell.spell.longerAction
-                            : spell.spell.action == "BonusAction"
-                            ? "Bonus Action"
-                            : spell.spell.action}
-                        </span>
-                        <span className="grow"></span>
-                      </div>
-                    )}
+
+                    <div className="flex flex-col grow m-0.5">
+                      <span className="grow"></span>
+                      <span className="capitalize text-xxs">
+                        {spell.spell.hasVerbalComponent &&
+                        spell.spell.hasSomaticComponent &&
+                        spell.spell.hasMaterialComponent &&
+                        spell.spell.materials != undefined
+                          ? `V, S, M ${
+                              spell.spell.materials.toLowerCase().includes("gp")
+                                ? `(${spell.spell.materials})`
+                                : ""
+                            }`
+                          : spell.spell.hasVerbalComponent &&
+                            spell.spell.hasSomaticComponent
+                          ? "V, S"
+                          : spell.spell.hasVerbalComponent &&
+                            spell.spell.hasMaterialComponent &&
+                            spell.spell.materials != undefined
+                          ? `V, M ${
+                              spell.spell.materials.toLowerCase().includes("gp")
+                                ? `(${spell.spell.materials})`
+                                : ""
+                            }`
+                          : spell.spell.hasSomaticComponent &&
+                            spell.spell.hasMaterialComponent &&
+                            spell.spell.materials != undefined
+                          ? `S, M ${
+                              spell.spell.materials.toLowerCase().includes("gp")
+                                ? `(${spell.spell.materials})`
+                                : ""
+                            }`
+                          : spell.spell.hasVerbalComponent
+                          ? "V"
+                          : spell.spell.hasSomaticComponent
+                          ? "S"
+                          : spell.spell.hasMaterialComponent &&
+                            spell.spell.materials != undefined
+                          ? `M ${
+                              spell.spell.materials
+                                .toLowerCase()
+                                .includes("consum")
+                                ? `(${spell.spell.materials})`
+                                : ""
+                            }`
+                          : ""}
+                      </span>
+                      <span className="grow"></span>
+                    </div>
+
+                    <div className="flex flex-col grow m-0.5">
+                      <span className="grow"></span>
+                      <span className="capitalize text-xxs">
+                        {spell.spell.range}
+                      </span>
+                      <span className="grow"></span>
+                    </div>
+
+                    <div className="flex flex-col m-0.5">
+                      <span className="grow"></span>
+                      <span className="capitalize text-xxs">
+                        {spell.spell.action == "Longer"
+                          ? spell.spell.longerAction
+                          : spell.spell.action == "BonusAction"
+                          ? "Bonus Action"
+                          : spell.spell.action}
+                      </span>
+                      <span className="grow"></span>
+                    </div>
                   </div>
                   <div className="flex flex-col basis-0">
-                    <div className="grow"></div>
                     {props.isManageMode ? (
                       <Button
+                        className="grow"
                         variant="outlined"
                         color="error"
                         onClick={(e) => {
@@ -325,6 +431,7 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
                       </Button>
                     ) : spell.spell.level > 0 ? (
                       <Button
+                        className="grow"
                         variant="outlined"
                         color={primaryColorString}
                         disabled={
@@ -371,8 +478,6 @@ export const CharacterSpells = memo((props: CharacterSpellProps) => {
                     ) : (
                       <></>
                     )}
-
-                    <div className="grow"></div>
                   </div>
                 </div>
               ))}
