@@ -102,25 +102,22 @@ export function getTheme(mode: ThemeMode) {
 export function usePrimaryColor() {
   const theme = useTheme();
   const themeStore = useThemeStore();
-  var ret = theme.palette.mode == "dark";
-  if (ret == themeStore.isPrimarySwapped) return theme.palette.primary;
-  return theme.palette.secondary;
+  return themeStore.isPrimarySwapped
+    ? theme.palette.secondary
+    : theme.palette.primary;
 }
 
 export function usePrimaryColorString() {
-  const theme = useTheme();
   const themeStore = useThemeStore();
-  var ret = theme.palette.mode == "dark";
-  if (ret == themeStore.isPrimarySwapped) return "primary";
-  return "secondary";
+  return themeStore.isPrimarySwapped ? "secondary" : "primary";
 }
 
 export function useSecondaryColor() {
   const theme = useTheme();
   const themeStore = useThemeStore();
-  var ret = theme.palette.mode == "dark";
-  if (ret == themeStore.isPrimarySwapped) return theme.palette.secondary;
-  return theme.palette.primary;
+  return themeStore.isPrimarySwapped
+    ? theme.palette.primary
+    : theme.palette.secondary;
 }
 
 export function useBgColor() {
