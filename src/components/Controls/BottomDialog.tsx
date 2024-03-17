@@ -1,7 +1,12 @@
-import { Dialog, IconButton, Slide } from "@mui/material";
+import { AppBar, Dialog, IconButton, Slide, Toolbar } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React, { ReactNode, memo } from "react";
-import { useBgColor, useBgColorStyle, usePrimaryColor } from "../../theme";
+import {
+  useBgColor,
+  useBgColorStyle,
+  usePrimaryColor,
+  usePrimaryColorString,
+} from "../../theme";
 import { Dndsvg } from "../../assets/dndsvg";
 import { Check, Clear, Delete } from "@mui/icons-material";
 
@@ -30,8 +35,7 @@ export const BottomDialog = memo((p: BottomDialogProps) => {
   const bgStyle = useBgColorStyle();
   const bgColor = useBgColor();
   const primaryColor = usePrimaryColor();
-  const pannelBgStyle = { backgroundColor: primaryColor.main };
-  const whiteColor = { color: "white" };
+  const primaryColorString = usePrimaryColorString();
   return (
     <Dialog
       className="w-screen sticky max-h-90%Screen"
@@ -48,38 +52,43 @@ export const BottomDialog = memo((p: BottomDialogProps) => {
       }}
     >
       {p.disableAppbar != true ? (
-        <div className="w-full flex flex-row" style={pannelBgStyle}>
-          <IconButton
-            onClick={() => {
-              if (p.onClear) p.onClear();
-              p.onClose();
-            }}
-          >
-            <Clear style={whiteColor} className="text-3xl" />
-          </IconButton>
-          <div className="grow"></div>
-          {p.showDelete ? (
+        <AppBar className="relative" color={primaryColorString}>
+          <Toolbar className="p-1">
             <IconButton
+              color="inherit"
               onClick={() => {
-                if (p.onDelete) p.onDelete();
+                if (p.onClear) p.onClear();
                 p.onClose();
               }}
             >
-              <Delete style={whiteColor} className="text-3xl" />
+              <Clear />
             </IconButton>
-          ) : (
-            <></>
-          )}
-          <div className="grow"></div>
-          <IconButton
-            onClick={() => {
-              if (p.onSave) p.onSave();
-              p.onClose();
-            }}
-          >
-            <Check style={whiteColor} className="text-3xl" />
-          </IconButton>
-        </div>
+            <div className="grow"></div>
+            {p.showDelete ? (
+              <IconButton
+                color="inherit"
+                onClick={() => {
+                  if (p.onDelete) p.onDelete();
+                  p.onClose();
+                }}
+              >
+                <Delete />
+              </IconButton>
+            ) : (
+              <></>
+            )}
+            <div className="grow"></div>
+            <IconButton
+              color="inherit"
+              onClick={() => {
+                if (p.onSave) p.onSave();
+                p.onClose();
+              }}
+            >
+              <Check />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
       ) : (
         <></>
       )}

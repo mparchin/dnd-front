@@ -24,7 +24,7 @@ export const StatsBox = memo((props: stats) => {
   ]);
   const modifire = CalculateModifire(props.value);
   return (
-    <div className="bg-no-repeat flex flex-col w-30 h-30 m-1" style={bgImage}>
+    <div className="bg-no-repeat flex flex-col w-30 h-30 m-0.5" style={bgImage}>
       <span className="text-center text-lg pt-0.5" style={coloredStyle}>
         {props.value}
       </span>
