@@ -28,6 +28,7 @@ import { CharacterAttributes } from "../models/Character/CharacterAttributes";
 import { Character } from "../models/Character/Character";
 import { CalculateProficiencyBonous } from "../models/extraCalculations";
 import { Dndsvg } from "../assets/dndsvg";
+import { ImageUploader } from "./Controls/ImageUploader";
 
 class ExpertEditClass implements ExpertEditState {
   [immerable] = true;
@@ -97,6 +98,7 @@ export interface CharacterEditDialogState {
   name: string;
   race: string;
   background: string;
+  imageUrl: string;
   classId: string;
   subclassName?: string;
   level: number;
@@ -146,6 +148,7 @@ export interface CharacterEditDialogState {
     setName: (str: string) => void;
     setRace: (str: string) => void;
     setBackground: (str: string) => void;
+    setImageUrl: (str: string) => void;
     setClassId: (str: string) => void;
     setSubclassName: (str?: string) => void;
     setLevel: (val: number) => void;
@@ -179,6 +182,7 @@ export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
     name: "",
     race: "",
     background: "",
+    imageUrl: "",
     classId: "",
     subclassName: undefined,
     level: 1,
@@ -234,6 +238,7 @@ export const useCharacterEditDialogStore = create<CharacterEditDialogState>()(
       setName: (str: string) => set({ name: str }),
       setRace: (str: string) => set({ race: str }),
       setBackground: (str: string) => set({ background: str }),
+      setImageUrl: (str: string) => set({ imageUrl: str }),
       setClassId: (str: string) => set({ classId: str }),
       setSubclassName: (str?: string) => set({ subclassName: str }),
       setLevel: (val: number) => set({ level: val }),
@@ -274,6 +279,7 @@ function Save(
   character.name = state.name;
   character.race = state.race;
   character.background = state.background;
+  character.image = state.imageUrl;
   character.class = selectedClass;
   character.subClassName = state.subclassName ?? "";
   character.level = state.level;
@@ -346,6 +352,7 @@ function Load(
   state.actions.setName(character.name);
   state.actions.setRace(character.race);
   state.actions.setBackground(character.background);
+  state.actions.setImageUrl(character.image ?? "");
   state.actions.setClassId(character.class.id.toString());
   state.actions.setSubclassName(character.subClassName);
   state.actions.setLevel(character.level);
@@ -525,7 +532,12 @@ export default function () {
           onChange={state.actions.setBackground}
         />
 
-        <div className="w-88 m-2 text-center">TODO image</div>
+        <div className="w-88 m-2">
+          <ImageUploader
+            imageUrl={state.imageUrl}
+            setImageUrl={state.actions.setImageUrl}
+          />
+        </div>
 
         <ComboBox
           className="w-88 m-2"
