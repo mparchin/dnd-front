@@ -5,7 +5,7 @@ import FilterDialog from "./components/FilterDialog";
 import ReloadPrompt from "./reloadPrompt";
 import { Backdrop, CircularProgress, useTheme } from "@mui/material";
 import { ThemeMode, useBgColor, usePrimaryColor, useThemeStore } from "./theme";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { ComingSoon } from "./components/CommingSoon";
 import SettingsPage from "./components/SettingsPage";
@@ -64,13 +64,13 @@ export default function App() {
   }, [bgColor]);
 
   if (!authority.isLoggedIn && location.pathname != "/login") authority.login();
-  console.log(authority.state.token?.expiration);
-  console.log();
-  if (
-    authority.state.token != null &&
-    authority.state.token.expiration <= new Date().getTime()
-  )
-    authority.refresh();
+  useEffect(() => {
+    if (
+      authority.state.token != null &&
+      authority.state.token.expiration <= new Date().getTime()
+    )
+      authority.refresh();
+  }, [authority.state.token]);
   return (
     <>
       <Helmet>
