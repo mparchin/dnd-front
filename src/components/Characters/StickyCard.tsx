@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { memo, useMemo } from "react";
 import { Bonfire } from "../../assets/bonfire";
-import { usePrimaryColor } from "../../theme";
+import { useBgColor, usePrimaryColor } from "../../theme";
 import { Circle } from "../../assets/circle";
 import { HPDialog, useHPDialogStore } from "./Edit/HPDialog";
 import { useCharacterAPI } from "../../API/characters";
@@ -38,6 +38,11 @@ export const StickyCard = memo((p: Props) => {
   const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
     primaryColor,
   ]);
+  const bgColor = useBgColor();
+  const avatarStyle = useMemo(
+    () => ({ color: primaryColor.main, backgroundColor: bgColor }),
+    [primaryColor]
+  );
   const currentHP = CalculateCurrentHP(p.character);
   const currentMaximumHP = CalculateCurrentMaximumHP(p.character);
   const bloodiedThreshHold = CalculateBloodiedThreshold(p.character);
@@ -83,9 +88,9 @@ export const StickyCard = memo((p: Props) => {
             <div className="pr-2 pl-2 basis-0">
               <Avatar
                 className="w-28 h-28 mt-1 border-2 border-current rounded-lg"
-                src="/asghar.jpg"
+                src={p.character.image}
                 variant="rounded"
-                style={coloredStyle}
+                style={avatarStyle}
               />
             </div>
             <div className="grow flex flex-col justify-around basis-0">

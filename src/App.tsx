@@ -64,6 +64,13 @@ export default function App() {
   }, [bgColor]);
 
   if (!authority.isLoggedIn && location.pathname != "/login") authority.login();
+  console.log(authority.state.token?.expiration);
+  console.log();
+  if (
+    authority.state.token != null &&
+    authority.state.token.expiration <= new Date().getTime()
+  )
+    authority.refresh();
   return (
     <>
       <Helmet>

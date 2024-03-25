@@ -43,9 +43,11 @@ export const CharacterListItem = memo((p: CharacterListItemProps) => {
   const primaryColor = usePrimaryColor();
   const primarycolorString = usePrimaryColorString();
   const pageState = useCharacterListPageStore((state) => state);
-  const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
-    primaryColor,
-  ]);
+  const bgColor = useBgColor();
+  const avatarStyle = useMemo(
+    () => ({ color: primaryColor.main, backgroundColor: bgColor }),
+    [primaryColor]
+  );
   const dividerStyle = useMemo(() => ({ backgroundColor: primaryColor.main }), [
     primaryColor,
   ]);
@@ -60,9 +62,9 @@ export const CharacterListItem = memo((p: CharacterListItemProps) => {
       >
         <Avatar
           className="w-20 h-20 mt-1 border-2 border-current rounded-lg"
-          src="/asghar.jpg"
+          src={p.character.image}
           variant="rounded"
-          style={coloredStyle}
+          style={avatarStyle}
         />
         <div className="flex flex-col grow pl-4 pt-2">
           <span className="grow capitalize">{p.character.name}</span>

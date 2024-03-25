@@ -40,7 +40,7 @@ const useTokenStore = create<TokenState>()(
   )
 );
 
-const apiAddress = import.meta.env.VITE_API_ADDRESS
+export const apiAddress = import.meta.env.VITE_API_ADDRESS
   ? import.meta.env.VITE_API_ADDRESS
   : //"http://localhost:5056";
     "https://backend.eldoriantales.com";
@@ -75,7 +75,7 @@ export const login = (info: LoginInfo) =>
     .post<JWTToken>(`${authorityAddress}/login`, info)
     .then((res) => res.data);
 
-const header = (token: JWTToken) => ({
+export const header = (token: JWTToken) => ({
   headers: {
     Authorization: `Bearer ${token.token}`,
   },
@@ -96,6 +96,7 @@ interface AuthorityFunc {
   error: (res: AxiosError) => void;
   isLoggedIn: boolean;
   login: () => void;
+  refresh: () => void;
 }
 
 export function useAuthority(): AuthorityFunc {
@@ -110,29 +111,31 @@ export function useAuthority(): AuthorityFunc {
     navigate,
   ]);
 
+  const refreshCallback = useCallback(() => {
+    if (!tokenStore.token || !isLoggedIn) {
+      login();
+      return;
+    }
+    setLoading(true);
+    refresh(tokenStore.token)
+      .then((token) => tokenStore.setToken(token))
+      .catch((res: AxiosError) => {
+        if (res.response?.status == 401) {
+          tokenStore.setToken(undefined);
+          login();
+          return;
+        }
+        report();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [tokenStore.token]);
+
   const error = useCallback(
     (res: AxiosError) => {
-      if (!tokenStore.token || !isLoggedIn) {
-        login();
-        return;
-      }
       if (res.response?.status == 401) {
-        setLoading(true);
-        refresh(tokenStore.token)
-          .then((token) => tokenStore.setToken(token))
-          .catch((res: AxiosError) => {
-            if (res.response?.status == 401) {
-              tokenStore.setToken(undefined);
-              login();
-              return;
-            }
-            report();
-          })
-          .finally(() => {
-            setLoading(false);
-            report();
-          });
-        return;
+        refreshCallback();
       }
       report();
     },
@@ -144,6 +147,7 @@ export function useAuthority(): AuthorityFunc {
     error: error,
     isLoggedIn: isLoggedIn,
     login: login,
+    refresh: refreshCallback,
   };
 }
 
