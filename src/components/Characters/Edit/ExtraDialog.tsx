@@ -10,8 +10,8 @@ import { usePrimaryColorString } from "../../../theme";
 import { ExtraField } from "../../Controls/ExtraField";
 
 interface ExtraDialogState {
-  state: "editing" | "using" | "off";
-  setState: (state: "editing" | "using" | "off") => void;
+  state: "editing" | "using" | "editingOff" | "usingOff";
+  setState: (state: "editing" | "using" | "editingOff" | "usingOff") => void;
   value: { [key: string]: string };
   setValue: (val: { [key: string]: string }) => void;
   extra: CharacterExtra;
@@ -22,7 +22,7 @@ interface ExtraDialogState {
 }
 
 export const useExtraDialogState = create<ExtraDialogState>()((set) => ({
-  state: "off",
+  state: "editingOff",
   setState: (state) => set({ state: state }),
   value: { val: "0" },
   setValue: (val) => set({ value: val }),
@@ -49,20 +49,26 @@ export const ExtraDialog = memo((p: Props) => {
         state.extra.used = Number(state.value.val);
         p.onUse(state.extra);
       }
-    } else if (state.extra.name != "" && state.extra.maximumFormula != "") {
+      state.setState("usingOff");
+    } else {
+      state.setState("editingOff");
+    }
+    state.setValue({ val: "0" });
+  }, [state.state, state.extra, state.value]);
+
+  const saveData = useCallback(() => {
+    if (state.extra.name != "" && state.extra.maximumFormula != "") {
       if (state.extra.id > 0) p.onEdit(state.extra);
       else p.onCreate(state.extra);
     }
-    state.setState("off");
-    state.setValue({ val: "0" });
-  }, [state.state, state.extra, state.value]);
+  }, [state.extra]);
 
   useEffect(() => {
     if (state.state == "using")
       state.setValue({ val: state.extra.used.toString() });
   }, [state.state, state.extra]);
 
-  if (state.state == "using") {
+  if (state.state == "using" || state.state == "usingOff") {
     const maximum =
       state.extra.maximumFormula == ""
         ? 0
@@ -71,7 +77,12 @@ export const ExtraDialog = memo((p: Props) => {
       val: [...Array(maximum + 1).keys()],
     };
     return (
-      <BottomDialog isOpen={state.state == "using"} onClose={closeDialog}>
+      <BottomDialog
+        isOpen={state.state == "using"}
+        disableAppbar
+        disableLogo
+        onClose={closeDialog}
+      >
         <>
           <Picker
             value={state.value}
@@ -91,7 +102,7 @@ export const ExtraDialog = memo((p: Props) => {
           {state.extra.customRefreshFormula != "" ? (
             <TextField
               disabled
-              className="m-5 w-96"
+              className="m-5 w-88"
               multiline
               label="Custom recharge"
               value={state.extra.customRefreshFormula}
@@ -105,7 +116,11 @@ export const ExtraDialog = memo((p: Props) => {
   }
 
   return (
-    <BottomDialog isOpen={state.state != "off"} onClose={closeDialog}>
+    <BottomDialog
+      isOpen={state.state == "editing"}
+      onSave={saveData}
+      onClose={closeDialog}
+    >
       <div className="flex flex-col p-4">
         <TextField
           color={primaryColorString}

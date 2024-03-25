@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { memo, useMemo } from "react";
 import { Bonfire } from "../../assets/bonfire";
-import { usePrimaryColor } from "../../theme";
+import { useBgColor, usePrimaryColor } from "../../theme";
 import { Circle } from "../../assets/circle";
 import { HPDialog, useHPDialogStore } from "./Edit/HPDialog";
 import { useCharacterAPI } from "../../API/characters";
@@ -38,6 +38,11 @@ export const StickyCard = memo((p: Props) => {
   const coloredStyle = useMemo(() => ({ color: primaryColor.main }), [
     primaryColor,
   ]);
+  const bgColor = useBgColor();
+  const avatarStyle = useMemo(
+    () => ({ color: primaryColor.main, backgroundColor: bgColor }),
+    [primaryColor]
+  );
   const currentHP = CalculateCurrentHP(p.character);
   const currentMaximumHP = CalculateCurrentMaximumHP(p.character);
   const bloodiedThreshHold = CalculateBloodiedThreshold(p.character);
@@ -58,6 +63,12 @@ export const StickyCard = memo((p: Props) => {
     }),
     [theme.palette.primary]
   );
+  const whiteColor = useMemo(
+    () => ({
+      color: theme.palette.common.white,
+    }),
+    [theme.palette.common.white]
+  );
   return (
     <>
       <Card className="w-full p-2" elevation={3}>
@@ -77,9 +88,9 @@ export const StickyCard = memo((p: Props) => {
             <div className="pr-2 pl-2 basis-0">
               <Avatar
                 className="w-28 h-28 mt-1 border-2 border-current rounded-lg"
-                src="/asghar.jpg"
+                src={p.character.image}
                 variant="rounded"
-                style={coloredStyle}
+                style={avatarStyle}
               />
             </div>
             <div className="grow flex flex-col justify-around basis-0">
@@ -90,7 +101,7 @@ export const StickyCard = memo((p: Props) => {
                 onClick={() => hpDialogState.dialogActions.setIsOpen(true)}
               >
                 {hpDialogState.isLoading ? (
-                  <CircularProgress style={HpColor} />
+                  <CircularProgress style={whiteColor} />
                 ) : (
                   <>
                     <div className="grow basis-0 text-xl">
@@ -107,7 +118,7 @@ export const StickyCard = memo((p: Props) => {
                 onClick={() => manaDialogState.dialogActions.setIsOpen(true)}
               >
                 {manaDialogState.isLoading ? (
-                  <CircularProgress style={ManaColor} />
+                  <CircularProgress style={whiteColor} />
                 ) : (
                   <>
                     <div className="grow basis-0 text-xl">
@@ -217,7 +228,12 @@ export const StickyCard = memo((p: Props) => {
           update(p.character, hpDialogState.dialogActions.setIsLoading);
         }}
       />
+
       <ManaDialog
+        level6={!p.character.spellCasting.used6thLevel}
+        level7={!p.character.spellCasting.used7thLevel}
+        level8={!p.character.spellCasting.used8thLevel}
+        level9={!p.character.spellCasting.used9thLevel}
         onChange={(val) => {
           p.character.spellCasting.usedMana += val;
           if (
@@ -229,6 +245,13 @@ export const StickyCard = memo((p: Props) => {
             );
           if (p.character.spellCasting.usedMana < 0)
             p.character.spellCasting.usedMana = 0;
+          update(p.character, manaDialogState.dialogActions.setIsLoading);
+        }}
+        onSave={(state) => {
+          p.character.spellCasting.used6thLevel = !state.level6;
+          p.character.spellCasting.used7thLevel = !state.level7;
+          p.character.spellCasting.used8thLevel = !state.level8;
+          p.character.spellCasting.used9thLevel = !state.level9;
           update(p.character, manaDialogState.dialogActions.setIsLoading);
         }}
       />

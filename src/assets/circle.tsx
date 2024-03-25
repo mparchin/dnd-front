@@ -35,7 +35,7 @@ export const Circle = memo((p: CircleProps) => {
       <text
         x="3"
         y="7"
-        fill="currentColor"
+        fill="white"
         className="uppercase"
         style={{ fontSize: "0.4rem" }}
       >

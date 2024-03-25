@@ -2,19 +2,21 @@ import { create } from "zustand";
 import { Character } from "../models/Character/Character";
 import {
   createCharacterExtra,
+  createCharacterSpell,
   deleteCharacter,
   deleteCharacterExtra,
+  deleteCharacterSpell,
   editCharacter,
   getCharacters,
   newCharacter,
   updateCharacterExtra,
-  useEnsureLoggedIn,
-  useTokenStore,
+  updateCharacterSpell,
+  useAuthority,
 } from "../api";
 import { JWTToken } from "../models/spell";
-import { useNetworkStore } from "../components/NetworkPrompt";
 import { useCallback } from "react";
 import { CharacterExtra } from "../models/Character/CharacterExtra";
+import { CharacterSpell } from "../models/Character/CharacterSpell";
 
 export interface CharactersListState {
   characters: Character[];
@@ -40,7 +42,7 @@ export interface CharacterAPI {
     showProgress?: (flag: boolean) => void
   ) => void;
   delete: (id: number, showProgress?: (flag: boolean) => void) => void;
-  getAll: (showProgress?: (flag: boolean) => void) => void;
+  getAll: (showProgress?: (flag: boolean) => void) => Promise<void>;
   createExtra: (
     charId: number,
     extra: CharacterExtra,
@@ -56,6 +58,21 @@ export interface CharacterAPI {
     extraId: number,
     showProgress?: (flag: boolean) => void
   ) => void;
+  createSpell: (
+    charId: number,
+    spell: CharacterSpell,
+    showProgress?: (flag: boolean) => void
+  ) => void;
+  updateSpell: (
+    charId: number,
+    spell: CharacterSpell,
+    showProgress?: (flag: boolean) => void
+  ) => void;
+  deleteSpell: (
+    charId: number,
+    spellId: number,
+    showProgress?: (flag: boolean) => void
+  ) => void;
 }
 
 export const useCharacterAPI: () => CharacterAPI = () => {
@@ -65,9 +82,8 @@ export const useCharacterAPI: () => CharacterAPI = () => {
     setLastGetAllTime,
     lastGetAllTime,
   } = useCharacterListStore((state) => state);
-  useEnsureLoggedIn();
-  const token = useTokenStore((state) => state.token) ?? new JWTToken();
-  const { report } = useNetworkStore((state) => state);
+  const authority = useAuthority();
+  const token = authority.state.token ?? new JWTToken();
 
   const createCallback = useCallback(
     (character: Character, showProgress?: (flag: boolean) => void) => {
@@ -78,12 +94,12 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(savedChar);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
     },
-    [token]
+    [token, characters]
   );
 
   const updateCallback = useCallback(
@@ -95,12 +111,12 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(savedChar);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
     },
-    [token]
+    [token, characters]
   );
 
   const deleteCallback = useCallback(
@@ -111,29 +127,30 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           const chars = characters.filter((char) => char.id != id);
           setCharacters(chars.length > 0 ? chars : []);
         })
-        .catch(() => report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
     },
-    [token]
+    [token, characters]
   );
 
   const getAllCallback = useCallback(
     (showProgress?: (flag: boolean) => void) => {
-      if (new Date().getTime() - lastGetAllTime < 5000) return;
+      if (new Date().getTime() - lastGetAllTime < 5000)
+        return Promise.resolve();
+      setLastGetAllTime(new Date().getTime());
       if (showProgress) showProgress(true);
-      getCharacters("characters", token)
+      return getCharacters("characters", token)
         .then((chars) => {
           setCharacters(chars.length > 0 ? chars : []);
-          setLastGetAllTime(new Date().getTime());
         })
-        .catch(() => report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
     },
-    [token]
+    [token, characters]
   );
 
   const createExtraCallback = useCallback(
@@ -152,12 +169,12 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(char);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
     },
-    [token]
+    [token, characters]
   );
 
   const updateExtraCallback = useCallback(
@@ -177,12 +194,12 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(char);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
     },
-    [token]
+    [token, characters]
   );
 
   const deleteExtraCallback = useCallback(
@@ -201,12 +218,85 @@ export const useCharacterAPI: () => CharacterAPI = () => {
           chars.push(char);
           setCharacters(chars);
         })
-        .catch(report)
+        .catch(authority.error)
         .finally(() => {
           if (showProgress) showProgress(false);
         });
     },
-    [token]
+    [token, characters]
+  );
+
+  const createSpellCallback = useCallback(
+    (
+      charId: number,
+      spell: CharacterSpell,
+      showProgress?: (flag: boolean) => void
+    ) => {
+      if (showProgress) showProgress(true);
+      createCharacterSpell(charId, spell, token)
+        .then((spell) => {
+          const char = structuredClone(characters.find((c) => c.id == charId));
+          if (char == null) return;
+          char.spells.push(spell);
+          const chars = characters.filter((c) => c.id != charId);
+          chars.push(char);
+          setCharacters(chars);
+        })
+        .catch(authority.error)
+        .finally(() => {
+          if (showProgress) showProgress(false);
+        });
+    },
+    [token, characters]
+  );
+
+  const updateSpellCallback = useCallback(
+    (
+      charId: number,
+      spell: CharacterSpell,
+      showProgress?: (flag: boolean) => void
+    ) => {
+      if (showProgress) showProgress(true);
+      updateCharacterSpell(charId, spell, token)
+        .then((spell) => {
+          const char = structuredClone(characters.find((c) => c.id == charId));
+          if (char == null) return;
+          char.spells = char.spells.filter((e) => e.id != spell.id);
+          char.spells.push(spell);
+          const chars = characters.filter((c) => c.id != charId);
+          chars.push(char);
+          setCharacters(chars);
+        })
+        .catch(authority.error)
+        .finally(() => {
+          if (showProgress) showProgress(false);
+        });
+    },
+    [token, characters]
+  );
+
+  const deleteSpellCallback = useCallback(
+    (
+      charId: number,
+      spellId: number,
+      showProgress?: (flag: boolean) => void
+    ) => {
+      if (showProgress) showProgress(true);
+      deleteCharacterSpell(charId, spellId, token)
+        .then(() => {
+          const char = structuredClone(characters.find((c) => c.id == charId));
+          if (char == null) return;
+          char.spells = char.spells.filter((e) => e.id != spellId);
+          const chars = characters.filter((c) => c.id != charId);
+          chars.push(char);
+          setCharacters(chars);
+        })
+        .catch(authority.error)
+        .finally(() => {
+          if (showProgress) showProgress(false);
+        });
+    },
+    [token, characters]
   );
 
   return {
@@ -217,5 +307,8 @@ export const useCharacterAPI: () => CharacterAPI = () => {
     createExtra: createExtraCallback,
     updateExtra: updateExtraCallback,
     deleteExtra: deleteExtraCallback,
+    createSpell: createSpellCallback,
+    updateSpell: updateSpellCallback,
+    deleteSpell: deleteSpellCallback,
   };
 };

@@ -5,11 +5,13 @@ import { CharacterExpert } from "./CharacterExpert";
 import { CharacterHitpoint } from "./CharacterHitpoint";
 import { CharacterSpellCasting } from "./CharacterSpellCasting";
 import { CharacterExtra } from "./CharacterExtra";
+import { CharacterSpell } from "./CharacterSpell";
 
 export class Character {
   [immerable] = true;
   id: number = 0;
   name: string = "";
+  playerName: string = "";
   race: string = "";
   background: string = "";
   image?: string;
@@ -53,6 +55,7 @@ export class Character {
   usedHealingSurge: number = 0;
 
   extras: CharacterExtra[] = [];
+  spells: CharacterSpell[] = [];
 
   time: number = 0;
 }

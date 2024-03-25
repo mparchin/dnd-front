@@ -1,13 +1,25 @@
-import { Dialog, Slide } from "@mui/material";
+import { AppBar, Dialog, IconButton, Slide, Toolbar } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React, { ReactNode, memo } from "react";
-import { useBgColor, useBgColorStyle, usePrimaryColor } from "../../theme";
+import {
+  useBgColor,
+  useBgColorStyle,
+  usePrimaryColor,
+  usePrimaryColorString,
+} from "../../theme";
 import { Dndsvg } from "../../assets/dndsvg";
+import { Check, Clear, Delete } from "@mui/icons-material";
 
 interface BottomDialogProps {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
+  disableAppbar?: boolean;
+  disableLogo?: boolean;
+  showDelete?: boolean;
+  onClear?: () => void;
+  onSave?: () => void;
+  onDelete?: () => void;
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -23,9 +35,10 @@ export const BottomDialog = memo((p: BottomDialogProps) => {
   const bgStyle = useBgColorStyle();
   const bgColor = useBgColor();
   const primaryColor = usePrimaryColor();
+  const primaryColorString = usePrimaryColorString();
   return (
     <Dialog
-      className="w-screen sticky"
+      className="w-screen sticky max-h-90%Screen"
       fullWidth
       open={p.isOpen}
       onClose={p.onClose}
@@ -38,9 +51,54 @@ export const BottomDialog = memo((p: BottomDialogProps) => {
         },
       }}
     >
-      <div style={bgStyle} className="w-full">
+      {p.disableAppbar != true ? (
+        <AppBar className="relative" color={primaryColorString}>
+          <Toolbar className="p-1">
+            <IconButton
+              color="inherit"
+              onClick={() => {
+                if (p.onClear) p.onClear();
+                p.onClose();
+              }}
+            >
+              <Clear />
+            </IconButton>
+            <div className="grow"></div>
+            {p.showDelete ? (
+              <IconButton
+                color="inherit"
+                onClick={() => {
+                  if (p.onDelete) p.onDelete();
+                  p.onClose();
+                }}
+              >
+                <Delete />
+              </IconButton>
+            ) : (
+              <></>
+            )}
+            <div className="grow"></div>
+            <IconButton
+              color="inherit"
+              onClick={() => {
+                if (p.onSave) p.onSave();
+                p.onClose();
+              }}
+            >
+              <Check />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+      ) : (
+        <></>
+      )}
+      <div style={bgStyle} className="w-full overflow-auto max-h-85%Screen">
         {p.children}
-        <Dndsvg color={primaryColor.main} background={bgColor} />
+        {p.disableLogo != true ? (
+          <Dndsvg color={primaryColor.main} background={bgColor} />
+        ) : (
+          <></>
+        )}
       </div>
     </Dialog>
   );

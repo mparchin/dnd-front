@@ -1,6 +1,6 @@
 import SearchAppBar from "./components/SearchAppBar";
 import SpellList from "./components/SpellList";
-import SpellDetailDialog from "./components/SpellDetailDialog";
+import { SpellDetailDialog } from "./components/SpellDetailDialog";
 import FilterDialog from "./components/FilterDialog";
 import ReloadPrompt from "./reloadPrompt";
 import { Backdrop, CircularProgress, useTheme } from "@mui/material";
@@ -28,9 +28,9 @@ import CharacterEdit from "./components/CharacterEdit";
 import GetAndSaveClasses from "./API/classes";
 import CharactersList from "./components/CharactersList";
 import { Login } from "./components/Login";
-import { useEnsureLoggedIn } from "./api";
 import { NetworkPrompt } from "./components/NetworkPrompt";
 import { create } from "zustand";
+import { useAuthority } from "./api";
 
 interface AppLoadingState {
   isloading: boolean;
@@ -43,7 +43,7 @@ export const useAppLoadingState = create<AppLoadingState>()((set) => ({
 }));
 
 export default function App() {
-  useEnsureLoggedIn();
+  const authority = useAuthority();
   const state = useAppLoadingState((state) => state);
   const theme = useTheme();
   const themeStore = useThemeStore((state) => state);
@@ -62,6 +62,15 @@ export default function App() {
       backgroundColor: bgColor,
     };
   }, [bgColor]);
+
+  if (!authority.isLoggedIn && location.pathname != "/login") authority.login();
+  console.log(authority.state.token?.expiration);
+  console.log();
+  if (
+    authority.state.token != null &&
+    authority.state.token.expiration <= new Date().getTime()
+  )
+    authority.refresh();
   return (
     <>
       <Helmet>
@@ -92,7 +101,7 @@ export default function App() {
         <div className="flex-grow flex flex-shrink basis-auto overflow-auto">
           {location.pathname == "/spells" ||
           location.pathname == "/filter" ||
-          location.pathname.includes("details") ? (
+          location.pathname == "/details" ? (
             <SpellList />
           ) : location.pathname == "/settings" ? (
             <SettingsPage />
@@ -113,9 +122,9 @@ export default function App() {
           ) : location.pathname == "/rules" ? (
             <RulesPage />
           ) : location.pathname.includes("characters") ? (
-            // <CharatersPage />
             <CharactersList />
-          ) : location.pathname.includes("character") ? (
+          ) : location.pathname.includes("character") ||
+            location.pathname == "/charSpellDetails" ? (
             <CharatersPage />
           ) : (
             <ComingSoon />
@@ -124,7 +133,7 @@ export default function App() {
       </div>
       {location.pathname == "/spells" ||
       location.pathname == "/filter" ||
-      location.pathname.includes("details") ? (
+      location.pathname == "/details" ? (
         <>
           <SpellDetailDialog />
           <FilterDialog />
@@ -135,8 +144,12 @@ export default function App() {
       ) : location.pathname == "/feats" ||
         location.pathname == "/featsFilter" ? (
         <FeatsFilterDialog />
-      ) : location.pathname.includes("haracter") ? (
-        <CharacterEdit />
+      ) : location.pathname.includes("haracter") ||
+        location.pathname == "/charSpellDetails" ? (
+        <>
+          <SpellDetailDialog />
+          <CharacterEdit />
+        </>
       ) : (
         <></>
       )}

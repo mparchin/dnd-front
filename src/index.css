@@ -71,10 +71,10 @@ div.light.swappedColors li::marker {
   color: rgb(196, 86, 30);
 }
 div.dark li::marker {
-  color: rgb(196, 86, 30);
+  color: rgb(26, 122, 171);
 }
 div.dark.swappedColors li::marker {
-  color: rgb(26, 122, 171);
+  color: rgb(196, 86, 30);
 }
 
 div table {
@@ -112,11 +112,11 @@ div.light tr:nth-child(even) {
   background-color: #f5f5f5;
 }
 div.dark th {
-  color: rgb(196, 86, 30);
+  color: rgb(26, 122, 171);
   background-color: #313131;
 }
 div.dark.swappedColors th {
-  color: rgb(26, 122, 171);
+  color: rgb(196, 86, 30);
   background-color: #313131;
 }
 div.descriptions.dark tr:nth-child(even) {

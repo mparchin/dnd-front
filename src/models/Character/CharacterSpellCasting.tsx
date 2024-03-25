@@ -6,4 +6,8 @@ export class CharacterSpellCasting {
   castingAbility: string = "";
   attackExtra: string = "";
   dcExtra: string = "";
+  used6thLevel: boolean = false;
+  used7thLevel: boolean = false;
+  used8thLevel: boolean = false;
+  used9thLevel: boolean = false;
 }

@@ -12,48 +12,35 @@ import {
   UserProfile,
 } from "./models/spell";
 import axios, { AxiosError } from "axios";
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { persist } from "zustand/middleware";
 import { Character } from "./models/Character/Character";
 import { CharacterExtra } from "./models/Character/CharacterExtra";
+import { useNetworkStore } from "./components/NetworkPrompt";
+import { useAppLoadingState } from "./App";
+import { CharacterSpell } from "./models/Character/CharacterSpell";
 
 export interface TokenState {
   token?: JWTToken;
-  isValid: boolean;
   profile?: UserProfile;
-  needsRefresh: boolean;
-  noConnection: boolean;
-  lastCheckedTime: number;
   setToken: (token?: JWTToken) => void;
-  setIsValid: (flag: boolean) => void;
   setProfile: (profile?: UserProfile) => void;
-  setNeedsRefresh: (flag: boolean) => void;
-  setNoConnection: (flag: boolean) => void;
-  setLastCheckedTime: (val: number) => void;
 }
 
-export const useTokenStore = create<TokenState>()(
+const useTokenStore = create<TokenState>()(
   persist<TokenState>(
     (set) => ({
       token: undefined,
-      isValid: false,
       profile: undefined,
-      needsRefresh: false,
-      noConnection: false,
-      lastCheckedTime: 0,
       setToken: (token) => set({ token: token }),
-      setIsValid: (flag) => set({ isValid: flag }),
       setProfile: (profile) => set({ profile: profile }),
-      setNeedsRefresh: (flag) => set({ needsRefresh: flag }),
-      setNoConnection: (flag) => set({ noConnection: flag }),
-      setLastCheckedTime: (val) => set({ lastCheckedTime: val }),
     }),
     { name: "Token-Storage" }
   )
 );
 
-const apiAddress = import.meta.env.VITE_API_ADDRESS
+export const apiAddress = import.meta.env.VITE_API_ADDRESS
   ? import.meta.env.VITE_API_ADDRESS
   : //"http://localhost:5056";
     "https://backend.eldoriantales.com";
@@ -88,7 +75,7 @@ export const login = (info: LoginInfo) =>
     .post<JWTToken>(`${authorityAddress}/login`, info)
     .then((res) => res.data);
 
-const header = (token: JWTToken) => ({
+export const header = (token: JWTToken) => ({
   headers: {
     Authorization: `Bearer ${token.token}`,
   },
@@ -104,50 +91,64 @@ export const refresh = (token: JWTToken) =>
     .post<JWTToken>(`${authorityAddress}/refresh`, token)
     .then((res) => res.data);
 
-export function useEnsureLoggedIn() {
+interface AuthorityFunc {
+  state: TokenState;
+  error: (res: AxiosError) => void;
+  isLoggedIn: boolean;
+  login: () => void;
+  refresh: () => void;
+}
+
+export function useAuthority(): AuthorityFunc {
   const tokenStore = useTokenStore((state) => state);
   const navigate = useNavigate();
-  useEffect(() => {
-    if (new Date().getTime() - tokenStore.lastCheckedTime < 300000) return;
-    if (!tokenStore.token) {
-      tokenStore.setIsValid(false);
-      navigate("/login", { replace: true });
+  const { report } = useNetworkStore();
+  const { setLoading } = useAppLoadingState((state) => state);
+  const isLoggedIn =
+    tokenStore.token != undefined && tokenStore.token.token != "";
+
+  const login = useCallback(() => navigate("/login", { replace: true }), [
+    navigate,
+  ]);
+
+  const refreshCallback = useCallback(() => {
+    if (!tokenStore.token || !isLoggedIn) {
+      login();
       return;
     }
-    if (!tokenStore.needsRefresh)
-      userProfile(tokenStore.token)
-        .then((profile) => {
-          tokenStore.setProfile(profile);
-          tokenStore.setNoConnection(false);
-          tokenStore.setNeedsRefresh(false);
-          tokenStore.setIsValid(true);
-          tokenStore.setLastCheckedTime(new Date().getTime());
-        })
-        .catch((res: AxiosError) => {
-          if (res.response?.status == 401) {
-            tokenStore.setNeedsRefresh(true);
-            tokenStore.setNoConnection(false);
-            tokenStore.setProfile(undefined);
-          } else {
-            tokenStore.setNoConnection(true);
-          }
-        });
-    else
-      refresh(tokenStore.token)
-        .then((token) => {
-          tokenStore.setToken(token);
-          tokenStore.setNoConnection(false);
-          tokenStore.setNeedsRefresh(false);
-        })
-        .catch((res: AxiosError) => {
-          if (res.response?.status == 401) {
-            tokenStore.setToken(undefined);
-            tokenStore.setNoConnection(false);
-            tokenStore.setNeedsRefresh(false);
-          } else tokenStore.setNoConnection(true);
-        });
-  }, []);
-  return tokenStore.isValid;
+    setLoading(true);
+    refresh(tokenStore.token)
+      .then((token) => tokenStore.setToken(token))
+      .catch((res: AxiosError) => {
+        if (res.response?.status == 401) {
+          tokenStore.setToken(undefined);
+          login();
+          return;
+        }
+        report();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [tokenStore.token]);
+
+  const error = useCallback(
+    (res: AxiosError) => {
+      if (res.response?.status == 401) {
+        refreshCallback();
+      }
+      report();
+    },
+    [tokenStore.token]
+  );
+
+  return {
+    state: tokenStore,
+    error: error,
+    isLoggedIn: isLoggedIn,
+    login: login,
+    refresh: refreshCallback,
+  };
 }
 
 export const newCharacter = (char: Character, token: JWTToken) =>
@@ -200,5 +201,41 @@ export const deleteCharacterExtra = (
 ) =>
   axios.delete(
     `${apiAddress}/characters/${charId}/extras/${extraId}`,
+    header(token)
+  );
+
+export const createCharacterSpell = (
+  charId: number,
+  spell: CharacterSpell,
+  token: JWTToken
+) =>
+  axios
+    .post<CharacterSpell>(
+      `${apiAddress}/characters/${charId}/spells`,
+      spell,
+      header(token)
+    )
+    .then((res) => res.data);
+
+export const updateCharacterSpell = (
+  charId: number,
+  spell: CharacterSpell,
+  token: JWTToken
+) =>
+  axios
+    .put<CharacterSpell>(
+      `${apiAddress}/characters/${charId}/spells`,
+      spell,
+      header(token)
+    )
+    .then((res) => res.data);
+
+export const deleteCharacterSpell = (
+  charId: number,
+  spellId: number,
+  token: JWTToken
+) =>
+  axios.delete(
+    `${apiAddress}/characters/${charId}/spells/${spellId}`,
     header(token)
   );
